@@ -1,10 +1,10 @@
 # Stage 9.1d — Distribution Build, CI and Package Validation
 
-**Stage:** 9 — Packaging, Documentation and Release  
-**Step:** 9.1d — Distribution build, CI and package validation  
-**Public-history starting commit:** `c294ffd` — `Stage 9.1d: bootstrap clean public repository history`  
-**Pre-public predecessor:** `6a6ddf7` — `Stage 9.1c: configure package metadata, versioning and builds`  
-**Target release:** Seestar Toolkit `v1.1.0`  
+**Stage:** 9 — Packaging, Documentation and Release
+**Step:** 9.1d — Distribution build, CI and package validation
+**Public-history starting commit:** `c294ffd` — `Stage 9.1d: bootstrap clean public repository history`
+**Pre-public predecessor:** `6a6ddf7` — `Stage 9.1c: configure package metadata, versioning and builds`
+**Target release:** Seestar Toolkit `v1.1.0`
 **Status on opening:** STARTED
 
 ---
