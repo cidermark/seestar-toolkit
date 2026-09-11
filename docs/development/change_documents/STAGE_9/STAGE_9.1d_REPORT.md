@@ -1,5 +1,274 @@
 # Stage 9.1d — Implementation and closure review
 
+## Final reassessment following CI Run 2
+
+**Decision: PASS — CI Run 2, final local validation and all 112 criterion
+checks are satisfied.** Stage 9.1d remains
+STARTED pending final Stage-review closure. The initial report and Run 1
+record below are retained as historical evidence, not current status.
+
+### Files changed
+
+Only `docs/development/change_documents/STAGE_9/STAGE_9.1d_REPORT.md` changed
+in this follow-up: reviewed Run 2 evidence, final local checks and an individual
+reassessment of all 112 criteria. The existing pending
+`docs/development/CHANGELOG.md` modification is preserved byte-for-byte.
+Production code, tests, fixtures, CI, packaging metadata and validators are
+unchanged. No commit was created.
+
+### CI implementation
+
+Unchanged workflow: **Distribution validation**, pushes to main, pull requests
+targeting main and manual dispatch. Four candidate jobs on `macos-15`, with
+Darwin/arm64 verification; Python 3.11–3.14, `fail-fast: false`, no failure
+suppression. Permissions remain `contents: read`, no persisted checkout
+credentials, no additional secrets and no explicit caching. No publication,
+release, tag, version or CHANGELOG mutation steps exist.
+
+### GitHub Actions evidence and Python candidate findings
+
+Evidence source: CI Run 2 results independently reviewed by the Stage review
+and supplied for this report. These are accepted as actual Actions evidence,
+not represented as logs downloaded by Codex.
+
+| Candidate/interpreter | Runner | Pytest | Matrix job result |
+| --- | --- | --- | --- |
+| 3.11 / 3.11.9 | macOS arm64 | 329 passed | PASS |
+| 3.12 / 3.12.10 | macOS arm64 | 329 passed | PASS |
+| 3.13 / 3.13.15 | macOS arm64 | 329 passed | PASS |
+| 3.14 / 3.14.7 | macOS arm64 | 329 passed | PASS |
+
+All four jobs completed successfully. Reviewed results also establish:
+
+- Public fixture/history check: 10 reviewed fixtures, clean public root,
+  no oversized blobs — PASS.
+- Ruff — PASS on all four jobs.
+- Applicable formatting — PASS, 36 files already formatted.
+- Incremental whitespace — PASS on all four jobs.
+- Wheel and sdist build/inspection — PASS.
+- Isolated wheel and sdist runtime validation — PASS.
+- Installed entry points — `seestar-toolkit 1.1.0`.
+- Temporary build outputs removed.
+
+**Preserved sequence: CI Run 1 FAIL → five specification whitespace violations
+remediated → CI Run 2 PASS.** Run 1 remains a genuine failure; its complete
+existing record is preserved below. All four candidates were attempted in
+Run 1. Run 2 success does not relabel Run 1 or hide its remediation.
+Python 3.11–3.14 remain candidates only; final support is a Stage 9.2a decision.
+
+Run 2 authoritative identifier, confirmed by Stage review:
+`a3b0e9915d8b7d87c43b1e9b202f96310720afcb` —
+`Stage 9.1d: fix CI whitespace validation`. Run URL/ID is not supplied /
+unavailable; the triggering SHA is used as the authoritative identifier.
+This matches locally verified main and origin/main. Implementation commit
+`bfb947f` precedes the whitespace fix, descending from public root `c294ffd`.
+
+Stage review confirms that the GitHub repository remains **PRIVATE**. Stage
+review inspected the uploaded CI Run 2 log archive and found no private
+filesystem paths, credentials, private FITS metadata, user-specific
+configuration or other private data exposed in the logs. These are explicit
+review attestations; Codex's read-only `gh` attempt remained unauthenticated
+and is not represented as an independent remote inspection.
+
+### Build validation
+
+Final local `python tools/validate_distribution.py` rebuilt and inspected:
+
+- `seestar_toolkit-1.1.0-py3-none-any.whl` — 39 allowed members.
+- `seestar_toolkit-1.1.0.tar.gz` — 46 allowed members.
+
+The isolated source copy contains packaging inputs and Python modules only;
+the wheel is built from the sdist. Checks verify name, version 1.1.0, Mark
+Wymer author metadata, MIT expression/license, README, `Requires-Python: >=3.11`,
+all package modules, console entry point and the declared runtime requirements.
+Dev/build extras remain separate. Archive allowlists and content scanning
+exclude FITS, private datasets, Git metadata, caches and private path/key
+markers. Temporary validation outputs are removed; none is a release asset.
+
+### Installed-artifact validation
+
+Final local wheel and sdist checks each use a separate clean temporary venv,
+no extras, outside-source working directory, cleared PYTHONPATH/PYTHONHOME,
+Python `-I` and no user site. `pip check`, both version entry points and an
+exact linear RGB FITS-to-TIFF conversion pass. Import location is verified
+beneath each venv at
+`lib/python3.13/site-packages/seestar_toolkit/__init__.py`.
+Both entry points report `seestar-toolkit 1.1.0`. pytest, Ruff, build and PDF
+tooling are absent from runtime environments. Sdist smoke passes with no
+observed limitation. Run 2 establishes these checks across all four candidates.
+
+### Final local test/quality
+
+Environment: Python 3.13.15, macOS arm64, Ruff 0.16.7.
+
+| Command/check | Result |
+| --- | --- |
+| `python -m pytest` | PASS: 329 passed in 11.23s. |
+| `python -m ruff check .` | PASS: All checks passed. |
+| `python tools/check_formatting.py` | PASS: 36 files already formatted. |
+| `python tools/check_public_inputs.py` | PASS: 10 reviewed fixtures; clean public root; no oversized blobs. |
+| `git diff --check` | PASS: final working-tree diff. |
+| `git diff --check c294ffd HEAD` | PASS: committed incremental public-stage changes. |
+| `python tools/validate_distribution.py` | PASS: build, inspection, isolated wheel/sdist installs and runtime smoke. |
+| Preservation checks | PASS: existing CHANGELOG and complete Run 1 record unchanged. |
+
+Local final validation does not replace or erase either CI run. No new test
+skip, candidate removal, dependency change or validation workaround was made.
+
+### Privacy/public checks and scope exclusions
+
+Ten approved fixtures remain unchanged, including the 5,760-byte synthetic
+mosaic. The public-history checker passes against current HEAD. Public main
+has only the clean bootstrap root; no oversized blob is reachable. Local
+master remains present and separate. No LFS, private dataset or generated
+artifact was introduced. Distribution checks pass for private-path exclusion;
+Stage review confirms PRIVATE visibility and completed clean CI-log review.
+
+No commit, push, tag, GitHub Release, PyPI publication, public switch or history
+rewrite was performed. No backup was intentionally deleted. v1.1.0 remains
+unreleased. Stage 9.2 (and later stages) have not begun. Final status contains
+only this report and the pre-existing pending development CHANGELOG edit.
+
+### Current individual closure assessment
+
+The following is the authoritative current reassessment, superseding the
+historical table later in this file. PASS means verified local implementation
+or explicitly supplied Stage-review CI evidence. No criterion remains pending on the supplied evidence; formal approval
+is a separate Stage-review action.
+
+**Unsatisfied closure criteria: none.** All 112 checks pass on the combined
+local and independently reviewed CI evidence. Criterion 112 is satisfied as
+a safeguard: the existing implementation/fix commits are recorded, current
+post-commit status is verified, and no premature COMPLETE status is assigned.
+The expected working-tree changes are this report and the preserved pending
+CHANGELOG. The formal close under specification §25 still requires explicit
+Stage-review approval; this report does not itself provide that approval or
+begin Stage 9.2. No new implementation commit is required or created here.
+
+| # | Criterion | Status | Current evidence / remaining work |
+| ---: | --- | --- | --- |
+| 1 | Work is on `main`. | PASS | main at a3b0e99 descends from c294ffd; public-input/history check passes; no history changes. |
+| 2 | `main` descends from `c294ffd`. | PASS | main at a3b0e99 descends from c294ffd; public-input/history check passes; no history changes. |
+| 3 | Old `master` is not merged into `main`. | PASS | main at a3b0e99 descends from c294ffd; public-input/history check passes; no history changes. |
+| 4 | The 272,923,200-byte FITS blob is not reachable from `main`. | PASS | main at a3b0e99 descends from c294ffd; public-input/history check passes; no history changes. |
+| 5 | No tracked public-history blob exceeds 100 MiB. | PASS | main at a3b0e99 descends from c294ffd; public-input/history check passes; no history changes. |
+| 6 | Repository remains private. | PASS | Stage review explicitly confirms GitHub repository remains PRIVATE; no visibility change performed. |
+| 7 | No normal 9.1d history rewrite occurs. | PASS | main at a3b0e99 descends from c294ffd; public-input/history check passes; no history changes. |
+| 8 | Historical documents are not retroactively rewritten solely to replace old commit IDs. | PASS | main at a3b0e99 descends from c294ffd; public-input/history check passes; no history changes. |
+| 9 | GitHub Actions workflow exists. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 10 | CI runs on pushes to `main`. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 11 | CI runs on PRs targeting `main`. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 12 | Workflow permissions are least-privilege. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 13 | Normal CI needs no personal secrets. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 14 | CI does not publish packages. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 15 | CI does not create releases. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 16 | CI does not create tags. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 17 | CI does not modify versioning. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 18 | CI does not modify CHANGELOGs. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 19 | CI does not require private datasets. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 20 | CI uses only repository-safe fixtures. | PASS | Unchanged workflow inspected; reviewed Run 2 passes; main triggers/read-only/no publishing or private inputs. |
+| 21 | Python 3.11 is attempted where available. | PASS | Reviewed Run 2: candidate attempted on macOS arm64; 329 tests and complete matrix job PASS. |
+| 22 | Python 3.12 is attempted where available. | PASS | Reviewed Run 2: candidate attempted on macOS arm64; 329 tests and complete matrix job PASS. |
+| 23 | Python 3.13 is attempted where available. | PASS | Reviewed Run 2: candidate attempted on macOS arm64; 329 tests and complete matrix job PASS. |
+| 24 | Python 3.14 is attempted where available. | PASS | Reviewed Run 2: candidate attempted on macOS arm64; 329 tests and complete matrix job PASS. |
+| 25 | Versions remain candidates, not final support claims. | PASS | All candidates retained; Run 1 FAIL and remediation retained; Run 2 PASS; final support deferred. |
+| 26 | Unavailable candidates are recorded. | PASS | All candidates retained; Run 1 FAIL and remediation retained; Run 2 PASS; final support deferred. |
+| 27 | Failing candidates are recorded. | PASS | All candidates retained; Run 1 FAIL and remediation retained; Run 2 PASS; final support deferred. |
+| 28 | Failing candidates are not silently removed. | PASS | All candidates retained; Run 1 FAIL and remediation retained; Run 2 PASS; final support deferred. |
+| 29 | Full pytest suite passes for applicable matrix entries. | PASS | 329 tests passed on each of 3.11.9, 3.12.10, 3.13.15 and 3.14.7 in reviewed Run 2. |
+| 30 | Ruff passes. | PASS | Reviewed Run 2 passes all jobs; final local Ruff, 36-file formatting and whitespace pass. |
+| 31 | Configured formatting passes. | PASS | Reviewed Run 2 passes all jobs; final local Ruff, 36-file formatting and whitespace pass. |
+| 32 | Incremental `git diff --check` passes. | PASS | Reviewed Run 2 passes all jobs; final local Ruff, 36-file formatting and whitespace pass. |
+| 33 | Coverage is not weakened merely for CI. | PASS | No tests, skips, matrix or validation behaviour changed in this follow-up. |
+| 34 | New CI skips are justified. | PASS | No tests, skips, matrix or validation behaviour changed in this follow-up. |
+| 35 | CI is reproducible from clean checkout. | PASS | Four successful clean Actions jobs plus isolated-source build/install validation. |
+| 36 | Wheel build succeeds. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 37 | Sdist build succeeds. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 38 | Build uses repository source only. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 39 | Wheel filename/version are correct. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 40 | Sdist filename/version are correct. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 41 | Project-name metadata is correct. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 42 | Version metadata is `1.1.0`. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 43 | Author metadata is Mark Wymer. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 44 | MIT licensing metadata is appropriate. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 45 | Runtime dependency metadata matches Stage 9.1c intent. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 46 | Dev-only dependencies are not runtime dependencies. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 47 | Build outputs remain untracked. | PASS | Reviewed Run 2 and fresh local wheel/sdist build/metadata/runtime dependency checks PASS; temporary outputs removed. |
+| 48 | Wheel contents are inspected. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 49 | Sdist contents are inspected. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 50 | Required package modules are present. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 51 | Console-script metadata is present. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 52 | Expected README/license metadata is present. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 53 | No private Stage 8 datasets are included. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 54 | No private local paths are included. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 55 | No `.git` data is included. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 56 | No accidental cache/temp files are included. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 57 | Superseded oversized Siril fixture is absent. | PASS | Wheel 39 members/sdist 46 members; strict allowlists, module/metadata/license and private-path inspection PASS. |
+| 58 | Wheel installs in clean temporary environment. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 59 | Installed `seestar-toolkit --version` is `1.1.0`. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 60 | Installed `python -m seestar_toolkit --version` is `1.1.0`. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 61 | Console entry point works outside repository source tree. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 62 | Module entry point works outside repository source tree. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 63 | Imported package resolves from temporary environment/site-packages. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 64 | Installed package does not require pytest. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 65 | Installed package does not require Ruff. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 66 | Installed package does not require PDF tooling. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 67 | Sdist smoke validation succeeds where practical. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 68 | Any sdist limitation is documented. | PASS | Run 2 and fresh local independent wheel/sdist venv checks PASS: outside-source entry points, site-packages imports, runtime-only dependencies. |
+| 69 | `tests/data/PRIVACY_REVIEW.md` remains present. | PASS | Public validator PASS: ten unchanged approved fixture hashes, reviewed synthetic mosaic, no oversized blob or LFS. |
+| 70 | Synthetic Siril mosaic remains the reviewed small fixture. | PASS | Public validator PASS: ten unchanged approved fixture hashes, reviewed synthetic mosaic, no oversized blob or LFS. |
+| 71 | Sanitised real FITS fixtures remain sanitised. | PASS | Public validator PASS: ten unchanged approved fixture hashes, reviewed synthetic mosaic, no oversized blob or LFS. |
+| 72 | CI does not restore old identifying metadata. | PASS | Public validator PASS: ten unchanged approved fixture hashes, reviewed synthetic mosaic, no oversized blob or LFS. |
+| 73 | CI logs expose no private fixture metadata/paths. | PASS | Stage review inspected Run 2 log archive: no private paths, credentials, FITS metadata, user configuration or private data. |
+| 74 | No Git LFS dependency is introduced. | PASS | Public validator PASS: ten unchanged approved fixture hashes, reviewed synthetic mosaic, no oversized blob or LFS. |
+| 75 | `PACKAGING.md` reflects implemented build/CI process where needed. | PASS | Existing packaging/notes document implementation and defer closure/support to this report/review; bootstrap/history preserved. |
+| 76 | `PROJECT_Notes.md` reflects 9.1d status where needed. | PASS | Existing packaging/notes document implementation and defer closure/support to this report/review; bootstrap/history preserved. |
+| 77 | `PUBLIC_HISTORY_BOOTSTRAP.md` remains accurate. | PASS | Existing packaging/notes document implementation and defer closure/support to this report/review; bootstrap/history preserved. |
+| 78 | Historical Stage documents are preserved. | PASS | Existing packaging/notes document implementation and defer closure/support to this report/review; bootstrap/history preserved. |
+| 79 | User Guide work is not prematurely moved into 9.1d. | PASS | Existing packaging/notes document implementation and defer closure/support to this report/review; bootstrap/history preserved. |
+| 80 | Final Python support claims remain deferred to 9.2a. | PASS | Existing packaging/notes document implementation and defer closure/support to this report/review; bootstrap/history preserved. |
+| 81 | At least one real GitHub Actions run occurs. | PASS | Stage review confirms real Run 1 FAIL and Run 2 PASS. |
+| 82 | Triggering commit is recorded. | PASS | Stage review confirms Run 2 triggering SHA a3b0e9915d8b7d87c43b1e9b202f96310720afcb; URL unavailable. |
+| 83 | Attempted Python matrix is recorded. | PASS | All four exact candidate interpreters recorded in current Run 2 table. |
+| 84 | Runner OS is recorded. | PASS | macOS arm64 confirmed by Stage review; workflow specifies macos-15. |
+| 85 | Job outcomes are recorded. | PASS | All four Run 2 matrix jobs PASS; Run 1 remains FAIL. |
+| 86 | Pytest outcome is recorded. | PASS | 329 pytest tests passed on each of the four Run 2 jobs. |
+| 87 | Ruff outcome is recorded. | PASS | Ruff passed on all four Run 2 jobs. |
+| 88 | Formatting outcome is recorded. | PASS | Applicable formatting passed: 36 files already formatted. |
+| 89 | Build outcome is recorded. | PASS | Run 2 wheel/sdist build and inspection PASS; fresh local repeat PASS. |
+| 90 | Installed-artifact smoke outcome is recorded. | PASS | Run 2 isolated wheel/sdist smoke PASS; version entry points 1.1.0; fresh local repeat PASS. |
+| 91 | Failure/remediation cycles remain visible. | PASS | Run 1 record retained byte-for-byte; whitespace-only remediation and Run 2 PASS explicitly sequenced. |
+| 92 | Final applicable CI state required for closure is passing. | PASS | Stage review independently confirms all four Run 2 jobs completed successfully. |
+| 93 | No PyPI publication. | PASS | No publishing/tag/release/visibility/next-stage/history operations; master preserved; no backup intentionally deleted. |
+| 94 | No GitHub Release. | PASS | No publishing/tag/release/visibility/next-stage/history operations; master preserved; no backup intentionally deleted. |
+| 95 | No release tag. | PASS | No publishing/tag/release/visibility/next-stage/history operations; master preserved; no backup intentionally deleted. |
+| 96 | Repository stays private. | PASS | Stage review explicitly confirms GitHub repository remains PRIVATE; no visibility change performed. |
+| 97 | Stage 9.2 not begun. | PASS | No publishing/tag/release/visibility/next-stage/history operations; master preserved; no backup intentionally deleted. |
+| 98 | Stage 9.3 not begun. | PASS | No publishing/tag/release/visibility/next-stage/history operations; master preserved; no backup intentionally deleted. |
+| 99 | Stage 9.4 not begun. | PASS | No publishing/tag/release/visibility/next-stage/history operations; master preserved; no backup intentionally deleted. |
+| 100 | No automatic release workflow. | PASS | No publishing/tag/release/visibility/next-stage/history operations; master preserved; no backup intentionally deleted. |
+| 101 | Pre-public `master` preserved through closure. | PASS | No publishing/tag/release/visibility/next-stage/history operations; master preserved; no backup intentionally deleted. |
+| 102 | Private pre-public backup not intentionally deleted during 9.1d. | PASS | No publishing/tag/release/visibility/next-stage/history operations; master preserved; no backup intentionally deleted. |
+| 103 | Final pytest passes. | PASS | Fresh final pytest: 329 passed in 11.23s. |
+| 104 | Final Ruff passes. | PASS | Fresh final Ruff: All checks passed. |
+| 105 | Final formatting passes. | PASS | Fresh final applicable formatting: 36 files already formatted. |
+| 106 | Final incremental `git diff --check` passes. | PASS | Fresh final git diff --check and c294ffd-to-HEAD whitespace checks PASS. |
+| 107 | Pre-commit `git status` contains only expected 9.1d changes. | PASS | Only report edit plus pre-existing pending CHANGELOG; no code/data/workflow or generated/private-file changes. |
+| 108 | No unexpected generated artifacts are tracked. | PASS | Only report edit plus pre-existing pending CHANGELOG; no code/data/workflow or generated/private-file changes. |
+| 109 | No unexpected private files are tracked. | PASS | Only report edit plus pre-existing pending CHANGELOG; no code/data/workflow or generated/private-file changes. |
+| 110 | Codex provides a complete closure report mapped to these criteria. | PASS | All 112 criteria individually reassessed here with supplied evidence and remaining gaps identified. |
+| 111 | Codex does not commit. | PASS | No commit created in this follow-up; existing implementation/fix commits are recorded accurately. |
+| 112 | 9.1d is not marked COMPLETE until the approved commit exists and post-commit state is verified. | PASS | Existing implementation/fix commits and current post-commit status verified; STARTED safeguard retained pending explicit formal closure approval. |
+
+
+## Historical implementation and Run 1 evidence — preserved
+
+Everything below records the earlier implementation/remediation snapshots.
+Statements such as “Actions has not run” or “a subsequent passing run is still
+required” retain their historical meaning; current Run 2 evidence and the
+individual assessment above supersede them without rewriting the failure.
+
+
 > **CI Run 1 follow-up: FAIL; Stage 9.1d remains STARTED.** The sections below
 > through the original closure assessment preserve the pre-run implementation
 > report. Their statements that Actions had not run describe that earlier
