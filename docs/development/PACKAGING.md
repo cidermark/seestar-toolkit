@@ -48,7 +48,7 @@ With the build frontend installed in a development/build environment, run
 from the repository root:
 
 ```bash
-python -m build --outdir dist/stage9.1c
+python tools/validate_distribution.py
 ```
 
 The default isolated build produces the sdist first, then builds the wheel
@@ -60,7 +60,8 @@ subpackages. There is currently no runtime package data; implicit data inclusion
 is disabled. MANIFEST.in deliberately includes Python source, packaging inputs,
 the public root README/CHANGELOG and license. Tests, private fixtures and internal
 development documents stay in Git but are excluded from the sdist; they are not
-needed to rebuild it and are not yet cleared for public distribution.
+needed to rebuild it. The tracked test fixtures have since completed public
+privacy review in Stage 9.1d preflight.
 This is artifact selection, not a global Git FIT/FITS ignore or test removal.
 The transitional README's development links refer to the repository, not bundled
 development documentation; final public prose remains with Stage 9.3a.
@@ -70,8 +71,73 @@ and content for private paths, FIT/FITS data, caches and other local material.
 Never commit generated artifacts. Use ignored `dist/`/temporary directories.
 Do not upload or publish builds as part of this step.
 
-Stage 9.1d owns CI and broader distribution validation. Stage 9.2a owns the
-clean-install compatibility matrix; this step's single-interpreter build/CLI
-checks cannot replace that proof. Fixture and reachable-history privacy work
-remains a separate pre-publication requirement. Stage 9.4b's GO and subsequent
+Stage 9.2a owns the final clean-install compatibility matrix; Stage 9.1d
+validation does not declare final supported Python or macOS versions. Stage 9.4b's GO and subsequent
 publication/closure gates are unchanged.
+
+
+## Stage 9.1d distribution CI
+
+`.github/workflows/ci.yml` defines **Distribution validation** for pushes to
+`main`, PRs targeting `main`, and manual dispatch. All four candidate Python
+versions (3.11, 3.12, 3.13, 3.14) run independent jobs with `fail-fast: false`.
+No candidate uses `continue-on-error`. The runner is `macos-15`; a runtime
+assertion requires Darwin/arm64. This is release-relevant validation, not a
+claim that a particular macOS version or other platform is supported.
+The [GitHub runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
+lists macOS arm64 standard runners for private repositories.
+
+The workflow uses `actions/checkout@v6` and `actions/setup-python@v6`,
+`contents: read`, no persisted checkout credentials, no custom secrets and no
+explicit caching. A cache miss is valid. There are no publishing, artifact
+upload, tag, release, version-edit or changelog-edit steps. Action major tags
+receive upstream updates; dependency lower bounds resolve compatible versions
+at run time, so this is not a locked or bit-reproducible environment.
+
+Reproduce the workflow in a disposable development venv:
+
+```bash
+python -m pip install '.[dev,build]'
+python tools/check_public_inputs.py
+python -m pytest
+python -m ruff check .
+python tools/check_formatting.py
+git diff --check
+python tools/validate_distribution.py
+```
+
+Formatting retains the established archive/CLI and mosaic-remediation scope,
+plus the new validators and their tests (36 files). Existing unrelated
+formatting debt is not silently reformatted. CI checks whitespace against the
+push-before or PR-base SHA, falling back to the public bootstrap for manual
+runs; it does not lint the orphan root's historical whitespace as a new diff.
+
+`check_public_inputs.py` verifies all ten fixtures against reviewed sizes and
+SHA-256 values in `tests/data/public_fixtures.json`, checks the sole public
+history root is `c294ffd`, rejects reachable blobs above 100 MiB, and rejects
+tracked generated outputs/private-data directories and LFS configuration.
+A fixture hash change requires a fresh privacy review; do not simply refresh
+the manifest to make CI pass. Historical private `master` is never fetched
+from a private archive or merged by this workflow.
+
+`validate_distribution.py` copies only packaging inputs and Python package
+source to a temporary source directory with no Git data, caches or old builds.
+The isolated PEP 517 build creates the sdist then builds its wheel. Both
+archives are checked against a strict member allowlist, required modules,
+metadata/version/runtime requirements, README, MIT license and console entry
+point, and scanned for private-path/key markers. No FITS or development
+history is allowed inside either distribution.
+
+Each archive is independently installed with dependencies and without extras
+in a new temporary venv. Commands run outside the checkout with PYTHONPATH
+and PYTHONHOME removed, isolated Python (`-I`), no user site, and a verified
+site-packages import under that venv. Both version entry points, `pip check`,
+absence of pytest/Ruff/build/PDF tools, and a synthetic linear RGB FITS-to-TIFF
+conversion must pass. Build isolation may temporarily install setuptools;
+it is not a runtime requirement. All validation artifacts/venvs are removed
+at completion; no final release checksums are generated.
+
+The workflow is implemented locally but Stage 9.1d remains STARTED pending
+approved commit/push, actual Actions evidence and formal review. Git cannot
+push uncommitted files. See the [Stage 9.1d report](change_documents/STAGE_9/STAGE_9.1d_REPORT.md)
+for local candidate results and all closure criteria. v1.1.0 remains unreleased.

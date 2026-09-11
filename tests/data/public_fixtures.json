@@ -1,0 +1,42 @@
+{
+  "tests/data/reference/siril_stacked.fit": {
+    "bytes": 24888960,
+    "sha256": "f6910be9d8764ea81089136c8d8c8d838ab2e1c4ec00c1a8fad9215a6bf301fe"
+  },
+  "tests/data/reference/siril_stacked_mosaic.fit": {
+    "bytes": 5760,
+    "sha256": "a7336de08d58b23412c07e34504f5c4ab1048719ec61371c0c4082094049c115"
+  },
+  "tests/data/seestar/eq.fit": {
+    "bytes": 4152960,
+    "sha256": "73274ad5d6a392bb200ab339eeee0a64219036e435ee3accd85d49eb9a60f043"
+  },
+  "tests/data/seestar/light.fit": {
+    "bytes": 4152960,
+    "sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2"
+  },
+  "tests/data/seestar/mosaic.fit": {
+    "bytes": 4152960,
+    "sha256": "f12837b9c1afb8b5b752d4d37af0be017fd88b587955963d7ccf8f73e2eb7f3b"
+  },
+  "tests/data/seestar/mosaic_1.fit": {
+    "bytes": 4152960,
+    "sha256": "bb2fa89f818d05de6b4ee7288528fd7ce7fa84c8c3a1c9fa567b98e785b9bdb1"
+  },
+  "tests/data/seestar/mosaic_4.fit": {
+    "bytes": 4152960,
+    "sha256": "3e6e11e785bec9f18c8afeb74c23d49ec4241a128e67e738349a1c14881483fc"
+  },
+  "tests/data/seestar/mosaic_6.fit": {
+    "bytes": 4152960,
+    "sha256": "35d998177ddab20bdad12eec62204a20baf8dc1dc9b84339aeec23d90b56cf41"
+  },
+  "tests/data/seestar/stacked.fit": {
+    "bytes": 49775040,
+    "sha256": "add9d082a356ebe70bd97a7bbcb7ae86ee6dd192be9f04969d2facee1d65210d"
+  },
+  "tests/data/seestar/stacked_mosaic.fit": {
+    "bytes": 17925120,
+    "sha256": "8b730dd16e4ce03124b554f3a34f8cc07d0380fb1216b4988502de88576ba7bf"
+  }
+}

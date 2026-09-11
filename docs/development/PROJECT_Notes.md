@@ -801,3 +801,19 @@ The following remain future work and are not v1.1.0 support claims:
 
 Current development setup is in [DEV_README.md](DEV_README.md); local private
 capture policy is in [REAL_DATA_TESTING.md](REAL_DATA_TESTING.md).
+
+
+## Stage 9.1d implementation — awaiting Actions and review
+
+Distribution CI and package validators are implemented for candidate Python
+3.11–3.14 on macOS arm64. The current public history begins at `c294ffd`;
+pre-public `master` remains separate and must not be merged or recreated.
+Tracked public-safe fixtures are guarded by reviewed byte hashes. Builds and
+runtime-only wheel/sdist smoke checks use isolated temporary environments.
+
+Stage 9.1d remains STARTED, not COMPLETE. Actual GitHub Actions evidence and
+the approved implementation commit/post-commit review are outstanding; Git
+cannot transmit an uncommitted workflow. The [9.1d report](change_documents/STAGE_9/STAGE_9.1d_REPORT.md)
+records local validation and the complete 112-criterion assessment.
+No final Python compatibility decision has been made. v1.1.0 remains
+unreleased; Stage 9.2a and publication work have not begun.
