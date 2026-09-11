@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seestar-toolkit"
+version = "1.1.0"
+description = "Command-line tools for Seestar FIT/FITS conversion, batch conversion and archive organisation."
+readme = "README.md"
+# Candidate installation floor, not validated support; Stage 9.2a proves 3.11–3.14.
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Mark Wymer" }
+]
+keywords = ["astronomy", "astrophotography", "fits", "tiff", "seestar"]
+classifiers = [
+  "Environment :: Console",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Astronomy",
+]
+dependencies = [
+  "astropy>=7.0",
+  "numpy>=2.0",
+  "opencv-python-headless>=4.10",
+  "tifffile>=2025.1.10",
+]
+
+[project.optional-dependencies]
+build = ["build>=1.2"]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=6.0",
+  "ruff>=0.9",
+]
+
+[project.scripts]
+seestar-toolkit = "seestar_toolkit.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["seestar_toolkit", "seestar_toolkit.*"]
+namespaces = false
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

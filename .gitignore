@@ -1,0 +1,29 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+.DS_Store
+*.tif
+*.tiff
+.treeignore
+_pycache__/
+.pytest_cache/
+.ruff_cache/
+.vscode/
+
+# ------------------------------------------------------------
+# Reference datasets used by the test suite and documentation
+# ------------------------------------------------------------
+!tests/data/seestar/**
+!tests/data/reference/**
+
+# Optional private local captures; never used by public tests or releases.
+/.private-real-data/
