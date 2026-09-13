@@ -1,0 +1,1318 @@
+{
+  "starting_commit": "1771b9f",
+  "platform": "macOS 26.5.2 arm64",
+  "tooling": {
+    "uv": "0.8.22",
+    "build": "1.6.1"
+  },
+  "provenance": [
+    {
+      "version": "3.11.9",
+      "executable": "/tmp/seestar-stage92a-python/cpython-3.11.9-macos-aarch64-none/bin/python3.11",
+      "architecture": "arm64",
+      "macos": "26.5.2",
+      "build": "3.11.9 (main, Aug 14 2024, 04:17:21) [Clang 18.1.8 ]",
+      "resolved_executable": "/private/tmp/seestar-stage92a-python/cpython-3.11.9-macos-aarch64-none/bin/python3.11",
+      "executable_sha256": "ab895074dda5049329134df966da39ab9501dc562e80c7b43aec1fa2d7207884",
+      "source": "Astral python-build-standalone via uv 0.8.22"
+    },
+    {
+      "version": "3.12.10",
+      "executable": "/tmp/seestar-stage92a-python/cpython-3.12.10-macos-aarch64-none/bin/python3.12",
+      "architecture": "arm64",
+      "macos": "26.5.2",
+      "build": "3.12.10 (main, May 30 2025, 05:53:56) [Clang 20.1.4 ]",
+      "resolved_executable": "/private/tmp/seestar-stage92a-python/cpython-3.12.10-macos-aarch64-none/bin/python3.12",
+      "executable_sha256": "f3e4f781f6e90bce4609cdc59404c0e4da04356aaaa5b6e7937f2aa315923fe0",
+      "source": "Astral python-build-standalone via uv 0.8.22"
+    },
+    {
+      "version": "3.13.15",
+      "executable": "/opt/homebrew/opt/python@3.13/bin/python3.13",
+      "architecture": "arm64",
+      "macos": "26.5.2",
+      "build": "3.13.15 (main, Aug  5 2026, 12:25:43) [Clang 21.0.0 (clang-2100.1.1.101)]",
+      "resolved_executable": "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "executable_sha256": "1988a0dd685f91bbaf20b5267046e13cb78859dbb3b5f030e89b448c1fbfe8d4",
+      "source": "Homebrew"
+    },
+    {
+      "version": "3.14.7",
+      "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "architecture": "arm64",
+      "macos": "26.5.2",
+      "build": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+      "resolved_executable": "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "executable_sha256": "87d4df53fd91304be5bac391fb204643c36b7df2023c04a0953bcbc7d4fdf634",
+      "source": "Homebrew"
+    }
+  ],
+  "initial_requires_python": ">=3.11",
+  "final_requires_python": ">=3.11,<3.15",
+  "phases": {
+    "initial": {
+      "311": {
+        "fixture": "tests/data/seestar/light.fit",
+        "fixture_sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2",
+        "results": [
+          {
+            "artifact": "seestar_toolkit-1.1.0-py3-none-any.whl",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.11.9",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "<venv>/lib/python3.11/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "pip": "24.0",
+              "numpy": "2.4.6",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "tifffile": "2026.3.3",
+              "astropy": "8.0.1",
+              "setuptools": "65.5.0",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          },
+          {
+            "artifact": "seestar_toolkit-1.1.0.tar.gz",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.11.9",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "<venv>/lib/python3.11/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "pip": "24.0",
+              "numpy": "2.4.6",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "tifffile": "2026.3.3",
+              "astropy": "8.0.1",
+              "setuptools": "65.5.0",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          }
+        ]
+      },
+      "312": {
+        "fixture": "tests/data/seestar/light.fit",
+        "fixture_sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2",
+        "results": [
+          {
+            "artifact": "seestar_toolkit-1.1.0-py3-none-any.whl",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.12.10",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "<venv>/lib/python3.12/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "astropy": "8.0.1",
+              "pyerfa": "2.0.1.5",
+              "pip": "25.0.1",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          },
+          {
+            "artifact": "seestar_toolkit-1.1.0.tar.gz",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.12.10",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "<venv>/lib/python3.12/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "astropy": "8.0.1",
+              "pyerfa": "2.0.1.5",
+              "pip": "25.0.1",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          }
+        ]
+      },
+      "313": {
+        "fixture": "tests/data/seestar/light.fit",
+        "fixture_sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2",
+        "results": [
+          {
+            "artifact": "seestar_toolkit-1.1.0-py3-none-any.whl",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.13.15",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "<venv>/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "pip": "26.2",
+              "astropy": "8.0.1",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          },
+          {
+            "artifact": "seestar_toolkit-1.1.0.tar.gz",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.13.15",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "<venv>/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "pip": "26.2",
+              "astropy": "8.0.1",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          }
+        ]
+      },
+      "314": {
+        "fixture": "tests/data/seestar/light.fit",
+        "fixture_sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2",
+        "results": [
+          {
+            "artifact": "seestar_toolkit-1.1.0-py3-none-any.whl",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.14.7",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "<venv>/lib/python3.14/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "astropy": "8.0.1",
+              "pip": "26.2.1",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          },
+          {
+            "artifact": "seestar_toolkit-1.1.0.tar.gz",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.14.7",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "<venv>/lib/python3.14/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "astropy": "8.0.1",
+              "pip": "26.2.1",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          }
+        ]
+      }
+    },
+    "final": {
+      "311": {
+        "fixture": "tests/data/seestar/light.fit",
+        "fixture_sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2",
+        "results": [
+          {
+            "artifact": "seestar_toolkit-1.1.0-py3-none-any.whl",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.11.9",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "/private/tmp/seestar-clean-d91tqlpi/venv/lib/python3.11/site-packages/seestar_toolkit/__init__.py",
+            "module_relative": "<venv>/lib/python3.11/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "pip": "24.0",
+              "numpy": "2.4.6",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "tifffile": "2026.3.3",
+              "astropy": "8.0.1",
+              "setuptools": "65.5.0",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          },
+          {
+            "artifact": "seestar_toolkit-1.1.0.tar.gz",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.11.9",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "/private/tmp/seestar-clean-qck2shea/venv/lib/python3.11/site-packages/seestar_toolkit/__init__.py",
+            "module_relative": "<venv>/lib/python3.11/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "pip": "24.0",
+              "numpy": "2.4.6",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "tifffile": "2026.3.3",
+              "astropy": "8.0.1",
+              "setuptools": "65.5.0",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          }
+        ]
+      },
+      "312": {
+        "fixture": "tests/data/seestar/light.fit",
+        "fixture_sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2",
+        "results": [
+          {
+            "artifact": "seestar_toolkit-1.1.0-py3-none-any.whl",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.12.10",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "/private/tmp/seestar-clean-gqtlixi9/venv/lib/python3.12/site-packages/seestar_toolkit/__init__.py",
+            "module_relative": "<venv>/lib/python3.12/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "astropy": "8.0.1",
+              "pyerfa": "2.0.1.5",
+              "pip": "25.0.1",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          },
+          {
+            "artifact": "seestar_toolkit-1.1.0.tar.gz",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.12.10",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "/private/tmp/seestar-clean-v138v_wk/venv/lib/python3.12/site-packages/seestar_toolkit/__init__.py",
+            "module_relative": "<venv>/lib/python3.12/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "astropy": "8.0.1",
+              "pyerfa": "2.0.1.5",
+              "pip": "25.0.1",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          }
+        ]
+      },
+      "313": {
+        "fixture": "tests/data/seestar/light.fit",
+        "fixture_sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2",
+        "results": [
+          {
+            "artifact": "seestar_toolkit-1.1.0-py3-none-any.whl",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.13.15",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "/private/tmp/seestar-clean-wq085p88/venv/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+            "module_relative": "<venv>/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "pip": "26.2",
+              "astropy": "8.0.1",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          },
+          {
+            "artifact": "seestar_toolkit-1.1.0.tar.gz",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.13.15",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "/private/tmp/seestar-clean-9h_w298_/venv/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+            "module_relative": "<venv>/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "pip": "26.2",
+              "astropy": "8.0.1",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          }
+        ]
+      },
+      "314": {
+        "fixture": "tests/data/seestar/light.fit",
+        "fixture_sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2",
+        "results": [
+          {
+            "artifact": "seestar_toolkit-1.1.0-py3-none-any.whl",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.14.7",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "/private/tmp/seestar-clean-tw6n6k2t/venv/lib/python3.14/site-packages/seestar_toolkit/__init__.py",
+            "module_relative": "<venv>/lib/python3.14/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "astropy": "8.0.1",
+              "pip": "26.2.1",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          },
+          {
+            "artifact": "seestar_toolkit-1.1.0.tar.gz",
+            "status": "PASS",
+            "steps": [
+              {
+                "name": "create_venv",
+                "exit_code": 0
+              },
+              {
+                "name": "install",
+                "exit_code": 0
+              },
+              {
+                "name": "pip_check",
+                "exit_code": 0
+              },
+              {
+                "name": "cli_version",
+                "exit_code": 0
+              },
+              {
+                "name": "module_version",
+                "exit_code": 0
+              },
+              {
+                "name": "help",
+                "exit_code": 0
+              },
+              {
+                "name": "real_conversion",
+                "exit_code": 0
+              },
+              {
+                "name": "runtime_probe",
+                "exit_code": 0
+              }
+            ],
+            "cli_version": "seestar-toolkit 1.1.0",
+            "module_version": "seestar-toolkit 1.1.0",
+            "python": "3.14.7",
+            "architecture": "arm64",
+            "macos": "26.5.2",
+            "module": "/private/tmp/seestar-clean-zh65ghow/venv/lib/python3.14/site-packages/seestar_toolkit/__init__.py",
+            "module_relative": "<venv>/lib/python3.14/site-packages/seestar_toolkit/__init__.py",
+            "dependencies": {
+              "numpy": "2.5.3",
+              "packaging": "26.3",
+              "seestar-toolkit": "1.1.0",
+              "tifffile": "2026.9.9",
+              "astropy-iers-data": "0.2026.9.7.0.56.14",
+              "astropy": "8.0.1",
+              "pip": "26.2.1",
+              "pyerfa": "2.0.1.5",
+              "PyYAML": "6.0.3",
+              "opencv-python-headless": "5.0.0.93"
+            },
+            "runtime_requires": [
+              "astropy>=7.0",
+              "numpy>=2.0",
+              "opencv-python-headless>=4.10",
+              "tifffile>=2025.1.10",
+              "build>=1.2; extra == \"build\"",
+              "pytest>=8.0; extra == \"dev\"",
+              "pytest-cov>=6.0; extra == \"dev\"",
+              "ruff>=0.9; extra == \"dev\""
+            ],
+            "output_shape": [
+              1920,
+              1080,
+              3
+            ],
+            "output_dtype": "uint16",
+            "pixel_equality": true,
+            "dependency_separation": true,
+            "temporary_environment_removed": true
+          }
+        ]
+      }
+    }
+  }
+}

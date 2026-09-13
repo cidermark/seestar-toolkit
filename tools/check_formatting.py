@@ -21,6 +21,7 @@ PATHS = [
     "tests/unit/test_distribution_validation.py",
     "tools/check_public_inputs.py",
     "tools/validate_distribution.py",
+    "tools/validate_clean_install.py",
 ]
 
 if __name__ == "__main__":

@@ -87,7 +87,12 @@ def inspect_archive(path: Path, project: dict, modules: set[str]) -> None:
     assert metadata["Version"] == project["version"] == "1.1.0"
     assert metadata["Author"] == "Mark Wymer"
     assert metadata["License-Expression"] == "MIT"
-    assert metadata["Requires-Python"] == project["requires-python"] == ">=3.11"
+    assert (
+        set(metadata["Requires-Python"].split(","))
+        == set(project["requires-python"].split(","))
+        == {">=3.11", "<3.15"}
+    )
+    assert set(metadata.get_all("Classifier", [])) == set(project.get("classifiers", []))
     requirements = metadata.get_all("Requires-Dist", [])
     runtime = {r.replace(" ", "") for r in requirements if ";" not in r}
     assert runtime == {r.replace(" ", "") for r in project["dependencies"]}

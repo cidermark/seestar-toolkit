@@ -21,15 +21,13 @@ extra contains the standards-based build frontend. Build isolation obtains
 setuptools from `build-system.requires`; none of these tools is an ordinary
 runtime requirement. No PDF tools are introduced.
 
-The existing lower bounds are retained, without freezing local versions or
-inventing upper bounds. `requires-python = ">=3.11"` is a candidate installation
-floor, grounded in the runtime use of stdlib `tomllib`. It permits testing
-3.11–3.14 and is not a support declaration for those or future interpreters.
-Current local NumPy/tifffile require Python >=3.12; Python 3.11 needs an older
-compatible resolution allowed by the constraints. Stage 9.2a must prove clean
-wheel AND sdist installs and runtime compatibility for each candidate, and may
-narrow metadata in response to evidence. Version-specific Python classifiers
-have therefore been removed.
+Stage 9.2a clean wheel AND sdist validation, combined with Stage 9.1d CI,
+supports Python 3.11 through 3.14 inclusive for v1.1.0 on macOS arm64.
+`requires-python = ">=3.11,<3.15"` excludes unvalidated future Python lines;
+version-specific classifiers list exactly 3.11, 3.12, 3.13 and 3.14. Runtime
+dependency lower bounds are unchanged. This is a Python-line decision, not
+proof of every patch version or macOS release. Tested interpreter patches and
+actual dependency resolutions are recorded in the Stage 9.2a evidence.
 
 Release support policy is macOS Apple Silicon only, with exact macOS versions
 still to be validated. Toolkit's own code is pure Python: its wheel should
@@ -107,7 +105,7 @@ python tools/validate_distribution.py
 ```
 
 Formatting retains the established archive/CLI and mosaic-remediation scope,
-plus the new validators and their tests (36 files). Existing unrelated
+plus the validators and their tests (37 files after Stage 9.2a). Existing unrelated
 formatting debt is not silently reformatted. CI checks whitespace against the
 push-before or PR-base SHA, falling back to the public bootstrap for manual
 runs; it does not lint the orphan root's historical whitespace as a new diff.
@@ -137,7 +135,64 @@ conversion must pass. Build isolation may temporarily install setuptools;
 it is not a runtime requirement. All validation artifacts/venvs are removed
 at completion; no final release checksums are generated.
 
-The workflow is implemented locally but Stage 9.1d remains STARTED pending
-approved commit/push, actual Actions evidence and formal review. Git cannot
-push uncommitted files. See the [Stage 9.1d report](change_documents/STAGE_9/STAGE_9.1d_REPORT.md)
+Stage 9.1d formally closed at `1771b9f` after reviewed green Actions evidence.
+Its Run 1 FAIL, whitespace remediation and Run 2 PASS remain historical evidence. See the [Stage 9.1d report](change_documents/STAGE_9/STAGE_9.1d_REPORT.md)
 for local candidate results and all closure criteria. v1.1.0 remains unreleased.
+
+
+## Stage 9.2a clean installation validation
+
+The [Stage 9.2a report](change_documents/STAGE_9/STAGE_9.2a_REPORT.md) and
+[structured evidence](change_documents/STAGE_9/STAGE_9.2a_EVIDENCE.json) record
+interpreter provenance, initial and final wheel/sdist results, dependency sets,
+actual temporary site-packages paths and cleanup. Stage 9.2a remains STARTED
+pending review, approved commit and green post-commit CI for its metadata change.
+
+Homebrew Python 3.13.15 and 3.14.7 were available under `/opt/homebrew` (arm64).
+`python3` selected 3.14.7; its name alone did not identify the requested line.
+Inspect `command -v python3`, `python3 --version`, `sys.executable` and
+`platform.machine()` together. Use an explicit versioned executable to select
+a different installed line. No 3.11/3.12 Homebrew formula was installed locally;
+`pyenv versions --bare` was empty, and no framework installation was found.
+Homebrew Python remains the recommended later user-install route. Older lines
+may require versioned formulae; this stage did not install or validate those
+formulae and does not infer their current availability from standalone builds.
+
+For non-system-modifying validation, missing interpreters were obtained from
+[Astral python-build-standalone via uv](https://docs.astral.sh/uv/guides/install-python/),
+using pinned uv 0.8.22 in a disposable tooling venv and explicit versions:
+
+```bash
+python3.13 -m venv /tmp/seestar-stage92a-tools
+/tmp/seestar-stage92a-tools/bin/python -m pip install 'uv==0.8.22' 'build>=1.2'
+/tmp/seestar-stage92a-tools/bin/uv --no-config --cache-dir /tmp/seestar-stage92a-cache python install --install-dir /tmp/seestar-stage92a-python --no-bin 3.11.9 3.12.10
+```
+
+No system Python, Homebrew formula, shell startup file or PATH link is modified.
+The uv pin fixes its interpreter download catalogue; both installations were
+verified as native arm64 before use. These historical patches intentionally
+match the Stage 9.1d evidence; this is not advice to install an old patch
+instead of a maintained patch for normal use.
+
+Build wheel/sdist into a new temporary output directory using `python -m build`.
+Then invoke the small validator once per explicit interpreter:
+
+```bash
+python tools/validate_clean_install.py --python /path/to/candidate/python --wheel /tmp/validation-dist/seestar_toolkit-1.1.0-py3-none-any.whl --sdist /tmp/validation-dist/seestar_toolkit-1.1.0.tar.gz --report /tmp/candidate-evidence.json
+```
+
+The orchestrating Python is tooling only. Each artifact gets its own new venv
+created by the specified candidate. pip uses normal build isolation, no cache
+and no editable install. Runtime processes clear Python/pip overrides, disable
+user site and run outside the repository using `-I` for Python entry points.
+The approved real `tests/data/seestar/light.fit` is copied into the temporary
+working directory. Installed CLI conversion produces a uint16 RGB TIFF,
+verified against an independent OpenCV GRBG demosaic over every pixel, with
+shape/dtype/photometric checks. The source copy's digest must remain unchanged.
+All temporary environments, FITS copies and TIFF outputs are removed by the
+validator after evidence capture, even on a recorded validation failure.
+
+Do not reuse environments between wheel/sdist or initial/final artifacts.
+Any metadata change requires a rebuild and a new full clean-install matrix.
+The project validator also checks final Requires-Python and classifier metadata.
+No release artifact or checksum is produced by this process.

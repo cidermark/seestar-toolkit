@@ -13,7 +13,9 @@ validation = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(validation)
 
 
-@pytest.mark.parametrize("defect", [None, "extra", "missing", "version", "path", "dependency"])
+@pytest.mark.parametrize(
+    "defect", [None, "extra", "missing", "version", "path", "dependency", "python"]
+)
 def test_distribution_inspection_rejects_contract_violations(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, defect: str | None
 ) -> None:
@@ -23,13 +25,13 @@ def test_distribution_inspection_rejects_contract_violations(
     project = {
         "name": "seestar-toolkit",
         "version": "1.1.0",
-        "requires-python": ">=3.11",
+        "requires-python": ">=3.11,<3.15",
         "dependencies": ["numpy>=2.0"],
     }
     prefix = "seestar_toolkit-1.1.0.dist-info/"
     metadata = (
         "Metadata-Version: 2.4\nName: seestar-toolkit\nVersion: 1.1.0\n"
-        "Author: Mark Wymer\nLicense-Expression: MIT\nRequires-Python: >=3.11\n"
+        "Author: Mark Wymer\nLicense-Expression: MIT\nRequires-Python: <3.15,>=3.11\n"
         "Requires-Dist: numpy>=2.0\nProvides-Extra: dev\nProvides-Extra: build\n"
         "\nPublic description\n"
     )
@@ -50,6 +52,8 @@ def test_distribution_inspection_rejects_contract_violations(
         members["seestar_toolkit/__init__.py"] = "# /Users/synthetic/private-path\n"
     elif defect == "dependency":
         members[prefix + "METADATA"] = metadata.replace("numpy>=2.0", "pytest>=8.0")
+    elif defect == "python":
+        members[prefix + "METADATA"] = metadata.replace("<3.15,>=3.11", ">=3.11")
     wheel = tmp_path / "test.whl"
     with zipfile.ZipFile(wheel, "w") as archive:
         for name, content in members.items():

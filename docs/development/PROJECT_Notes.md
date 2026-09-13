@@ -803,7 +803,7 @@ Current development setup is in [DEV_README.md](DEV_README.md); local private
 capture policy is in [REAL_DATA_TESTING.md](REAL_DATA_TESTING.md).
 
 
-## Stage 9.1d implementation — awaiting Actions and review
+## Stage 9.1d distribution validation — formally complete
 
 Distribution CI and package validators are implemented for candidate Python
 3.11–3.14 on macOS arm64. The current public history begins at `c294ffd`;
@@ -811,9 +811,22 @@ pre-public `master` remains separate and must not be merged or recreated.
 Tracked public-safe fixtures are guarded by reviewed byte hashes. Builds and
 runtime-only wheel/sdist smoke checks use isolated temporary environments.
 
-Stage 9.1d remains STARTED, not COMPLETE. Actual GitHub Actions evidence and
-the approved implementation commit/post-commit review are outstanding; Git
-cannot transmit an uncommitted workflow. The [9.1d report](change_documents/STAGE_9/STAGE_9.1d_REPORT.md)
-records local validation and the complete 112-criterion assessment.
-No final Python compatibility decision has been made. v1.1.0 remains
-unreleased; Stage 9.2a and publication work have not begun.
+Stage 9.1d formally closed at `1771b9f` with green GitHub Actions and
+329 tests on each candidate Python line. Its [report](change_documents/STAGE_9/STAGE_9.1d_REPORT.md)
+preserves Run 1 FAIL, whitespace remediation and Run 2 PASS. That evidence
+is unchanged by Stage 9.2a.
+
+## Stage 9.2a — clean installation and Python support
+
+Clean wheel/sdist installations on native macOS arm64 establish the v1.1.0
+Python support range as 3.11–3.14 inclusive, combined with Stage 9.1d CI.
+Metadata bounds installation to `>=3.11,<3.15` and lists those four classifiers;
+no runtime dependency or production code change was required. Initial and
+rebuilt final artifacts use separate fresh venvs for every candidate/artifact.
+Real public-safe FITS conversion, installed imports and runtime-only dependency
+separation are recorded in the [9.2a report](change_documents/STAGE_9/STAGE_9.2a_REPORT.md).
+
+Stage 9.2a remains STARTED pending independent review, user-approved commit,
+post-commit state verification and green CI for changed metadata. v1.1.0 is
+unreleased. Stage 9.2b/9.3/9.4 have not begun. The pending Stage 9.1d CHANGELOG
+entry remains untouched; no Stage 9.2a commit ID is invented.
