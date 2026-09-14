@@ -1,0 +1,111 @@
+{
+  "checkpoint": "A only; not fresh Checkpoint B runtime proof",
+  "baseline": "398b771",
+  "python": "3.13.15",
+  "platform": "macOS 26.5.2 arm64",
+  "environment": "/tmp/seestar-stage91d-313",
+  "installation": "Pre-existing noneditable local-directory installation; direct_url dir_info is empty. Not a newly installed release wheel.",
+  "module": "/private/tmp/seestar-stage91d-313/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+  "source_files_compared": 33,
+  "source_file_differences": [],
+  "changelog_sha256": "8e96013e345524cb84ad076ab5abb554f5babee6f46133622b306284e66ee0c7",
+  "spec_sha256": "5d45a10a340e8885224a861f4cb45f4daf3a7d8a27adc3b59c254d6d07b916db",
+  "commands": [
+    {
+      "entry_point": "console",
+      "args": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "seestar-toolkit 1.1.0\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "console",
+      "args": [
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "console",
+      "args": [
+        "convert",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert [-h] INPUT_FITS OUTPUT_TIFF\n\nConvert one FIT/FITS image to one TIFF. Supported inputs include raw Seestar\nBayer, native Seestar RGB, and Siril RGB images.\n\npositional arguments:\n  INPUT_FITS   Input FIT/FITS image path.\n  OUTPUT_TIFF  Explicit output TIFF path.\n\noptions:\n  -h, --help   show this help message and exit\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "console",
+      "args": [
+        "convert-batch",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert-batch [-h] INPUT_DIR OUTPUT_DIR\n\nConvert supported FIT/FITS files in one non-recursive input directory to an\nexplicit output directory.\n\npositional arguments:\n  INPUT_DIR   Input directory scanned non-recursively for FIT/FITS files.\n  OUTPUT_DIR  Explicit flat output directory for stem-matched .tiff files.\n\noptions:\n  -h, --help  show this help message and exit\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "console",
+      "args": [
+        "archive",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit archive [-h] [--dry-run] [--location LOCATION]\n                               [--hierarchy HIERARCHY]\n                               [--source-action {copy,move}]\n                               [--collision-policy {skip-identical,error,overwrite}]\n                               [--non-interactive] [--config PATH]\n                               SOURCE_ROOT ARCHIVE_ROOT\n\nDiscover and reconstruct a Seestar work directory, plan its archive, and\noptionally archive FITS originals with TIFF derivatives.\n\npositional arguments:\n  SOURCE_ROOT\n  ARCHIVE_ROOT\n\noptions:\n  -h, --help            show this help message and exit\n  --dry-run             Show the archive plan without writing files.\n  --location LOCATION   Use this location for every observation.\n  --hierarchy HIERARCHY\n                        Archive hierarchy template; overrides configuration.\n  --source-action {copy,move}\n                        Archive originals by copy (default) or explicit move.\n  --collision-policy {skip-identical,error,overwrite}\n                        Policy for existing FITS destinations (default: skip-\n                        identical).\n  --non-interactive     Never prompt for a location.\n  --config PATH         Explicit archive TOML configuration.\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "seestar-toolkit 1.1.0\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "convert",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert [-h] INPUT_FITS OUTPUT_TIFF\n\nConvert one FIT/FITS image to one TIFF. Supported inputs include raw Seestar\nBayer, native Seestar RGB, and Siril RGB images.\n\npositional arguments:\n  INPUT_FITS   Input FIT/FITS image path.\n  OUTPUT_TIFF  Explicit output TIFF path.\n\noptions:\n  -h, --help   show this help message and exit\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "convert-batch",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert-batch [-h] INPUT_DIR OUTPUT_DIR\n\nConvert supported FIT/FITS files in one non-recursive input directory to an\nexplicit output directory.\n\npositional arguments:\n  INPUT_DIR   Input directory scanned non-recursively for FIT/FITS files.\n  OUTPUT_DIR  Explicit flat output directory for stem-matched .tiff files.\n\noptions:\n  -h, --help  show this help message and exit\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "archive",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit archive [-h] [--dry-run] [--location LOCATION]\n                               [--hierarchy HIERARCHY]\n                               [--source-action {copy,move}]\n                               [--collision-policy {skip-identical,error,overwrite}]\n                               [--non-interactive] [--config PATH]\n                               SOURCE_ROOT ARCHIVE_ROOT\n\nDiscover and reconstruct a Seestar work directory, plan its archive, and\noptionally archive FITS originals with TIFF derivatives.\n\npositional arguments:\n  SOURCE_ROOT\n  ARCHIVE_ROOT\n\noptions:\n  -h, --help            show this help message and exit\n  --dry-run             Show the archive plan without writing files.\n  --location LOCATION   Use this location for every observation.\n  --hierarchy HIERARCHY\n                        Archive hierarchy template; overrides configuration.\n  --source-action {copy,move}\n                        Archive originals by copy (default) or explicit move.\n  --collision-policy {skip-identical,error,overwrite}\n                        Policy for existing FITS destinations (default: skip-\n                        identical).\n  --non-interactive     Never prompt for a location.\n  --config PATH         Explicit archive TOML configuration.\n",
+      "stderr": ""
+    }
+  ]
+}

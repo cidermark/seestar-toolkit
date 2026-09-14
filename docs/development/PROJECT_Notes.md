@@ -826,7 +826,23 @@ rebuilt final artifacts use separate fresh venvs for every candidate/artifact.
 Real public-safe FITS conversion, installed imports and runtime-only dependency
 separation are recorded in the [9.2a report](change_documents/STAGE_9/STAGE_9.2a_REPORT.md).
 
-Stage 9.2a remains STARTED pending independent review, user-approved commit,
-post-commit state verification and green CI for changed metadata. v1.1.0 is
-unreleased. Stage 9.2b/9.3/9.4 have not begun. The pending Stage 9.1d CHANGELOG
-entry remains untouched; no Stage 9.2a commit ID is invented.
+Stage 9.2a is formally COMPLETE at `398b771`, as confirmed by Stage review
+in the Stage 9.2b starting context. v1.1.0 remains unreleased.
+
+## Stage 9.2b — installed CLI, functional and storage validation
+
+Stage 9.2b remains STARTED after passing technical checkpoints A–D. The
+[completion audit](change_documents/STAGE_9/STAGE_9.2b_REPORT.md) records all 186
+criteria. Formal closure readiness is FAIL pending independent review, approved
+user commit and post-commit gates (criteria 140, 182–185).
+
+Original USB EIO/disappearance and unconfirmed old-device cleanup remain FAIL
+history; a different replacement device and NAS validation passed with cleanup.
+Their current expected absence does not invalidate those results. No storage was
+accessed in D. Source/runtime privacy and local uninstall checks passed; no
+production defect or new feature was introduced. The actual archive/config/CLI
+contracts remain authoritative for later documentation.
+
+All owned local final-audit environments and data were removed. Stage 9.3/9.4
+have not begun. The pending Stage 9.2a CHANGELOG closure entry is preserved;
+no Stage 9.2b commit exists or has been invented.

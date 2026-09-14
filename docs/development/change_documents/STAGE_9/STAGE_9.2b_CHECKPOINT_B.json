@@ -1,0 +1,1263 @@
+{
+  "checkpoint": "B",
+  "environment": {
+    "python": "3.13.15",
+    "base_executable": "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+    "macos": "26.5.2",
+    "architecture": "arm64",
+    "module": "<temp>/venv/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+    "prefix": "<temp>/venv",
+    "dependencies": {
+      "numpy": "2.5.3",
+      "astropy-iers-data": "0.2026.9.14.0.56.43",
+      "packaging": "26.3",
+      "seestar-toolkit": "1.1.0",
+      "tifffile": "2026.9.9",
+      "pip": "26.2",
+      "astropy": "8.0.1",
+      "pyerfa": "2.0.1.5",
+      "PyYAML": "6.0.3",
+      "opencv-python-headless": "5.0.0.93"
+    }
+  },
+  "commands": [
+    {
+      "name": "pip check",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "No broken requirements found.\n",
+      "stderr": "WARNING: The directory '<user-pip-cache>' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.\n",
+      "pass": true
+    },
+    {
+      "name": "entry point ['--version']",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "--version"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "seestar-toolkit 1.1.0\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point ['--help']",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "--help"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point ['convert', '--help']",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert",
+        "--help"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert [-h] INPUT_FITS OUTPUT_TIFF\n\nConvert one FIT/FITS image to one TIFF. Supported inputs include raw Seestar\nBayer, native Seestar RGB, and Siril RGB images.\n\npositional arguments:\n  INPUT_FITS   Input FIT/FITS image path.\n  OUTPUT_TIFF  Explicit output TIFF path.\n\noptions:\n  -h, --help   show this help message and exit\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point ['convert-batch', '--help']",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "--help"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert-batch [-h] INPUT_DIR OUTPUT_DIR\n\nConvert supported FIT/FITS files in one non-recursive input directory to an\nexplicit output directory.\n\npositional arguments:\n  INPUT_DIR   Input directory scanned non-recursively for FIT/FITS files.\n  OUTPUT_DIR  Explicit flat output directory for stem-matched .tiff files.\n\noptions:\n  -h, --help  show this help message and exit\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point ['archive', '--help']",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "--help"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit archive [-h] [--dry-run] [--location LOCATION]\n                               [--hierarchy HIERARCHY]\n                               [--source-action {copy,move}]\n                               [--collision-policy {skip-identical,error,overwrite}]\n                               [--non-interactive] [--config PATH]\n                               SOURCE_ROOT ARCHIVE_ROOT\n\nDiscover and reconstruct a Seestar work directory, plan its archive, and\noptionally archive FITS originals with TIFF derivatives.\n\npositional arguments:\n  SOURCE_ROOT\n  ARCHIVE_ROOT\n\noptions:\n  -h, --help            show this help message and exit\n  --dry-run             Show the archive plan without writing files.\n  --location LOCATION   Use this location for every observation.\n  --hierarchy HIERARCHY\n                        Archive hierarchy template; overrides configuration.\n  --source-action {copy,move}\n                        Archive originals by copy (default) or explicit move.\n  --collision-policy {skip-identical,error,overwrite}\n                        Policy for existing FITS destinations (default: skip-\n                        identical).\n  --non-interactive     Never prompt for a location.\n  --config PATH         Explicit archive TOML configuration.\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point []",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point ['--version']",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-m",
+        "seestar_toolkit",
+        "--version"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "seestar-toolkit 1.1.0\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point ['--help']",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-m",
+        "seestar_toolkit",
+        "--help"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point ['convert', '--help']",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-m",
+        "seestar_toolkit",
+        "convert",
+        "--help"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert [-h] INPUT_FITS OUTPUT_TIFF\n\nConvert one FIT/FITS image to one TIFF. Supported inputs include raw Seestar\nBayer, native Seestar RGB, and Siril RGB images.\n\npositional arguments:\n  INPUT_FITS   Input FIT/FITS image path.\n  OUTPUT_TIFF  Explicit output TIFF path.\n\noptions:\n  -h, --help   show this help message and exit\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point ['convert-batch', '--help']",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-m",
+        "seestar_toolkit",
+        "convert-batch",
+        "--help"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert-batch [-h] INPUT_DIR OUTPUT_DIR\n\nConvert supported FIT/FITS files in one non-recursive input directory to an\nexplicit output directory.\n\npositional arguments:\n  INPUT_DIR   Input directory scanned non-recursively for FIT/FITS files.\n  OUTPUT_DIR  Explicit flat output directory for stem-matched .tiff files.\n\noptions:\n  -h, --help  show this help message and exit\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point ['archive', '--help']",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-m",
+        "seestar_toolkit",
+        "archive",
+        "--help"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit archive [-h] [--dry-run] [--location LOCATION]\n                               [--hierarchy HIERARCHY]\n                               [--source-action {copy,move}]\n                               [--collision-policy {skip-identical,error,overwrite}]\n                               [--non-interactive] [--config PATH]\n                               SOURCE_ROOT ARCHIVE_ROOT\n\nDiscover and reconstruct a Seestar work directory, plan its archive, and\noptionally archive FITS originals with TIFF derivatives.\n\npositional arguments:\n  SOURCE_ROOT\n  ARCHIVE_ROOT\n\noptions:\n  -h, --help            show this help message and exit\n  --dry-run             Show the archive plan without writing files.\n  --location LOCATION   Use this location for every observation.\n  --hierarchy HIERARCHY\n                        Archive hierarchy template; overrides configuration.\n  --source-action {copy,move}\n                        Archive originals by copy (default) or explicit move.\n  --collision-policy {skip-identical,error,overwrite}\n                        Policy for existing FITS destinations (default: skip-\n                        identical).\n  --non-interactive     Never prompt for a location.\n  --config PATH         Explicit archive TOML configuration.\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "entry point []",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-m",
+        "seestar_toolkit"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "usage missing arguments",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert"
+      ],
+      "expected_exit": 2,
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "usage: seestar-toolkit convert [-h] INPUT_FITS OUTPUT_TIFF\nseestar-toolkit convert: error: the following arguments are required: INPUT_FITS, OUTPUT_TIFF\n",
+      "pass": true
+    },
+    {
+      "name": "unknown option",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "--not-an-option"
+      ],
+      "expected_exit": 2,
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\nseestar-toolkit: error: unrecognized arguments: --not-an-option\n",
+      "pass": true
+    },
+    {
+      "name": "single success",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "--verbose",
+        "convert",
+        "<temp>/local data/single inputs/input.FITS",
+        "<temp>/local data/nested outputs/result.tiff"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Created TIFF: <temp>/local data/nested outputs/result.tiff\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "single existing output",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert",
+        "<temp>/local data/single inputs/input.FITS",
+        "<temp>/local data/nested outputs/result.tiff"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Failed to write TIFF <temp>/local data/nested outputs/result.tiff: [Errno 17] File exists: '<temp>/local data/nested outputs/result.tiff'\n",
+      "pass": true
+    },
+    {
+      "name": "single missing",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert",
+        "<temp>/local data/missing.fit",
+        "<temp>/local data/missing.tiff"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Unable to read FITS file: <temp>/local data/missing.fit\n",
+      "pass": true
+    },
+    {
+      "name": "single missing parent",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert",
+        "<temp>/local data/single inputs/input.FITS",
+        "<temp>/local data/absent/deep/out.tiff"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Failed to write TIFF <temp>/local data/absent/deep/out.tiff: [Errno 2] No such file or directory: '<temp>/local data/absent/deep/out.tiff'\n",
+      "pass": true
+    },
+    {
+      "name": "single directory input",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert",
+        "<temp>/local data/single inputs",
+        "<temp>/local data/dir.tiff"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Unable to read FITS file: <temp>/local data/single inputs\n",
+      "pass": true
+    },
+    {
+      "name": "single directory output",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert",
+        "<temp>/local data/single inputs/input.FITS",
+        "<temp>/local data/nested outputs"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Failed to write TIFF <temp>/local data/nested outputs: [Errno 17] File exists: '<temp>/local data/nested outputs'\n",
+      "pass": true
+    },
+    {
+      "name": "single malformed",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert",
+        "<temp>/local data/invalid.fit",
+        "<temp>/local data/bad.tiff"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Unable to read FITS file: <temp>/local data/invalid.fit\n",
+      "pass": true
+    },
+    {
+      "name": "single unreadable",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert",
+        "<temp>/local data/single inputs/input.FITS",
+        "<temp>/local data/denied.tiff"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Unable to read FITS file: <temp>/local data/single inputs/input.FITS\n",
+      "pass": true
+    },
+    {
+      "name": "single unwritable",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert",
+        "<temp>/local data/single inputs/input.FITS",
+        "<temp>/local data/nested outputs/denied.tiff"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Failed to write TIFF <temp>/local data/nested outputs/denied.tiff: [Errno 13] Permission denied: '<temp>/local data/nested outputs/denied.tiff'\n",
+      "pass": true
+    },
+    {
+      "name": "batch success",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/batch input",
+        "<temp>/local data/batch output"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Created TIFF: <temp>/local data/batch output/a.tiff\nCreated TIFF: <temp>/local data/batch output/b.tiff\nBatch complete: 2 discovered, 2 converted, 0 failed\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "batch repeated",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/batch input",
+        "<temp>/local data/batch output"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "Batch complete: 2 discovered, 0 converted, 2 failed\n",
+      "stderr": "Failed: <temp>/local data/batch input/a.fit \u2014 Failed to write TIFF <temp>/local data/batch output/a.tiff: [Errno 17] File exists: '<temp>/local data/batch output/a.tiff'\nFailed: <temp>/local data/batch input/b.FITS \u2014 Failed to write TIFF <temp>/local data/batch output/b.tiff: [Errno 17] File exists: '<temp>/local data/batch output/b.tiff'\n",
+      "pass": true
+    },
+    {
+      "name": "batch partial",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/batch input",
+        "<temp>/local data/partial output"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "Created TIFF: <temp>/local data/partial output/a.tiff\nCreated TIFF: <temp>/local data/partial output/b.tiff\nBatch complete: 3 discovered, 2 converted, 1 failed\n",
+      "stderr": "Failed: <temp>/local data/batch input/bad.fit \u2014 Unable to read FITS file: <temp>/local data/batch input/bad.fit\n",
+      "pass": true
+    },
+    {
+      "name": "batch empty",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/empty",
+        "<temp>/local data/empty output"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "Batch complete: 0 discovered, 0 converted, 0 failed\n",
+      "stderr": "No FIT/FITS files found in: <temp>/local data/empty\n",
+      "pass": true
+    },
+    {
+      "name": "batch missing input",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/absent",
+        "<temp>/local data/unused"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Input directory does not exist: <temp>/local data/absent\n",
+      "pass": true
+    },
+    {
+      "name": "batch file input",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/single inputs/input.FITS",
+        "<temp>/local data/unused"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Input path is not a directory: <temp>/local data/single inputs/input.FITS\n",
+      "pass": true
+    },
+    {
+      "name": "batch file output",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/batch input",
+        "<temp>/local data/single inputs/input.FITS"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Output path is not a directory: <temp>/local data/single inputs/input.FITS\n",
+      "pass": true
+    },
+    {
+      "name": "batch missing parent",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/batch input",
+        "<temp>/local data/absent/deeper"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Unable to create output directory: <temp>/local data/absent/deeper\n",
+      "pass": true
+    },
+    {
+      "name": "archive copy dry run",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/archive source",
+        "<temp>/local data/archive nested/output",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive",
+        "--dry-run"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=unknown; date=20000101; destination=<temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01\n  FITS <temp>/local data/archive source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff\n  FITS <temp>/local data/archive source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <temp>/local data/archive nested/output/IC 434/INDEX.md\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "archive copy",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/archive source",
+        "<temp>/local data/archive nested/output",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Archive complete: 2 copied, 0 moved, 0 skipped identical, 0 original failures\nTIFFs: 2 created, 0 skipped/collided/failed\nIndexes: 1 created, 0 updated, 0 unchanged, 0 failed\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "archive repeated dry run",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/archive source",
+        "<temp>/local data/archive nested/output",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive",
+        "--dry-run"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=unknown; date=20000101; destination=<temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01\n  FITS <temp>/local data/archive source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff\n  FITS <temp>/local data/archive source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <temp>/local data/archive nested/output/IC 434/INDEX.md\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "archive repeated",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/archive source",
+        "<temp>/local data/archive nested/output",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "Archive partial: 0 copied, 0 moved, 2 skipped identical, 0 original failures\nTIFFs: 0 created, 2 skipped/collided/failed\nIndexes: 0 created, 0 updated, 1 unchanged, 0 failed\n",
+      "stderr": "TIFF collision: <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff: TIFF destination already exists; existing file preserved\nTIFF collision: <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff: TIFF destination already exists; existing file preserved\n",
+      "pass": true
+    },
+    {
+      "name": "archive move dry run",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/move source",
+        "<temp>/local data/move archive",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive",
+        "--source-action",
+        "move",
+        "--location",
+        "Synthetic Site",
+        "--dry-run"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Dry run: 1 observation(s); action=move; collision=skip_identical\nPlan observation_01: target=IC 434; location=Synthetic Site; date=20000101; destination=<temp>/local data/move archive/IC 434/Synthetic Site/20000101/observation_01\n  FITS <temp>/local data/move source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/move archive/IC 434/Synthetic Site/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/move archive/IC 434/Synthetic Site/20000101/observation_01/tiff/Light_IC 434.tiff\n  FITS <temp>/local data/move source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/move archive/IC 434/Synthetic Site/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/move archive/IC 434/Synthetic Site/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <temp>/local data/move archive/IC 434/INDEX.md\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "archive move",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/move source",
+        "<temp>/local data/move archive",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive",
+        "--source-action",
+        "move",
+        "--location",
+        "Synthetic Site"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Archive complete: 0 copied, 2 moved, 0 skipped identical, 0 original failures\nTIFFs: 2 created, 0 skipped/collided/failed\nIndexes: 1 created, 0 updated, 0 unchanged, 0 failed\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "saved matching alternative hierarchy dry run",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/saved archive",
+        "--config",
+        "<temp>/local data/saved.toml",
+        "--non-interactive",
+        "--dry-run"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=Synthetic Site; date=20000101; destination=<temp>/local data/saved archive/Synthetic Site/20000101/IC 434/observation_01\n  FITS <temp>/local data/config source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/saved archive/Synthetic Site/20000101/IC 434/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/saved archive/Synthetic Site/20000101/IC 434/observation_01/tiff/Light_IC 434.tiff\n  FITS <temp>/local data/config source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/saved archive/Synthetic Site/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/saved archive/Synthetic Site/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <temp>/local data/saved archive/Synthetic Site/20000101/IC 434/INDEX.md\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "saved matching alternative hierarchy",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/saved archive",
+        "--config",
+        "<temp>/local data/saved.toml",
+        "--non-interactive"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Archive complete: 2 copied, 0 moved, 0 skipped identical, 0 original failures\nTIFFs: 2 created, 0 skipped/collided/failed\nIndexes: 1 created, 0 updated, 0 unchanged, 0 failed\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "explicit location precedence",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/override",
+        "--config",
+        "<temp>/local data/saved.toml",
+        "--dry-run",
+        "--non-interactive",
+        "--location",
+        "Override"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=Override; date=20000101; destination=<temp>/local data/override/Override/20000101/IC 434/observation_01\n  FITS <temp>/local data/config source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/override/Override/20000101/IC 434/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/override/Override/20000101/IC 434/observation_01/tiff/Light_IC 434.tiff\n  FITS <temp>/local data/config source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/override/Override/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/override/Override/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <temp>/local data/override/Override/20000101/IC 434/INDEX.md\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "missing explicit config",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/error",
+        "--config",
+        "<temp>/local data/missing.toml",
+        "--non-interactive"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Archive configuration file does not exist: <temp>/local data/missing.toml\n",
+      "pass": true
+    },
+    {
+      "name": "malformed config",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/error",
+        "--config",
+        "<temp>/local data/malformed.toml",
+        "--non-interactive"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Unable to load archive configuration <temp>/local data/malformed.toml: Invalid value (at line 1, column 8)\n",
+      "pass": true
+    },
+    {
+      "name": "config directory",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/error",
+        "--config",
+        "<temp>/local data",
+        "--non-interactive"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Archive configuration path is not a file: <temp>/local data\n",
+      "pass": true
+    },
+    {
+      "name": "unsupported hierarchy",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/error",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--hierarchy",
+        "{target}/{location}/{date}",
+        "--non-interactive"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Unknown hierarchy token: date\n",
+      "pass": true
+    },
+    {
+      "name": "archive missing source",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/absent",
+        "<temp>/local data/error",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Seestar input root does not exist: <temp>/local data/absent\n",
+      "pass": true
+    },
+    {
+      "name": "archive file source",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/single inputs/input.FITS",
+        "<temp>/local data/error",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: Seestar input root is not a directory: <temp>/local data/single inputs/input.FITS\n",
+      "pass": true
+    },
+    {
+      "name": "archive empty",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/empty",
+        "<temp>/local data/empty archive",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Archive complete: 0 copied, 0 moved, 0 skipped identical, 0 original failures\nTIFFs: 0 created, 0 skipped/collided/failed\nIndexes: 0 created, 0 updated, 0 unchanged, 0 failed\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "implicit missing config installed API harness",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-c",
+        "from pathlib import Path; from unittest.mock import patch; from seestar_toolkit.archive.config import load_archive_config,default_archive_config_path; p=Path(\"isolated synthetic home\").resolve();\nwith patch(\"pathlib.Path.home\",return_value=p):\n assert default_archive_config_path()==p/\".config/seestar-toolkit/config.toml\"; c=load_archive_config(); assert c.source_action.value==\"copy\"; assert not p.exists()\nprint(\"PASS isolated installed config loader; no default creation\")"
+      ],
+      "expected_exit": 0,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 3, in <module>\n    assert default_archive_config_path()==p/\".config/seestar-toolkit/config.toml\"; c=load_archive_config(); assert c.source_action.value==\"copy\"; assert not p.exists()\n                                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "pass": false
+    },
+    {
+      "name": "corrected implicit config installed API harness",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-c",
+        "from pathlib import Path; from unittest.mock import patch; from seestar_toolkit.archive.config import load_archive_config,default_archive_config_path; from seestar_toolkit.archive.execution_models import SourceAction; p=Path(\"isolated synthetic home\").resolve();\nwith patch(\"pathlib.Path.home\",return_value=p):\n assert default_archive_config_path()==p/\".config/seestar-toolkit/config.toml\"; c=load_archive_config(); assert c.source_action is SourceAction.COPY; assert not p.exists()\nprint(\"PASS isolated installed config loader; no default creation\")"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "PASS isolated installed config loader; no default creation\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "explicit override asserted",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/override",
+        "--config",
+        "<temp>/local data/saved.toml",
+        "--dry-run",
+        "--non-interactive",
+        "--location",
+        "Override"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=Override; date=20000101; destination=<temp>/local data/override/Override/20000101/IC 434/observation_01\n  FITS <temp>/local data/config source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/override/Override/20000101/IC 434/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/override/Override/20000101/IC 434/observation_01/tiff/Light_IC 434.tiff\n  FITS <temp>/local data/config source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/override/Override/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/override/Override/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <temp>/local data/override/Override/20000101/IC 434/INDEX.md\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "batch same stem collision",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/same stem",
+        "<temp>/local data/same stem output"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "Created TIFF: <temp>/local data/same stem output/same.tiff\nBatch complete: 2 discovered, 1 converted, 1 failed\n",
+      "stderr": "Failed: <temp>/local data/same stem/same.fit \u2014 Failed to write TIFF <temp>/local data/same stem output/same.tiff: [Errno 17] File exists: '<temp>/local data/same stem output/same.tiff'\n",
+      "pass": true
+    },
+    {
+      "name": "corrected implicit config installed API harness",
+      "command": [
+        "<temp>/venv/bin/python",
+        "-I",
+        "-c",
+        "from pathlib import Path; from unittest.mock import patch; from seestar_toolkit.archive.config import load_archive_config,default_archive_config_path; from seestar_toolkit.archive.execution_models import SourceAction; p=Path(\"isolated synthetic home\").resolve();\nwith patch(\"pathlib.Path.home\",return_value=p):\n assert default_archive_config_path()==p/\".config/seestar-toolkit/config.toml\"; c=load_archive_config(); assert c.source_action is SourceAction.COPY; assert not p.exists()\nprint(\"PASS isolated installed config loader; no default creation\")"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "PASS isolated installed config loader; no default creation\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "explicit override asserted",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/override",
+        "--config",
+        "<temp>/local data/saved.toml",
+        "--dry-run",
+        "--non-interactive",
+        "--location",
+        "Override"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=Override; date=20000101; destination=<temp>/local data/override/Override/20000101/IC 434/observation_01\n  FITS <temp>/local data/config source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/override/Override/20000101/IC 434/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/override/Override/20000101/IC 434/observation_01/tiff/Light_IC 434.tiff\n  FITS <temp>/local data/config source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/override/Override/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/override/Override/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <temp>/local data/override/Override/20000101/IC 434/INDEX.md\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "batch same stem collision",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "convert-batch",
+        "<temp>/local data/same stem",
+        "<temp>/local data/same stem output"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "Batch complete: 2 discovered, 0 converted, 2 failed\n",
+      "stderr": "Failed: <temp>/local data/same stem/same.FITS \u2014 Failed to write TIFF <temp>/local data/same stem output/same.tiff: [Errno 17] File exists: '<temp>/local data/same stem output/same.tiff'\nFailed: <temp>/local data/same stem/same.fit \u2014 Failed to write TIFF <temp>/local data/same stem output/same.tiff: [Errno 17] File exists: '<temp>/local data/same stem output/same.tiff'\n",
+      "pass": true
+    },
+    {
+      "name": "explicit error policy dry run",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/archive source",
+        "<temp>/local data/archive nested/output",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive",
+        "--collision-policy",
+        "error",
+        "--dry-run"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Dry run: 1 observation(s); action=copy; collision=error\nPlan observation_01: target=IC 434; location=unknown; date=20000101; destination=<temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01\n  FITS <temp>/local data/archive source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff\n  FITS <temp>/local data/archive source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <temp>/local data/archive nested/output/IC 434/INDEX.md\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "explicit error policy",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/archive source",
+        "<temp>/local data/archive nested/output",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive",
+        "--collision-policy",
+        "error"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "Archive failed: 0 copied, 0 moved, 0 skipped identical, 2 original failures\nTIFFs: 0 created, 2 skipped/collided/failed\nIndexes: 0 created, 0 updated, 0 unchanged, 0 failed\n",
+      "stderr": "Original collision: <temp>/local data/archive source/IC 434_sub/Light_IC 434.fit: Destination already exists, including identical content\nOriginal collision: <temp>/local data/archive source/IC 434/Stacked_195_IC 434.fit: Destination already exists, including identical content\nTIFF ineligible: <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff: Original FITS archive outcome is not eligible for TIFF generation: COLLISION\nTIFF ineligible: <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff: Original FITS archive outcome is not eligible for TIFF generation: COLLISION\n",
+      "pass": true
+    },
+    {
+      "name": "explicit overwrite policy dry run",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/archive source",
+        "<temp>/local data/archive nested/output",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive",
+        "--collision-policy",
+        "overwrite",
+        "--dry-run"
+      ],
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "Dry run: 1 observation(s); action=copy; collision=overwrite\nPlan observation_01: target=IC 434; location=unknown; date=20000101; destination=<temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01\n  FITS <temp>/local data/archive source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff\n  FITS <temp>/local data/archive source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <temp>/local data/archive nested/output/IC 434/INDEX.md\n",
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "name": "explicit overwrite policy",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/archive source",
+        "<temp>/local data/archive nested/output",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--non-interactive",
+        "--collision-policy",
+        "overwrite"
+      ],
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "Archive partial: 1 copied, 0 moved, 1 skipped identical, 0 original failures\nTIFFs: 0 created, 2 skipped/collided/failed\nIndexes: 0 created, 0 updated, 1 unchanged, 0 failed\n",
+      "stderr": "TIFF collision: <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff: TIFF destination already exists; existing file preserved\nTIFF collision: <temp>/local data/archive nested/output/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff: TIFF destination already exists; existing file preserved\n",
+      "pass": true
+    },
+    {
+      "name": "interactive saved accept",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/interactive archive",
+        "--config",
+        "<temp>/local data/saved.toml",
+        "--dry-run"
+      ],
+      "stdin": "\n",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "stdout": "Location matched: Synthetic Site. Use this location? [Y/n] \r\nDry run: 1 observation(s); action=copy; collision=skip_identical\r\nPlan observation_01: target=IC 434; location=Synthetic Site; date=20000101; destination=<temp>/local data/interactive archive/Synthetic Site/20000101/IC 434/observation_01\r\n  FITS <temp>/local data/config source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/interactive archive/Synthetic Site/20000101/IC 434/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/interactive archive/Synthetic Site/20000101/IC 434/observation_01/tiff/Light_IC 434.tiff\r\n  FITS <temp>/local data/config source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/interactive archive/Synthetic Site/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/interactive archive/Synthetic Site/20000101/IC 434/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\r\nIndex: <temp>/local data/interactive archive/Synthetic Site/20000101/IC 434/INDEX.md\r\n",
+      "stderr": "combined PTY output",
+      "pass": true
+    },
+    {
+      "name": "interactive unknown manual",
+      "command": [
+        "<temp>/venv/bin/seestar-toolkit",
+        "archive",
+        "<temp>/local data/config source",
+        "<temp>/local data/interactive archive",
+        "--config",
+        "<temp>/local data/config.toml",
+        "--dry-run"
+      ],
+      "stdin": "Synthetic Manual\n",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "stdout": "Location name (blank for unknown): Synthetic Manual\r\nDry run: 1 observation(s); action=copy; collision=skip_identical\r\nPlan observation_01: target=IC 434; location=Synthetic Manual; date=20000101; destination=<temp>/local data/interactive archive/IC 434/Synthetic Manual/20000101/observation_01\r\n  FITS <temp>/local data/config source/IC 434_sub/Light_IC 434.fit -> <temp>/local data/interactive archive/IC 434/Synthetic Manual/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <temp>/local data/interactive archive/IC 434/Synthetic Manual/20000101/observation_01/tiff/Light_IC 434.tiff\r\n  FITS <temp>/local data/config source/IC 434/Stacked_195_IC 434.fit -> <temp>/local data/interactive archive/IC 434/Synthetic Manual/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <temp>/local data/interactive archive/IC 434/Synthetic Manual/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\r\nIndex: <temp>/local data/interactive archive/IC 434/INDEX.md\r\n",
+      "stderr": "combined PTY output",
+      "pass": true
+    }
+  ],
+  "assertions": [
+    {
+      "name": "fresh isolated runtime",
+      "pass": true
+    },
+    {
+      "name": "no development dependencies",
+      "pass": true
+    },
+    {
+      "name": "not editable",
+      "pass": true
+    },
+    {
+      "name": "single independent full uint16 pixels",
+      "pass": true
+    },
+    {
+      "name": "existing output preserved",
+      "pass": true
+    },
+    {
+      "name": "single source unchanged",
+      "pass": true
+    },
+    {
+      "name": "batch flat outputs",
+      "pass": true
+    },
+    {
+      "name": "batch pixels a",
+      "pass": true
+    },
+    {
+      "name": "batch pixels b",
+      "pass": true
+    },
+    {
+      "name": "batch originals outputs unchanged",
+      "pass": true
+    },
+    {
+      "name": "partial successes retained",
+      "pass": true
+    },
+    {
+      "name": "archive copy dry run nonmutation",
+      "pass": true
+    },
+    {
+      "name": "copy sources unchanged",
+      "pass": true
+    },
+    {
+      "name": "default layout",
+      "pass": true
+    },
+    {
+      "name": "original exact copies",
+      "pass": true
+    },
+    {
+      "name": "archive light pixels",
+      "pass": true
+    },
+    {
+      "name": "archive stack pixels",
+      "pass": true
+    },
+    {
+      "name": "index metadata",
+      "pass": false
+    },
+    {
+      "name": "JPEG not archived",
+      "pass": true
+    },
+    {
+      "name": "archive repeated dry run nonmutation",
+      "pass": true
+    },
+    {
+      "name": "rerun preserves sources",
+      "pass": true
+    },
+    {
+      "name": "archive move dry run nonmutation",
+      "pass": true
+    },
+    {
+      "name": "move only FITS removed",
+      "pass": true
+    },
+    {
+      "name": "saved matching alternative hierarchy dry run nonmutation",
+      "pass": true
+    },
+    {
+      "name": "saved location hierarchy",
+      "pass": false
+    },
+    {
+      "name": "configs read only",
+      "pass": true
+    },
+    {
+      "name": "source light final hash",
+      "pass": true
+    },
+    {
+      "name": "corrected index metadata",
+      "pass": true
+    },
+    {
+      "name": "corrected saved location hierarchy preserves spaces",
+      "pass": true
+    },
+    {
+      "name": "explicit location wins saved match",
+      "pass": true
+    },
+    {
+      "name": "unknown fallback executed",
+      "pass": true
+    },
+    {
+      "name": "same stem preserves both sources",
+      "pass": true
+    },
+    {
+      "name": "corrected index metadata",
+      "pass": true
+    },
+    {
+      "name": "corrected saved location hierarchy preserves spaces",
+      "pass": true
+    },
+    {
+      "name": "explicit location wins saved match",
+      "pass": true
+    },
+    {
+      "name": "unknown fallback executed",
+      "pass": true
+    },
+    {
+      "name": "same stem preserves both sources",
+      "pass": true
+    },
+    {
+      "name": "explicit error policy dry run nonmutation",
+      "pass": true
+    },
+    {
+      "name": "error policy unchanged original",
+      "pass": true
+    },
+    {
+      "name": "explicit overwrite policy dry run nonmutation",
+      "pass": true
+    },
+    {
+      "name": "overwrite restores approved original",
+      "pass": true
+    },
+    {
+      "name": "overwrite preserves existing TIFFs",
+      "pass": true
+    },
+    {
+      "name": "interactive saved accept nonmutation",
+      "pass": true
+    },
+    {
+      "name": "interactive unknown manual nonmutation",
+      "pass": true
+    },
+    {
+      "name": "all approved fixture hashes unchanged",
+      "pass": true
+    }
+  ],
+  "status": "PASS after recorded setup/harness remediation; original failures retained",
+  "build": {
+    "wheel": "seestar_toolkit-1.1.0-py3-none-any.whl",
+    "bytes": 46318,
+    "sha256": "a2c7fe9045e1286fa8cf808ea577ff56ac70f615a83b7c7a77936bf9eef4e42e",
+    "inspection": "PASS existing inspect_archive metadata/content/privacy/entry-point validator",
+    "build_dependencies": {
+      "build": "1.6.1",
+      "setuptools": "84.0.0",
+      "packaging": "26.3",
+      "pyproject_hooks": "1.2.0"
+    },
+    "failures": [
+      {
+        "step": "initial build",
+        "exit_code": 1,
+        "diagnostic": "No module named build in development environment",
+        "remediation": "created separate disposable build venv"
+      },
+      {
+        "step": "premature wheel install",
+        "exit_code": 1,
+        "diagnostic": "wheel did not exist following failed build",
+        "remediation": "built wheel before retry"
+      },
+      {
+        "step": "sandbox build dependency download",
+        "exit_code": 1,
+        "diagnostic": "PyPI DNS resolution failed; no matching distribution reported",
+        "remediation": "approved network escalation; install succeeded"
+      }
+    ],
+    "all_33_source_modules_byte_identical": true
+  },
+  "preservation": {
+    "docs/development/CHANGELOG.md": "8e96013e345524cb84ad076ab5abb554f5babee6f46133622b306284e66ee0c7",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_A.json": "657202492d554d5f28419b97a778459f4f0435d5b68ff8383f833cd312c306f3",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md": "44dff05f3a8fa253e7fd686cc8296e08fb6d30640131b92ac244b663459bf4ab"
+  },
+  "fixture_manifest": {
+    "tests/data/seestar/light.fit": {
+      "bytes": 4152960,
+      "sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2"
+    },
+    "tests/data/seestar/stacked.fit": {
+      "bytes": 49775040,
+      "sha256": "add9d082a356ebe70bd97a7bbcb7ae86ee6dd192be9f04969d2facee1d65210d"
+    }
+  },
+  "resolved_harness_failures": [
+    {
+      "original": "index metadata",
+      "cause": "Harness expected observation_01 in human-readable index; actual heading is Observation 01. Directory spelling was independently verified.",
+      "rerun": "corrected index metadata"
+    },
+    {
+      "original": "saved location hierarchy",
+      "cause": "Harness wrongly assumed spaces normalize to underscores; implementation preserves spaces.",
+      "rerun": "corrected saved location hierarchy preserves spaces"
+    },
+    {
+      "original": "implicit missing config installed API harness",
+      "cause": "Harness incorrectly expected SourceAction.COPY.value to be a string rather than auto() enum value.",
+      "rerun": "corrected implicit config installed API harness"
+    },
+    {
+      "original": "supplemental harness exit 1",
+      "cause": "NameError: archive helper not defined in temporary supplemental script. No affected archive command executed before the failure.",
+      "rerun": "Loaded helper and reran supplemental checks successfully; earlier results retained."
+    },
+    {
+      "original": "final evidence privacy assertion",
+      "cause": "pip check emitted a user-cache permission warning with a home path; final privacy assertion detected it.",
+      "rerun": "Replaced only the private cache path with <user-pip-cache>; retained warning. No committed evidence contains the path."
+    }
+  ],
+  "limitations": [
+    "Checkpoint C/D not performed",
+    "Default missing-config proof uses installed API with Path.home patched, separately labelled from unmodified CLI proof",
+    "Date representative 20000101 validated in installed archive; rollover boundaries covered by existing unit suite",
+    "No claim of whole-filesystem monitoring: explicit resolved disposable roots, source/destination hashes and dry-run snapshots constrain evidence; unrelated filesystems not inspected",
+    "Temporary one-off harnesses removed; commands, outputs, assertion results and oracle description retained"
+  ],
+  "pixel_oracle": "Read source via astropy.io.fits.getdata. Raw expected=cv2.cvtColor(raw,cv2.COLOR_BayerGB2RGB); native RGB expected=np.moveaxis(planes,0,-1). Reopen tifffile, assert photometric RGB and exact array equality, shape and uint16 dtype. Raw shape 1920x1080x3; stack 3840x2160x3.",
+  "validation": {
+    "pytest": "330 passed in 11.87s",
+    "ruff": "PASS",
+    "format": "37 files already formatted",
+    "public_inputs": "10 reviewed fixtures; clean public root; no oversized blobs",
+    "wheel_inspection": "39 allowed members; metadata/license/entry point/privacy PASS"
+  },
+  "cleanup": {
+    "temporary_root": "/tmp/seestar-92b-6snhgrz6",
+    "removed": true,
+    "build_venv_removed": true,
+    "runtime_venv_removed": true,
+    "wheel_source_test_data_and_harnesses_removed": true,
+    "temporary_permission_modes_restored_before_cleanup": true
+  }
+}

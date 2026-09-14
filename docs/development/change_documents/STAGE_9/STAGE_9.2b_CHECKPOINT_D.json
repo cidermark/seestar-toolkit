@@ -1,0 +1,2490 @@
+{
+  "checkpoint": "D",
+  "technical_status": "PASS",
+  "formal_closure_readiness": "FAIL",
+  "baseline": "398b771",
+  "preservation_sha256": {
+    "docs/development/CHANGELOG.md": "8e96013e345524cb84ad076ab5abb554f5babee6f46133622b306284e66ee0c7",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b.md": "5d45a10a340e8885224a861f4cb45f4daf3a7d8a27adc3b59c254d6d07b916db",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_C.json": "28f3e6fecd180af39cdc802c993203f0b5211a7819f8d07a08782f6a84a258eb",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_B.json": "de11a63e2f831622bb9acfb5570feb2cb71b36daf26921fdfc585422d1f8257e",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md": "895f87e5e7ba9fff4ecdee6c7b3ff6025e32baf066773726f61ad8fc6523c94d",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_A.json": "657202492d554d5f28419b97a778459f4f0435d5b68ff8383f833cd312c306f3"
+  },
+  "local_validation": {
+    "status": "PASS",
+    "commands": [
+      {
+        "name": "runtime provenance",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "-c",
+          "import sys,platform,json,importlib.metadata as m,importlib.util; from pathlib import Path; import seestar_toolkit; assert sys.prefix != sys.base_prefix; assert Path(seestar_toolkit.__file__).resolve().is_relative_to(Path(sys.prefix).resolve()); assert m.version('seestar-toolkit')=='1.1.0'; assert all(importlib.util.find_spec(n) is None for n in ['build','pytest','ruff']); print(json.dumps(dict(python=platform.python_version(),macos=platform.mac_ver()[0],architecture=platform.machine(),base_executable=sys._base_executable,module=seestar_toolkit.__file__,dependencies={d.metadata['Name']:d.version for d in m.distributions()})))"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "{\"python\": \"3.13.15\", \"macos\": \"26.5.2\", \"architecture\": \"arm64\", \"base_executable\": \"/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/bin/python3.13\", \"module\": \"<local-temp>/runtime/lib/python3.13/site-packages/seestar_toolkit/__init__.py\", \"dependencies\": {\"numpy\": \"2.5.3\", \"astropy-iers-data\": \"0.2026.9.14.0.56.43\", \"packaging\": \"26.3\", \"seestar-toolkit\": \"1.1.0\", \"tifffile\": \"2026.9.9\", \"pip\": \"26.2\", \"astropy\": \"8.0.1\", \"pyerfa\": \"2.0.1.5\", \"PyYAML\": \"6.0.3\", \"opencv-python-headless\": \"5.0.0.93\"}}\n",
+        "stderr": ""
+      },
+      {
+        "name": "pip check",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "-m",
+          "pip",
+          "--isolated",
+          "--no-cache-dir",
+          "check"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "No broken requirements found.\n",
+        "stderr": ""
+      },
+      {
+        "name": "normal installed version",
+        "command": [
+          "<local-temp>/runtime/bin/seestar-toolkit",
+          "--version"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "seestar-toolkit 1.1.0\n",
+        "stderr": ""
+      },
+      {
+        "name": "deactivate",
+        "command": [
+          "/bin/bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "original_path=$PATH; source \"$1/bin/activate\"; test \"$VIRTUAL_ENV\" -ef \"$1\" || exit 1; test \"$(command -v python)\" = \"$VIRTUAL_ENV/bin/python\" || exit 1; deactivate; test \"$PATH\" = \"$original_path\" || exit 1; test -z \"${VIRTUAL_ENV+x}\" || exit 1; test -x \"$1/bin/seestar-toolkit\" || exit 1; echo \"PASS activation selects venv; deactivate restores PATH/unsets VIRTUAL_ENV and leaves installation intact\"",
+          "audit",
+          "<local-temp>/runtime"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "PASS activation selects venv; deactivate restores PATH/unsets VIRTUAL_ENV and leaves installation intact\n",
+        "stderr": ""
+      },
+      {
+        "name": "help",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "<local-temp>/network_probe.py",
+          "<local-temp>/help.json",
+          "--help"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+        "stderr": ""
+      },
+      {
+        "name": "version",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "<local-temp>/network_probe.py",
+          "<local-temp>/version.json",
+          "--version"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "seestar-toolkit 1.1.0\n",
+        "stderr": ""
+      },
+      {
+        "name": "single",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "<local-temp>/network_probe.py",
+          "<local-temp>/single.json",
+          "convert",
+          "<local-temp>/local data/source/IC 434_sub/Light_IC 434.fit",
+          "<local-temp>/local data/single.tiff"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "Created TIFF: <local-temp>/local data/single.tiff\n",
+        "stderr": ""
+      },
+      {
+        "name": "batch",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "<local-temp>/network_probe.py",
+          "<local-temp>/batch.json",
+          "convert-batch",
+          "<local-temp>/local data/source/IC 434_sub",
+          "<local-temp>/local data/batch"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "Created TIFF: <local-temp>/local data/batch/Light_IC 434.tiff\nBatch complete: 1 discovered, 1 converted, 0 failed\n",
+        "stderr": ""
+      },
+      {
+        "name": "archive_dry",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "<local-temp>/network_probe.py",
+          "<local-temp>/archive_dry.json",
+          "archive",
+          "<local-temp>/local data/source",
+          "<local-temp>/local data/archive",
+          "--config",
+          "<local-temp>/local data/isolated config/config.toml",
+          "--non-interactive",
+          "--dry-run"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=Synthetic Site; date=20000101; destination=<local-temp>/local data/archive/IC 434/Synthetic Site/20000101/observation_01\n  FITS <local-temp>/local data/source/IC 434_sub/Light_IC 434.fit -> <local-temp>/local data/archive/IC 434/Synthetic Site/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <local-temp>/local data/archive/IC 434/Synthetic Site/20000101/observation_01/tiff/Light_IC 434.tiff\nIndex: <local-temp>/local data/archive/IC 434/INDEX.md\n",
+        "stderr": ""
+      },
+      {
+        "name": "archive_execute",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "<local-temp>/network_probe.py",
+          "<local-temp>/archive_execute.json",
+          "archive",
+          "<local-temp>/local data/source",
+          "<local-temp>/local data/archive",
+          "--config",
+          "<local-temp>/local data/isolated config/config.toml",
+          "--non-interactive"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "Archive complete: 1 copied, 0 moved, 0 skipped identical, 0 original failures\nTIFFs: 1 created, 0 skipped/collided/failed\nIndexes: 1 created, 0 updated, 0 unchanged, 0 failed\n",
+        "stderr": ""
+      },
+      {
+        "name": "pip uninstall",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "-m",
+          "pip",
+          "--isolated",
+          "--no-cache-dir",
+          "uninstall",
+          "-y",
+          "seestar-toolkit"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "Found existing installation: seestar-toolkit 1.1.0\nUninstalling seestar-toolkit-1.1.0:\n  Successfully uninstalled seestar-toolkit-1.1.0\n",
+        "stderr": ""
+      },
+      {
+        "name": "module absent",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "-c",
+          "import importlib.util; assert importlib.util.find_spec('seestar_toolkit') is None; print('PASS module absent')"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "PASS module absent\n",
+        "stderr": ""
+      },
+      {
+        "name": "module entry unavailable after uninstall",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "-m",
+          "seestar_toolkit",
+          "--version"
+        ],
+        "expected_exit": 1,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "<local-temp>/runtime/bin/python: No module named seestar_toolkit\n"
+      },
+      {
+        "name": "dependencies retained and consistent",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "-m",
+          "pip",
+          "--isolated",
+          "--no-cache-dir",
+          "check"
+        ],
+        "expected_exit": 0,
+        "exit_code": 0,
+        "stdout": "No broken requirements found.\n",
+        "stderr": ""
+      }
+    ],
+    "checks": [
+      {
+        "name": "runtime provenance",
+        "pass": true
+      },
+      {
+        "name": "pip check",
+        "pass": true
+      },
+      {
+        "name": "normal installed version",
+        "pass": true
+      },
+      {
+        "name": "deactivate",
+        "pass": true
+      },
+      {
+        "name": "approved fixture",
+        "pass": true
+      },
+      {
+        "name": "help",
+        "pass": true
+      },
+      {
+        "name": "help no network attempts",
+        "pass": true
+      },
+      {
+        "name": "version",
+        "pass": true
+      },
+      {
+        "name": "version no network attempts",
+        "pass": true
+      },
+      {
+        "name": "single",
+        "pass": true
+      },
+      {
+        "name": "single no network attempts",
+        "pass": true
+      },
+      {
+        "name": "batch",
+        "pass": true
+      },
+      {
+        "name": "batch no network attempts",
+        "pass": true
+      },
+      {
+        "name": "archive_dry",
+        "pass": true
+      },
+      {
+        "name": "archive_dry no network attempts",
+        "pass": true
+      },
+      {
+        "name": "dry run unchanged files",
+        "pass": true
+      },
+      {
+        "name": "archive_execute",
+        "pass": true
+      },
+      {
+        "name": "archive_execute no network attempts",
+        "pass": true
+      },
+      {
+        "name": "archive products created",
+        "pass": true
+      },
+      {
+        "name": "pip uninstall",
+        "pass": true
+      },
+      {
+        "name": "uninstall leaves all config/source/generated/archive data unchanged",
+        "pass": true
+      },
+      {
+        "name": "console removed",
+        "pass": true
+      },
+      {
+        "name": "module absent",
+        "pass": true
+      },
+      {
+        "name": "module entry unavailable after uninstall",
+        "pass": true
+      },
+      {
+        "name": "dependencies retained and consistent",
+        "pass": true
+      },
+      {
+        "name": "config persists after uninstall",
+        "pass": true
+      },
+      {
+        "name": "venv removed",
+        "pass": true
+      },
+      {
+        "name": "venv removal leaves data and config unchanged",
+        "pass": true
+      },
+      {
+        "name": "separate config removal leaves image/archive data unchanged",
+        "pass": true
+      }
+    ],
+    "network_probes": [
+      {
+        "argv": [
+          "--help"
+        ],
+        "exit_code": 0,
+        "python_network_or_process_events": [],
+        "synthetic_guard_selftest": "PASS; sys.audit only, no network I/O"
+      },
+      {
+        "argv": [
+          "--version"
+        ],
+        "exit_code": 0,
+        "python_network_or_process_events": [],
+        "synthetic_guard_selftest": "PASS; sys.audit only, no network I/O"
+      },
+      {
+        "argv": [
+          "convert",
+          "<local-temp>/local data/source/IC 434_sub/Light_IC 434.fit",
+          "<local-temp>/local data/single.tiff"
+        ],
+        "exit_code": 0,
+        "python_network_or_process_events": [],
+        "synthetic_guard_selftest": "PASS; sys.audit only, no network I/O"
+      },
+      {
+        "argv": [
+          "convert-batch",
+          "<local-temp>/local data/source/IC 434_sub",
+          "<local-temp>/local data/batch"
+        ],
+        "exit_code": 0,
+        "python_network_or_process_events": [],
+        "synthetic_guard_selftest": "PASS; sys.audit only, no network I/O"
+      },
+      {
+        "argv": [
+          "archive",
+          "<local-temp>/local data/source",
+          "<local-temp>/local data/archive",
+          "--config",
+          "<local-temp>/local data/isolated config/config.toml",
+          "--non-interactive",
+          "--dry-run"
+        ],
+        "exit_code": 0,
+        "python_network_or_process_events": [],
+        "synthetic_guard_selftest": "PASS; sys.audit only, no network I/O"
+      },
+      {
+        "argv": [
+          "archive",
+          "<local-temp>/local data/source",
+          "<local-temp>/local data/archive",
+          "--config",
+          "<local-temp>/local data/isolated config/config.toml",
+          "--non-interactive"
+        ],
+        "exit_code": 0,
+        "python_network_or_process_events": [],
+        "synthetic_guard_selftest": "PASS; sys.audit only, no network I/O"
+      }
+    ],
+    "environment": {
+      "python": "3.13.15",
+      "macos": "26.5.2",
+      "architecture": "arm64",
+      "base_executable": "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "module": "<local-temp>/runtime/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+      "dependencies": {
+        "numpy": "2.5.3",
+        "astropy-iers-data": "0.2026.9.14.0.56.43",
+        "packaging": "26.3",
+        "seestar-toolkit": "1.1.0",
+        "tifffile": "2026.9.9",
+        "pip": "26.2",
+        "astropy": "8.0.1",
+        "pyerfa": "2.0.1.5",
+        "PyYAML": "6.0.3",
+        "opencv-python-headless": "5.0.0.93"
+      }
+    }
+  },
+  "distribution": {
+    "artifacts": [
+      {
+        "artifact": "seestar_toolkit-1.1.0-py3-none-any.whl",
+        "bytes": 46318,
+        "sha256": "8b1426623e432d87a9edf9735ac42c556792735cd84e1afe188d3022eab2cce0",
+        "inspection": "PASS metadata/content/license/entry-point/privacy"
+      },
+      {
+        "artifact": "seestar_toolkit-1.1.0.tar.gz",
+        "bytes": 35348,
+        "sha256": "cb8e3649e15734e6aa889ea074e87058f26f82367dd42534f62e9fddf5eda236",
+        "inspection": "PASS metadata/content/license/entry-point/privacy"
+      }
+    ],
+    "wheel_source_matches": 33,
+    "build": "build 1.6.1 and setuptools 84.0.0 in separate temporary tooling venv; build --no-isolation builds sdist then wheel from sdist",
+    "sdist_runtime": "No independent runtime repetition: metadata/runtime unchanged; D uses wheel built from sdist; Stage 9.2a records independent sdist installs"
+  },
+  "source_audit": {
+    "imports": {
+      "src/seestar_toolkit/__init__.py": [
+        "importlib.metadata"
+      ],
+      "src/seestar_toolkit/__main__.py": [
+        "seestar_toolkit.cli"
+      ],
+      "src/seestar_toolkit/archive/__init__.py": [
+        "config",
+        "discovery",
+        "exceptions",
+        "execution",
+        "execution_models",
+        "index_models",
+        "indexing",
+        "models",
+        "orchestration",
+        "orchestration_models",
+        "planning",
+        "planning_models",
+        "reconstruction",
+        "reconstruction_models"
+      ],
+      "src/seestar_toolkit/archive/config.py": [
+        "__future__",
+        "dataclasses",
+        "exceptions",
+        "execution_models",
+        "math",
+        "pathlib",
+        "planning_models",
+        "tomllib",
+        "typing"
+      ],
+      "src/seestar_toolkit/archive/discovery.py": [
+        "__future__",
+        "exceptions",
+        "models",
+        "pathlib",
+        "seestar_toolkit.fits",
+        "target_comparison"
+      ],
+      "src/seestar_toolkit/archive/exceptions.py": [],
+      "src/seestar_toolkit/archive/execution.py": [
+        "__future__",
+        "contextlib",
+        "exceptions",
+        "execution_models",
+        "hashlib",
+        "os",
+        "pathlib",
+        "planning_models",
+        "tempfile"
+      ],
+      "src/seestar_toolkit/archive/execution_models.py": [
+        "__future__",
+        "dataclasses",
+        "enum",
+        "pathlib",
+        "planning_models"
+      ],
+      "src/seestar_toolkit/archive/index_models.py": [
+        "__future__",
+        "dataclasses",
+        "enum",
+        "pathlib"
+      ],
+      "src/seestar_toolkit/archive/indexing.py": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "execution_models",
+        "index_models",
+        "os",
+        "pathlib",
+        "planning_models",
+        "re",
+        "seestar_toolkit.fits",
+        "tempfile"
+      ],
+      "src/seestar_toolkit/archive/models.py": [
+        "__future__",
+        "dataclasses",
+        "enum",
+        "pathlib",
+        "seestar_toolkit.fits"
+      ],
+      "src/seestar_toolkit/archive/orchestration.py": [
+        "__future__",
+        "dataclasses",
+        "discovery",
+        "execution",
+        "execution_models",
+        "indexing",
+        "orchestration_models",
+        "pathlib",
+        "planning",
+        "planning_models",
+        "re",
+        "reconstruction",
+        "seestar_toolkit.conversion",
+        "seestar_toolkit.fits",
+        "seestar_toolkit.tiff"
+      ],
+      "src/seestar_toolkit/archive/orchestration_models.py": [
+        "__future__",
+        "dataclasses",
+        "enum",
+        "execution_models",
+        "index_models",
+        "models",
+        "pathlib",
+        "planning_models",
+        "reconstruction_models"
+      ],
+      "src/seestar_toolkit/archive/planning.py": [
+        "__future__",
+        "collections",
+        "datetime",
+        "exceptions",
+        "math",
+        "models",
+        "pathlib",
+        "planning_models",
+        "re",
+        "reconstruction_models",
+        "string",
+        "target_comparison"
+      ],
+      "src/seestar_toolkit/archive/planning_models.py": [
+        "__future__",
+        "dataclasses",
+        "pathlib",
+        "reconstruction_models"
+      ],
+      "src/seestar_toolkit/archive/reconstruction.py": [
+        "__future__",
+        "collections",
+        "dataclasses",
+        "datetime",
+        "math",
+        "models",
+        "pathlib",
+        "re",
+        "reconstruction_models"
+      ],
+      "src/seestar_toolkit/archive/reconstruction_models.py": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "models"
+      ],
+      "src/seestar_toolkit/archive/target_comparison.py": [],
+      "src/seestar_toolkit/batch.py": [
+        "__future__",
+        "conversion",
+        "dataclasses",
+        "fits",
+        "pathlib",
+        "tiff"
+      ],
+      "src/seestar_toolkit/cli.py": [
+        "__future__",
+        "argparse",
+        "collections.abc",
+        "logging",
+        "pathlib",
+        "seestar_toolkit",
+        "seestar_toolkit.archive",
+        "seestar_toolkit.batch",
+        "seestar_toolkit.conversion",
+        "seestar_toolkit.fits",
+        "seestar_toolkit.tiff",
+        "sys"
+      ],
+      "src/seestar_toolkit/conversion.py": [
+        "__future__",
+        "fits",
+        "imaging.demosaic",
+        "imaging.rgb",
+        "pathlib",
+        "tiff"
+      ],
+      "src/seestar_toolkit/fits/__init__.py": [
+        "__future__",
+        "exceptions",
+        "inspector",
+        "models",
+        "reader"
+      ],
+      "src/seestar_toolkit/fits/exceptions.py": [
+        "__future__"
+      ],
+      "src/seestar_toolkit/fits/inspector.py": [
+        "__future__",
+        "astropy.io.fits",
+        "datetime",
+        "models",
+        "pathlib",
+        "reader",
+        "typing"
+      ],
+      "src/seestar_toolkit/fits/models.py": [
+        "__future__",
+        "astropy.io.fits",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "numpy",
+        "pathlib"
+      ],
+      "src/seestar_toolkit/fits/reader.py": [
+        "__future__",
+        "astropy.io",
+        "exceptions",
+        "models",
+        "numpy",
+        "pathlib"
+      ],
+      "src/seestar_toolkit/imaging/__init__.py": [],
+      "src/seestar_toolkit/imaging/demosaic.py": [
+        "cv2",
+        "numpy"
+      ],
+      "src/seestar_toolkit/imaging/rgb.py": [
+        "numpy"
+      ],
+      "src/seestar_toolkit/models.py": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "pathlib",
+        "typing"
+      ],
+      "src/seestar_toolkit/tiff/__init__.py": [
+        "__future__",
+        "exceptions",
+        "writer"
+      ],
+      "src/seestar_toolkit/tiff/exceptions.py": [
+        "__future__"
+      ],
+      "src/seestar_toolkit/tiff/writer.py": [
+        "__future__",
+        "exceptions",
+        "numpy",
+        "pathlib",
+        "tifffile"
+      ]
+    },
+    "calls": {
+      "src/seestar_toolkit/__init__.py": [
+        "version"
+      ],
+      "src/seestar_toolkit/__main__.py": [
+        "SystemExit",
+        "main"
+      ],
+      "src/seestar_toolkit/archive/__init__.py": [],
+      "src/seestar_toolkit/archive/config.py": [
+        "', '.join",
+        "ArchiveConfig",
+        "ArchiveConfigError",
+        "Path",
+        "Path.home",
+        "SavedLocation",
+        "_collision_policy",
+        "_finite_number",
+        "_parse_config",
+        "_saved_location",
+        "_source_action",
+        "archive.get",
+        "config_path.exists",
+        "config_path.is_file",
+        "config_path.open",
+        "data.get",
+        "dataclass",
+        "default_archive_config_path",
+        "enumerate",
+        "float",
+        "isinstance",
+        "math.isfinite",
+        "name.strip",
+        "tomllib.load",
+        "tuple",
+        "value.casefold"
+      ],
+      "src/seestar_toolkit/archive/discovery.py": [
+        "'; '.join",
+        "ArchiveDiscoveryError",
+        "Path",
+        "SeestarDiscoveryInventory",
+        "SeestarDiscoveryItem",
+        "_candidate_paths",
+        "_classify_candidate",
+        "_classify_fits",
+        "_directory_evidence",
+        "_fits_discovery_classification",
+        "_join_problems",
+        "_target_evidence_problem",
+        "candidates.append",
+        "candidates.extend",
+        "child.is_dir",
+        "child.is_file",
+        "child.iterdir",
+        "directory_target_for_comparison",
+        "directory_target_for_comparison(directory_target).casefold",
+        "inspect_fits",
+        "len",
+        "metadata_target.casefold",
+        "name.casefold",
+        "name.casefold().endswith",
+        "path.is_file",
+        "path.relative_to",
+        "path.relative_to(root).as_posix",
+        "path.stem.casefold",
+        "path.stem.casefold().endswith",
+        "path.stem.casefold().startswith",
+        "path.suffix.casefold",
+        "root.iterdir",
+        "sorted",
+        "str",
+        "tuple",
+        "work_root.exists",
+        "work_root.is_dir"
+      ],
+      "src/seestar_toolkit/archive/exceptions.py": [],
+      "src/seestar_toolkit/archive/execution.py": [
+        "ArchiveExecutionError",
+        "ArchiveExecutionResult",
+        "ArchiveFileExecutionResult",
+        "FileNotFoundError",
+        "OSError",
+        "Path",
+        "Path(path).open",
+        "ValueError",
+        "_execute_file",
+        "_failure",
+        "_finish_action",
+        "_handle_existing_destination",
+        "_require_beneath",
+        "_stage_and_replace",
+        "_validate_destination",
+        "_validate_destination_after_creation",
+        "_validate_source",
+        "archive_root.is_absolute",
+        "archive_root.resolve",
+        "destination.exists",
+        "destination.is_absolute",
+        "destination.is_file",
+        "destination.is_symlink",
+        "destination.parent.mkdir",
+        "destination.parent.resolve",
+        "destination.resolve",
+        "digest.hexdigest",
+        "digest.update",
+        "frozenset",
+        "hashlib.sha256",
+        "input_file.read",
+        "isinstance",
+        "os.fdopen",
+        "os.fsync",
+        "os.path.samefile",
+        "os.replace",
+        "path.relative_to",
+        "sha256_file",
+        "source.exists",
+        "source.is_file",
+        "source.open",
+        "source.read",
+        "source.stat",
+        "source.suffix.casefold",
+        "source.unlink",
+        "staged.fileno",
+        "staged.flush",
+        "staged.write",
+        "suppress",
+        "tempfile.mkstemp",
+        "temporary_path.unlink",
+        "tuple"
+      ],
+      "src/seestar_toolkit/archive/execution_models.py": [
+        "any",
+        "auto",
+        "dataclass",
+        "sum"
+      ],
+      "src/seestar_toolkit/archive/index_models.py": [
+        "auto",
+        "dataclass"
+      ],
+      "src/seestar_toolkit/archive/indexing.py": [
+        "'\\n'.join",
+        "(path / 'lights').is_dir",
+        "(path / 'seestar_stacked').is_dir",
+        "ArchiveIndexResult",
+        "OSError",
+        "Path",
+        "_IndexObservation",
+        "_MARKDOWN_SPECIAL.sub",
+        "_STACK_COUNT.match",
+        "_capture_mode",
+        "_datetime",
+        "_display_date",
+        "_escape",
+        "_established_fits",
+        "_exposure",
+        "_first",
+        "_gps",
+        "_maximum",
+        "_minimum",
+        "_record_from_directory",
+        "_records_for_index",
+        "_render",
+        "_reported_stack_count",
+        "_require_safe_path",
+        "_target_directory",
+        "_value",
+        "_write_index",
+        "archive_root.is_absolute",
+        "archive_root.resolve",
+        "current_outcomes.get",
+        "dataclass",
+        "datetime.strptime",
+        "datetime.strptime(value, '%Y%m%d').date",
+        "datetime.strptime(value, '%Y%m%d').date().isoformat",
+        "dict",
+        "directory.is_dir",
+        "directory.iterdir",
+        "frozenset",
+        "hierarchy_directory.relative_to",
+        "index_path.exists",
+        "index_path.is_symlink",
+        "index_path.parent.is_dir",
+        "index_path.read_text",
+        "inspect_fits",
+        "int",
+        "item.location.casefold",
+        "item.name.casefold",
+        "len",
+        "lines.extend",
+        "match.group",
+        "max",
+        "min",
+        "next",
+        "observation.hierarchy_directory.relative_to",
+        "os.fdopen",
+        "os.fsync",
+        "os.replace",
+        "path.as_posix",
+        "path.is_absolute",
+        "path.is_dir",
+        "path.is_file",
+        "path.resolve",
+        "path.suffix.casefold",
+        "path_real.relative_to",
+        "plan.config.archive_root.joinpath",
+        "plan.config.hierarchy_template.split",
+        "planned_index_paths",
+        "re.compile",
+        "record.observation_name.removeprefix",
+        "records.append",
+        "results.append",
+        "sorted",
+        "str",
+        "str(value).replace",
+        "str(value).replace('\\n', ' ').replace",
+        "stream.fileno",
+        "stream.flush",
+        "stream.write",
+        "target_directory.exists",
+        "target_directory.rglob",
+        "tempfile.mkstemp",
+        "temporary.unlink",
+        "tokens.index",
+        "tuple",
+        "value.isoformat",
+        "zip",
+        "{0: 'Alt-Az', 1: 'Equatorial'}.get"
+      ],
+      "src/seestar_toolkit/archive/models.py": [
+        "auto",
+        "dataclass",
+        "tuple"
+      ],
+      "src/seestar_toolkit/archive/orchestration.py": [
+        "ArchiveTiffResult",
+        "OSError",
+        "PreparedSeestarArchive",
+        "SeestarArchiveResult",
+        "_OBSERVATION_DIRECTORY.fullmatch",
+        "_existing_observation_numbers",
+        "_generate_tiff",
+        "_planned_files",
+        "_prepare_tiff_destination",
+        "_reconcile_incremental_observations",
+        "_rename_planned_observation",
+        "_require_beneath",
+        "any",
+        "archive_root.is_absolute",
+        "archive_root.resolve",
+        "child.is_file",
+        "child.suffix.casefold",
+        "convert_fits_to_tiff",
+        "destination.exists",
+        "destination.is_absolute",
+        "destination.is_file",
+        "destination.is_symlink",
+        "destination.parent.mkdir",
+        "destination.parent.resolve",
+        "destination.resolve",
+        "directory.is_dir",
+        "directory.is_symlink",
+        "directory.iterdir",
+        "discover_seestar_inputs",
+        "execute_archive_plan",
+        "execute_prepared_seestar_archive",
+        "frozenset",
+        "generate_archive_indexes",
+        "hierarchy.is_dir",
+        "hierarchy.iterdir",
+        "int",
+        "item.fits_destination.exists",
+        "len",
+        "match.group",
+        "max",
+        "numbers.add",
+        "observation.observation_name.removeprefix",
+        "path.is_dir",
+        "path.is_symlink",
+        "path.relative_to",
+        "plan_seestar_archive",
+        "prepare_seestar_archive",
+        "re.compile",
+        "reconciled.append",
+        "reconstruct_seestar_observations",
+        "replace",
+        "set",
+        "str",
+        "tuple",
+        "used.add",
+        "used_by_hierarchy.setdefault",
+        "zip"
+      ],
+      "src/seestar_toolkit/archive/orchestration_models.py": [
+        "any",
+        "auto",
+        "bool",
+        "dataclass",
+        "item.source_path.suffix.casefold"
+      ],
+      "src/seestar_toolkit/archive/planning.py": [
+        "(capture_datetime + timedelta(hours=12)).date",
+        "(capture_datetime + timedelta(hours=12)).date().strftime",
+        "ArchivePlan",
+        "ArchivePlanningCollisionError",
+        "ArchivePlanningConfig",
+        "ArchivePlanningConfigurationError",
+        "ArchivePlanningProblem",
+        "ObservationArchiveMetadata",
+        "Path",
+        "PlannedArchiveObservation",
+        "PlannedFile",
+        "_UNSAFE_COMPONENT_CHARACTERS.sub",
+        "_UNSAFE_COMPONENT_CHARACTERS.sub('-', normalized).strip",
+        "_WHITESPACE.sub",
+        "_haversine_m",
+        "_observation_candidate",
+        "_observation_items",
+        "_observation_sort_key",
+        "_planned_observation",
+        "_record_destinations",
+        "_require_beneath_root",
+        "_resolve_location",
+        "_resolve_target",
+        "_source_gps",
+        "_telescope",
+        "_template_tokens",
+        "_unique_values",
+        "_validate_config",
+        "any",
+        "candidates.append",
+        "compatibility_target.strip",
+        "config.archive_root.is_absolute",
+        "config.archive_root.joinpath",
+        "coordinates.append",
+        "defaultdict",
+        "destination.relative_to",
+        "destinations.get",
+        "diagnostics.append",
+        "diagnostics.extend",
+        "directory_target_for_comparison",
+        "directory_target_for_comparison(directory).casefold",
+        "enumerate",
+        "explicit.strip",
+        "frozenset",
+        "grouped[metadata.target_component, metadata.location_component, metadata.session_end_date].append",
+        "isinstance",
+        "item.observation_directory.as_posix",
+        "item.source_path.as_posix",
+        "item.source_path.with_suffix",
+        "len",
+        "list",
+        "location.name.casefold",
+        "matches.append",
+        "math.atan2",
+        "math.cos",
+        "math.isfinite",
+        "math.radians",
+        "math.sin",
+        "math.sqrt",
+        "max",
+        "metadata_values[0].casefold",
+        "min",
+        "normalize_archive_component",
+        "observation.stack.source_path.with_suffix",
+        "planned.append",
+        "planned.sort",
+        "problems.append",
+        "re.compile",
+        "session_end_date",
+        "set",
+        "sorted",
+        "str",
+        "string.Formatter",
+        "string.Formatter().parse",
+        "template.split",
+        "template.startswith",
+        "timedelta",
+        "tokens.append",
+        "tuple",
+        "unique.setdefault",
+        "value.strip",
+        "value.strip().casefold"
+      ],
+      "src/seestar_toolkit/archive/planning_models.py": [
+        "dataclass"
+      ],
+      "src/seestar_toolkit/archive/reconstruction.py": [
+        "ObservationCompatibility",
+        "ObservationReconstructionResult",
+        "ReconstructedObservation",
+        "TimestampEvidence",
+        "_FILENAME_TIMESTAMP.finditer",
+        "_FrameEvidence",
+        "_STACK_COUNT.match",
+        "_association_is_compatible",
+        "_capture_mode_is_compatible",
+        "_compatibility",
+        "_compatibility_key",
+        "_filename_timestamp",
+        "_frame_problems",
+        "_frame_semantic_order",
+        "_lights_only_group",
+        "_lights_only_observations",
+        "_metadata_is_compatible",
+        "_normalise_datetime",
+        "_observation_sort_key",
+        "_relative_path",
+        "_stack_count",
+        "_stack_metadata_problem",
+        "_stack_observation",
+        "_timestamp_evidence",
+        "_unresolved_light_observation",
+        "any",
+        "compatible_groups.items",
+        "compatible_groups[key[0], round(key[1], 6), key[2], mode if mode is not None else -1].append",
+        "dataclass",
+        "datetime.strptime",
+        "defaultdict",
+        "inspection.filter_name.strip",
+        "inspection.filter_name.strip().casefold",
+        "int",
+        "match.group",
+        "math.isclose",
+        "math.isfinite",
+        "max",
+        "min",
+        "observations.append",
+        "observations.extend",
+        "observations.sort",
+        "path.as_posix",
+        "path.relative_to",
+        "path.relative_to(root).as_posix",
+        "pending_lights.append",
+        "problems.append",
+        "re.compile",
+        "round",
+        "sorted",
+        "target.strip",
+        "target.strip().casefold",
+        "timedelta",
+        "tuple",
+        "unresolved.append",
+        "value.astimezone",
+        "value.astimezone(UTC).replace",
+        "zip"
+      ],
+      "src/seestar_toolkit/archive/reconstruction_models.py": [
+        "auto",
+        "dataclass"
+      ],
+      "src/seestar_toolkit/archive/target_comparison.py": [
+        "directory_target.casefold",
+        "directory_target.casefold().endswith",
+        "len"
+      ],
+      "src/seestar_toolkit/batch.py": [
+        "BatchConversionResult",
+        "BatchFailure",
+        "BatchSuccess",
+        "Path",
+        "ValueError",
+        "convert_fits_to_tiff",
+        "dataclass",
+        "destination_directory.exists",
+        "destination_directory.is_dir",
+        "destination_directory.mkdir",
+        "failures.append",
+        "len",
+        "path.is_file",
+        "path.suffix.lower",
+        "sorted",
+        "source_directory.exists",
+        "source_directory.is_dir",
+        "source_directory.iterdir",
+        "str",
+        "successes.append",
+        "tuple"
+      ],
+      "src/seestar_toolkit/cli.py": [
+        "'; '.join",
+        "ArchiveConfigError",
+        "PreparedSeestarArchive",
+        "_explicit_location",
+        "_print_archive_plan",
+        "_print_archive_result",
+        "_replan_with_manual_location",
+        "_resolve_interactive_location",
+        "_run_archive",
+        "action.name.lower",
+        "answer.casefold",
+        "archive_parser.add_argument",
+        "argparse.ArgumentParser",
+        "batch_parser.add_argument",
+        "build_parser",
+        "collision_policy.name.lower",
+        "configure_logging",
+        "convert_fits_directory",
+        "convert_fits_to_tiff",
+        "convert_parser.add_argument",
+        "execute_prepared_seestar_archive",
+        "input",
+        "input('Location name (blank for unknown): ').strip",
+        "input(f'Location matched: {current}. Use this location? [Y/n] ').strip",
+        "item.outcome.name.lower",
+        "iter",
+        "len",
+        "load_archive_config",
+        "logging.basicConfig",
+        "next",
+        "parser.add_argument",
+        "parser.add_subparsers",
+        "parser.error",
+        "parser.parse_args",
+        "parser.print_help",
+        "plan_seestar_archive",
+        "planned_index_paths",
+        "prepare_seestar_archive",
+        "print",
+        "result.status.name.lower",
+        "subparsers.add_parser",
+        "sum",
+        "sys.stdin.isatty",
+        "value.strip"
+      ],
+      "src/seestar_toolkit/conversion.py": [
+        "Path",
+        "ValueError",
+        "demosaic",
+        "inspect_fits",
+        "normalize_rgb_layout",
+        "read_fits_image",
+        "write_tiff"
+      ],
+      "src/seestar_toolkit/fits/__init__.py": [],
+      "src/seestar_toolkit/fits/exceptions.py": [],
+      "src/seestar_toolkit/fits/inspector.py": [
+        "FitsInspection",
+        "_classify_image",
+        "_read_datetime",
+        "_read_float",
+        "_read_int",
+        "_read_text",
+        "datetime.fromisoformat",
+        "float",
+        "header.get",
+        "image_type.casefold",
+        "int",
+        "normalised_value.endswith",
+        "read_fits_image",
+        "str",
+        "str(value).strip",
+        "text.upper"
+      ],
+      "src/seestar_toolkit/fits/models.py": [
+        "auto",
+        "dataclass"
+      ],
+      "src/seestar_toolkit/fits/reader.py": [
+        "FitsImageData",
+        "InvalidFitsFileError",
+        "MissingImageDataError",
+        "Path",
+        "data.copy",
+        "enumerate",
+        "fits.open",
+        "hdu.header.copy",
+        "np.asarray"
+      ],
+      "src/seestar_toolkit/imaging/__init__.py": [],
+      "src/seestar_toolkit/imaging/demosaic.py": [
+        "ValueError",
+        "cv2.cvtColor"
+      ],
+      "src/seestar_toolkit/imaging/rgb.py": [
+        "ValueError",
+        "np.moveaxis"
+      ],
+      "src/seestar_toolkit/models.py": [
+        "ValidationMessage",
+        "_make_json_friendly",
+        "any",
+        "asdict",
+        "dataclass",
+        "field",
+        "isinstance",
+        "result.pop",
+        "self.messages.append",
+        "str",
+        "value.isoformat",
+        "value.items"
+      ],
+      "src/seestar_toolkit/tiff/__init__.py": [],
+      "src/seestar_toolkit/tiff/exceptions.py": [],
+      "src/seestar_toolkit/tiff/writer.py": [
+        "InvalidTiffImageError",
+        "Path",
+        "TiffWriteError",
+        "np.isfinite",
+        "np.isfinite(image).all",
+        "output_path.open",
+        "tifffile.imwrite"
+      ]
+    }
+  },
+  "network_probe_source": "import sys,json,runpy\nfrom pathlib import Path\nout=Path(sys.argv[1]);args=sys.argv[2:];events=[]\ndef hook(event,arguments):\n if event.startswith('socket.') or event in ('subprocess.Popen','os.system','os.posix_spawn'):\n  events.append(event)\n  raise RuntimeError('Network/process event blocked by local audit harness')\nsys.addaudithook(hook)\n# Synthetic audit event only: no socket, lookup, connection or packet is attempted.\ntry:sys.audit('socket.connect',None,('synthetic.invalid',0))\nexcept RuntimeError:pass\nassert events==['socket.connect'];events.clear()\nstatus=0\ntry:\n sys.argv=['seestar-toolkit',*args]\n runpy.run_module('seestar_toolkit',run_name='__main__')\nexcept SystemExit as ex:status=ex.code or 0\nfinally:out.write_text(json.dumps({'argv':args,'exit_code':status,'python_network_or_process_events':events,'synthetic_guard_selftest':'PASS; sys.audit only, no network I/O'},indent=2)+'\\n')\nraise SystemExit(status)\n",
+  "privacy_conclusion": {
+    "result": "No telemetry, analytics, update checking, external FITS/image metadata transmission or network service found in Toolkit source or observed instrumented paths",
+    "coverage": "All 33 source modules imports/call sites audited; six fresh installed module executions: help, version, convert, batch, archive dry-run, archive copy",
+    "method": "CPython sys.addaudithook before package import; rejects socket.* and subprocess/os.system/os.posix_spawn events. Hook self-test uses sys.audit only, no socket or DNS request. Actual events empty.",
+    "limitations": "Not packet capture or exhaustive native dependency binary audit. No universal claim about arbitrary third-party code or unexecuted inputs.",
+    "local_metadata": "CLI diagnostics/index files can contain user-selected paths and capture/GPS metadata locally; absence of transmission does not sanitize arbitrary user data. Reviewed synthetic metadata only in evidence.",
+    "setup_network": "Approved dependency downloads only, needed to create disposable uninstall environment; no network request introduced to test absence of network behaviour."
+  },
+  "permissions": {
+    "observed": "B unreadable input and unwritable destination return 1; EACCES diagnostic captured for destination; temporary modes restored. C successful user-authorised storage I/O is recorded evidence. D local operations succeeded.",
+    "macos_prompts": "CLI evidence does not establish GUI/TCC prompt state or permission database contents. Tool sandbox approvals are distinct from macOS privacy settings. No security settings changed or Full Disk Access requested/claimed necessary.",
+    "scope": "No unavailable storage paths accessed or enumerated in D."
+  },
+  "storage_audit": {
+    "A": "PASS",
+    "B": "PASS after preserved setup/harness remediation",
+    "C": "PASS after preserved different-device recovery; NAS PASS unchanged",
+    "original_device": "EIO and disappearance remain FAIL history; original physical-device cleanup remains unconfirmed environmental limitation",
+    "live_storage_needed": false,
+    "unresolved_live_storage_criteria": []
+  },
+  "project_validation": {
+    "pytest": "330 passed in 11.85s",
+    "ruff": "PASS",
+    "format": "37 files already formatted",
+    "public_inputs": "PASS 10 reviewed fixtures; clean public root; no oversized blobs",
+    "distribution": "PASS wheel and sdist inspection; wheel from sdist installed for D",
+    "whitespace": "PASS git diff --check and new-evidence whitespace verification"
+  },
+  "scope": "No production/tests/fixtures/CI/metadata changes, commit, push, release, tag, PyPI, public switch or Stage 9.3/9.4 work",
+  "cleanup": {
+    "owned_local_root_removed": true,
+    "runtime_venv_removed_during_test": true,
+    "tooling_build_sources_artifacts_config_generated_data_and_harnesses_removed": true,
+    "old_failed_device_cleanup": "Unconfirmed historical limitation; no D access attempted"
+  },
+  "closure_criteria": [
+    {
+      "id": 1,
+      "criterion": "Branch is `main`.",
+      "status": "PASS",
+      "evidence": "Git branch is main."
+    },
+    {
+      "id": 2,
+      "criterion": "Work starts at or after `398b771`.",
+      "status": "PASS",
+      "evidence": "HEAD remains 398b771; no commits made."
+    },
+    {
+      "id": 3,
+      "criterion": "Stage 9.2a remains COMPLETE.",
+      "status": "PASS",
+      "evidence": "User-confirmed formal 9.2a completion; baseline commit retained."
+    },
+    {
+      "id": 4,
+      "criterion": "Pending Stage 9.2a CHANGELOG entry is preserved.",
+      "status": "PASS",
+      "evidence": "CHANGELOG SHA-256 matches the opening checkpoint hash."
+    },
+    {
+      "id": 5,
+      "criterion": "Version remains 1.1.0.",
+      "status": "PASS",
+      "evidence": "Metadata and both installed entry points report 1.1.0."
+    },
+    {
+      "id": 6,
+      "criterion": "v1.1.0 remains unreleased.",
+      "status": "PASS",
+      "evidence": "Unreleased state preserved; no release action performed."
+    },
+    {
+      "id": 7,
+      "criterion": "Repository remains private.",
+      "status": "PASS",
+      "evidence": "User-confirmed private starting state preserved; no visibility action. No fresh remote query claimed."
+    },
+    {
+      "id": 8,
+      "criterion": "Stage 9.3 has not begun.",
+      "status": "PASS",
+      "evidence": "No Stage 9.3 work performed."
+    },
+    {
+      "id": 9,
+      "criterion": "Stage 9.4 has not begun.",
+      "status": "PASS",
+      "evidence": "No Stage 9.4 work performed."
+    },
+    {
+      "id": 10,
+      "criterion": "Representative supported Python is justified.",
+      "status": "PASS",
+      "evidence": "Supported native Homebrew Python 3.13 chosen as the representative interpreter."
+    },
+    {
+      "id": 11,
+      "criterion": "Exact patch version is recorded.",
+      "status": "PASS",
+      "evidence": "B/C/D record Python 3.13.15."
+    },
+    {
+      "id": 12,
+      "criterion": "Executable/provenance is recorded.",
+      "status": "PASS",
+      "evidence": "Exact Homebrew base executable recorded in B/C/D JSON."
+    },
+    {
+      "id": 13,
+      "criterion": "macOS version is recorded.",
+      "status": "PASS",
+      "evidence": "macOS 26.5.2 recorded."
+    },
+    {
+      "id": 14,
+      "criterion": "arm64 is confirmed.",
+      "status": "PASS",
+      "evidence": "arm64 confirmed by runtime provenance."
+    },
+    {
+      "id": 15,
+      "criterion": "Fresh venv is used.",
+      "status": "PASS",
+      "evidence": "B and D use fresh normal venvs; C recovery also used a fresh venv."
+    },
+    {
+      "id": 16,
+      "criterion": "Distribution artifact is installed.",
+      "status": "PASS",
+      "evidence": "Built release-format 1.1.0 wheel installed normally."
+    },
+    {
+      "id": 17,
+      "criterion": "No editable install is used.",
+      "status": "PASS",
+      "evidence": "B noneditable check and normal wheel installs; no editable install used."
+    },
+    {
+      "id": 18,
+      "criterion": "Development venv is not runtime proof.",
+      "status": "PASS",
+      "evidence": "Development Python runs project checks only, not installed runtime proof."
+    },
+    {
+      "id": 19,
+      "criterion": "Repository PYTHONPATH is not used.",
+      "status": "PASS",
+      "evidence": "Runtime environment removes repository PYTHONPATH; module probes use -I."
+    },
+    {
+      "id": 20,
+      "criterion": "Module resolves from representative site-packages.",
+      "status": "PASS",
+      "evidence": "B/C/D module paths resolve beneath temporary site-packages."
+    },
+    {
+      "id": 21,
+      "criterion": "Commands run outside checkout where practical.",
+      "status": "PASS",
+      "evidence": "Runtime commands execute from disposable local directories outside checkout."
+    },
+    {
+      "id": 22,
+      "criterion": "`seestar-toolkit --version` passes.",
+      "status": "PASS",
+      "evidence": "A/B/C both-entry evidence; normal installed D console version also passed."
+    },
+    {
+      "id": 23,
+      "criterion": "`python -m seestar_toolkit --version` passes.",
+      "status": "PASS",
+      "evidence": "A/B/C module --version returned 0."
+    },
+    {
+      "id": 24,
+      "criterion": "Both report 1.1.0.",
+      "status": "PASS",
+      "evidence": "Both entry points print seestar-toolkit 1.1.0."
+    },
+    {
+      "id": 25,
+      "criterion": "Top-level help passes.",
+      "status": "PASS",
+      "evidence": "Installed top-level help returns 0."
+    },
+    {
+      "id": 26,
+      "criterion": "Every public subcommand is inventoried.",
+      "status": "PASS",
+      "evidence": "convert, convert-batch and archive inventoried in A and final section D."
+    },
+    {
+      "id": 27,
+      "criterion": "Every public subcommand help is validated.",
+      "status": "PASS",
+      "evidence": "Both-entry help for all three commands passed in A/B."
+    },
+    {
+      "id": 28,
+      "criterion": "Exact public syntax is recorded for Stage 9.3.",
+      "status": "PASS",
+      "evidence": "Exact syntax/options in A evidence and final section D."
+    },
+    {
+      "id": 29,
+      "criterion": "Internal APIs are not presented as public CLI.",
+      "status": "PASS",
+      "evidence": "Archive Python APIs distinguished from the three public commands."
+    },
+    {
+      "id": 30,
+      "criterion": "Approved fixture is used.",
+      "status": "PASS",
+      "evidence": "Approved light.fit and manifest hash used in B."
+    },
+    {
+      "id": 31,
+      "criterion": "Installed convert succeeds.",
+      "status": "PASS",
+      "evidence": "B installed single success returned 0."
+    },
+    {
+      "id": 32,
+      "criterion": "Success exit status is correct.",
+      "status": "PASS",
+      "evidence": "Success exit 0 recorded."
+    },
+    {
+      "id": 33,
+      "criterion": "TIFF is created.",
+      "status": "PASS",
+      "evidence": "TIFF creation verified in B."
+    },
+    {
+      "id": 34,
+      "criterion": "TIFF is readable.",
+      "status": "PASS",
+      "evidence": "TIFF reopened with tifffile."
+    },
+    {
+      "id": 35,
+      "criterion": "Dimensions are correct.",
+      "status": "PASS",
+      "evidence": "Raw-derived output shape 1920 x 1080 x 3 verified."
+    },
+    {
+      "id": 36,
+      "criterion": "RGB structure is correct.",
+      "status": "PASS",
+      "evidence": "RGB photometric interpretation and array structure verified."
+    },
+    {
+      "id": 37,
+      "criterion": "16-bit output is confirmed.",
+      "status": "PASS",
+      "evidence": "uint16 confirmed in B; C also verifies 16 bits/sample."
+    },
+    {
+      "id": 38,
+      "criterion": "Source is unchanged.",
+      "status": "PASS",
+      "evidence": "B source hash unchanged."
+    },
+    {
+      "id": 39,
+      "criterion": "Existing-output behaviour is recorded.",
+      "status": "PASS",
+      "evidence": "Existing output rejected with exit 1 and unchanged bytes."
+    },
+    {
+      "id": 40,
+      "criterion": "Missing-input behaviour is recorded.",
+      "status": "PASS",
+      "evidence": "Missing input returns 1 with diagnostic."
+    },
+    {
+      "id": 41,
+      "criterion": "Invalid/unsupported behaviour is recorded where safely testable.",
+      "status": "PASS",
+      "evidence": "Malformed synthetic input and input/output type errors return 1."
+    },
+    {
+      "id": 42,
+      "criterion": "Temporary outputs are cleaned.",
+      "status": "PASS",
+      "evidence": "B local outputs removed; original failed-device leftovers remain the expressly accepted C environmental exception."
+    },
+    {
+      "id": 43,
+      "criterion": "Disposable batch tree is used.",
+      "status": "PASS",
+      "evidence": "B owned disposable batch tree used."
+    },
+    {
+      "id": 44,
+      "criterion": "Only approved fixtures populate it.",
+      "status": "PASS",
+      "evidence": "Only approved FITS copies; clearly synthetic malformed/unrelated sentinels exercise error/ignore handling."
+    },
+    {
+      "id": 45,
+      "criterion": "Multiple supported inputs are exercised.",
+      "status": "PASS",
+      "evidence": "Two .fit/.FITS inputs processed."
+    },
+    {
+      "id": 46,
+      "criterion": "Expected TIFF outputs are created.",
+      "status": "PASS",
+      "evidence": "Exactly two expected TIFFs verified."
+    },
+    {
+      "id": 47,
+      "criterion": "Sources remain intact.",
+      "status": "PASS",
+      "evidence": "Batch source snapshots unchanged."
+    },
+    {
+      "id": 48,
+      "criterion": "Unsupported/unrelated-file behaviour is recorded.",
+      "status": "PASS",
+      "evidence": "Text and nested input ignored; case-insensitive FITS suffixes accepted."
+    },
+    {
+      "id": 49,
+      "criterion": "Output-directory behaviour is correct.",
+      "status": "PASS",
+      "evidence": "Output directory created with existing parent; missing parent/file destination rejected."
+    },
+    {
+      "id": 50,
+      "criterion": "Success exit status is correct.",
+      "status": "PASS",
+      "evidence": "B successful batch returns 0."
+    },
+    {
+      "id": 51,
+      "criterion": "Error/partial behaviour is recorded.",
+      "status": "PASS",
+      "evidence": "Mixed batch retains two successes and returns 1; empty input returns 1."
+    },
+    {
+      "id": 52,
+      "criterion": "Repeated/existing-output behaviour is recorded.",
+      "status": "PASS",
+      "evidence": "Repeat and same-stem collisions return 1 while preserving outputs."
+    },
+    {
+      "id": 53,
+      "criterion": "Temporary data is cleaned.",
+      "status": "PASS",
+      "evidence": "B local batch tree removed; original failed-device cleanup exception remains explicit."
+    },
+    {
+      "id": 54,
+      "criterion": "Exact public archive CLI surface is audited.",
+      "status": "PASS",
+      "evidence": "A installed archive help and source audit agree."
+    },
+    {
+      "id": 55,
+      "criterion": "Source/destination semantics are recorded.",
+      "status": "PASS",
+      "evidence": "Explicit source/destination roots documented and exercised."
+    },
+    {
+      "id": 56,
+      "criterion": "Hierarchy/template semantics are recorded where exposed.",
+      "status": "PASS",
+      "evidence": "Actual session_end_date template/permutations validated; unsupported date token rejected."
+    },
+    {
+      "id": 57,
+      "criterion": "Plan/dry-run availability is recorded.",
+      "status": "PASS",
+      "evidence": "Public --dry-run verified."
+    },
+    {
+      "id": 58,
+      "criterion": "Mutating/apply availability is recorded.",
+      "status": "PASS",
+      "evidence": "Omitting --dry-run executes; no separate apply subcommand."
+    },
+    {
+      "id": 59,
+      "criterion": "Source/JPEG/stacked/location/session/index semantics are recorded.",
+      "status": "PASS",
+      "evidence": "A inventory plus B/C originals, JPEG retention, stacks, locations, observations and index evidence."
+    },
+    {
+      "id": 60,
+      "criterion": "Internal-only functionality is distinguished from CLI.",
+      "status": "PASS",
+      "evidence": "No invented public commands for internal APIs."
+    },
+    {
+      "id": 61,
+      "criterion": "Public dry-run is validated if exposed.",
+      "status": "PASS",
+      "evidence": "B/C dry-run commands return 0 and preserve snapshots."
+    },
+    {
+      "id": 62,
+      "criterion": "Disposable source is used for archive validation.",
+      "status": "PASS",
+      "evidence": "Only disposable approved light/stack copies used."
+    },
+    {
+      "id": 63,
+      "criterion": "Discovery/reconstruction result is correct for test data where applicable.",
+      "status": "PASS",
+      "evidence": "One matched IC 434 observation with one retained light and stack count 195 verified."
+    },
+    {
+      "id": 64,
+      "criterion": "Planned hierarchy matches design where applicable.",
+      "status": "PASS",
+      "evidence": "Plans match actual target/location/session_end_date hierarchy and observation_01."
+    },
+    {
+      "id": 65,
+      "criterion": "+12-hour rule is verified where applicable.",
+      "status": "PASS",
+      "evidence": "Installed representative date plus full unit suite test_session_end_date_uses_twelve_hour_rule boundary cases."
+    },
+    {
+      "id": 66,
+      "criterion": "`session_01` is verified where applicable.",
+      "status": "N/A",
+      "evidence": "Literal session_01 is not implemented; user confirms observation_01 is authoritative and it is verified in B/C. No alias feature added."
+    },
+    {
+      "id": 67,
+      "criterion": "`seestar_stacked` is verified where applicable.",
+      "status": "PASS",
+      "evidence": "Native stack originals/TIFFs verified in seestar_stacked."
+    },
+    {
+      "id": 68,
+      "criterion": "Dry-run causes no unintended mutation.",
+      "status": "PASS",
+      "evidence": "B file hashes and C complete file/directory snapshots unchanged during dry-run."
+    },
+    {
+      "id": 69,
+      "criterion": "Public mutating operation is tested if exposed.",
+      "status": "PASS",
+      "evidence": "Installed archive copy and move passed in B and replacement C."
+    },
+    {
+      "id": 70,
+      "criterion": "Dry-run is inspected first where available.",
+      "status": "PASS",
+      "evidence": "Dry-run inspected before each tested archive mutation."
+    },
+    {
+      "id": 71,
+      "criterion": "Exact disposable roots are safety-checked.",
+      "status": "PASS",
+      "evidence": "Resolved containment/disjointness/symlink/device checks recorded; no live storage needed in D."
+    },
+    {
+      "id": 72,
+      "criterion": "Executed hierarchy/files/actions match plan where applicable.",
+      "status": "PASS",
+      "evidence": "Expected original/TIFF/index paths and source actions verified."
+    },
+    {
+      "id": 73,
+      "criterion": "Nothing outside disposable roots is modified.",
+      "status": "PASS",
+      "evidence": "Recorded guarded destinations and snapshots show only owned roots used; not a whole-system monitoring claim."
+    },
+    {
+      "id": 74,
+      "criterion": "Archive test data is cleaned.",
+      "status": "PASS",
+      "evidence": "B, NAS and replacement archive data cleaned; old failed-device partial setup remains the explicitly accepted environmental limitation."
+    },
+    {
+      "id": 75,
+      "criterion": "Actual config implementation is audited.",
+      "status": "PASS",
+      "evidence": "Read-only TOML loader and CLI reviewed in A/D."
+    },
+    {
+      "id": 76,
+      "criterion": "Expected config path is verified or discrepancy recorded.",
+      "status": "PASS",
+      "evidence": "Path.home()/.config/seestar-toolkit/config.toml verified; XDG variable is not consulted."
+    },
+    {
+      "id": 77,
+      "criterion": "Missing-config behaviour is validated.",
+      "status": "PASS",
+      "evidence": "Missing explicit config returns 1; absent implicit default verified in labelled installed-code harness."
+    },
+    {
+      "id": 78,
+      "criterion": "Read/write/create behaviour is validated where exposed.",
+      "status": "PASS",
+      "evidence": "Exposed reads verified and config hashes unchanged; create/write persistence is not exposed."
+    },
+    {
+      "id": 79,
+      "criterion": "Malformed config behaviour is validated.",
+      "status": "PASS",
+      "evidence": "Malformed TOML returns 1 with useful diagnostic."
+    },
+    {
+      "id": 80,
+      "criterion": "Real user config is untouched.",
+      "status": "PASS",
+      "evidence": "Direct archive invocations use explicit disposable --config; real config not read or written."
+    },
+    {
+      "id": 81,
+      "criterion": "Temporary isolated config is used where practical.",
+      "status": "PASS",
+      "evidence": "Disposable config; Path.home patch only in separately labelled missing-default API harness."
+    },
+    {
+      "id": 82,
+      "criterion": "Saved-location behaviour is validated where exposed.",
+      "status": "PASS",
+      "evidence": "Synthetic saved-location match and real PTY acceptance verified."
+    },
+    {
+      "id": 83,
+      "criterion": "Fallback/unknown location behaviour is validated where exposed.",
+      "status": "PASS",
+      "evidence": "Unknown fallback, manual naming and explicit CLI precedence verified."
+    },
+    {
+      "id": 84,
+      "criterion": "No personal GPS enters committed evidence.",
+      "status": "PASS",
+      "evidence": "Only approved synthetic coordinates/identifiers enter evidence."
+    },
+    {
+      "id": 85,
+      "criterion": "No unexpected external geocoding/network dependency exists.",
+      "status": "PASS",
+      "evidence": "Local distance matching; no geocoder call/import; D runtime network events empty."
+    },
+    {
+      "id": 86,
+      "criterion": "Writable local operation succeeds.",
+      "status": "PASS",
+      "evidence": "Local conversion/archive and D uninstall-data operations succeed."
+    },
+    {
+      "id": 87,
+      "criterion": "Paths containing spaces are exercised.",
+      "status": "PASS",
+      "evidence": "Input, output, source and location names with spaces tested."
+    },
+    {
+      "id": 88,
+      "criterion": "Nested paths are exercised.",
+      "status": "PASS",
+      "evidence": "Nested local/archive paths tested."
+    },
+    {
+      "id": 89,
+      "criterion": "Existing destination behaviour is recorded.",
+      "status": "PASS",
+      "evidence": "Existing TIFF rejection, identical FITS skip, explicit collision/error/overwrite recorded."
+    },
+    {
+      "id": 90,
+      "criterion": "Missing destination creation is validated where expected.",
+      "status": "PASS",
+      "evidence": "Batch and archive directory creation verified; single missing-parent error documented."
+    },
+    {
+      "id": 91,
+      "criterion": "Non-existent input behaviour is validated.",
+      "status": "PASS",
+      "evidence": "Missing single/batch/archive inputs return 1."
+    },
+    {
+      "id": 92,
+      "criterion": "File/directory type errors are validated where relevant.",
+      "status": "PASS",
+      "evidence": "File/directory input, output and config mistakes return 1."
+    },
+    {
+      "id": 93,
+      "criterion": "Safe external/removable availability is assessed.",
+      "status": "PASS",
+      "evidence": "C recorded actual authorised mount/type before testing; no re-probe required in D."
+    },
+    {
+      "id": 94,
+      "criterion": "If available, only a disposable directory is used.",
+      "status": "PASS",
+      "evidence": "Only dedicated run-created directory used on each physical device."
+    },
+    {
+      "id": 95,
+      "criterion": "If available, representative operation passes or genuine failure is preserved.",
+      "status": "PASS",
+      "evidence": "Initial exFAT EIO retained; replacement FAT-family archive/cross-storage PASS."
+    },
+    {
+      "id": 96,
+      "criterion": "If unavailable, limitation is honestly recorded.",
+      "status": "PASS",
+      "evidence": "Old-device disappearance/unconfirmed cleanup and current expected absence explicitly recorded."
+    },
+    {
+      "id": 97,
+      "criterion": "Production astronomy archive is untouched.",
+      "status": "PASS",
+      "evidence": "No real captures or production archive accessed."
+    },
+    {
+      "id": 98,
+      "criterion": "Identifying volume path is not committed.",
+      "status": "PASS",
+      "evidence": "Only privacy-safe storage labels in evidence; no actual volume path."
+    },
+    {
+      "id": 99,
+      "criterion": "Safe mounted-network availability is assessed.",
+      "status": "PASS",
+      "evidence": "C recorded mounted smbfs at the authorised root."
+    },
+    {
+      "id": 100,
+      "criterion": "If available, only a disposable directory is used.",
+      "status": "PASS",
+      "evidence": "Only the dedicated NAS disposable directory used."
+    },
+    {
+      "id": 101,
+      "criterion": "If available, representative operation passes or genuine failure is preserved.",
+      "status": "PASS",
+      "evidence": "NAS single/batch/archive and both local directions passed; cleanup confirmed."
+    },
+    {
+      "id": 102,
+      "criterion": "If unavailable, limitation is honestly recorded.",
+      "status": "PASS",
+      "evidence": "Current expected NAS absence documented; historical PASS remains valid."
+    },
+    {
+      "id": 103,
+      "criterion": "No credentials are stored.",
+      "status": "PASS",
+      "evidence": "No NAS credentials/configuration read or recorded."
+    },
+    {
+      "id": 104,
+      "criterion": "Production NAS archive is untouched.",
+      "status": "PASS",
+      "evidence": "No production NAS archive accessed."
+    },
+    {
+      "id": 105,
+      "criterion": "Identifying NAS details are not committed.",
+      "status": "PASS",
+      "evidence": "No host/share/volume identity in evidence."
+    },
+    {
+      "id": 106,
+      "criterion": "Mounted I/O is distinguished from Toolkit network-service behaviour.",
+      "status": "PASS",
+      "evidence": "Mounted filesystem operations distinguished from Toolkit services/telemetry."
+    },
+    {
+      "id": 107,
+      "criterion": "Cross-storage is attempted where feasible.",
+      "status": "PASS",
+      "evidence": "Local-to/from NAS and replacement external directions executed in C."
+    },
+    {
+      "id": 108,
+      "criterion": "At least one different-root scenario passes where feasible.",
+      "status": "PASS",
+      "evidence": "Four recorded different-device directions pass."
+    },
+    {
+      "id": 109,
+      "criterion": "No same-filesystem assumption is introduced.",
+      "status": "PASS",
+      "evidence": "Local/external and local/NAS device identity comparisons prove distinct filesystems."
+    },
+    {
+      "id": 110,
+      "criterion": "Inability to test is recorded.",
+      "status": "PASS",
+      "evidence": "Initial external inability preserved and later recovery recorded; D does not require live devices."
+    },
+    {
+      "id": 111,
+      "criterion": "Missing input non-zero behaviour is validated.",
+      "status": "PASS",
+      "evidence": "Missing inputs return 1 with diagnostics."
+    },
+    {
+      "id": 112,
+      "criterion": "Unwritable destination is tested where safely reproducible.",
+      "status": "PASS",
+      "evidence": "B chmod-based unwritable destination returns 1/EACCES; modes restored."
+    },
+    {
+      "id": 113,
+      "criterion": "File-vs-directory error is tested where relevant.",
+      "status": "PASS",
+      "evidence": "B file-versus-directory errors verified."
+    },
+    {
+      "id": 114,
+      "criterion": "Invalid config is tested where relevant.",
+      "status": "PASS",
+      "evidence": "B missing/malformed/directory config errors verified."
+    },
+    {
+      "id": 115,
+      "criterion": "Unsupported/malformed input is tested.",
+      "status": "PASS",
+      "evidence": "B deliberately invalid FITS returns operational failure."
+    },
+    {
+      "id": 116,
+      "criterion": "Anticipated errors provide useful diagnostics.",
+      "status": "PASS",
+      "evidence": "Captured expected errors are diagnostic, without CLI traceback; separate harness traceback preserved as harness failure."
+    },
+    {
+      "id": 117,
+      "criterion": "No unintended source loss occurs.",
+      "status": "PASS",
+      "evidence": "Input hashes preserved for copy/failures; successful moves retain identical archived originals; no Toolkit-caused loss demonstrated."
+    },
+    {
+      "id": 118,
+      "criterion": "Temporary permissions are restored.",
+      "status": "PASS",
+      "evidence": "B records restoration before owned-root cleanup."
+    },
+    {
+      "id": 119,
+      "criterion": "Exit 0 is verified for success.",
+      "status": "PASS",
+      "evidence": "Installed successful operations return 0."
+    },
+    {
+      "id": 120,
+      "criterion": "Exit 1 is verified for operational failure.",
+      "status": "PASS",
+      "evidence": "Expected runtime/config/filesystem/collision failures return 1."
+    },
+    {
+      "id": 121,
+      "criterion": "Exit 2 is verified for usage error.",
+      "status": "PASS",
+      "evidence": "Missing arguments and unknown option return 2."
+    },
+    {
+      "id": 122,
+      "criterion": "Any discrepancy is treated as a finding.",
+      "status": "PASS",
+      "evidence": "Setup/harness failures and storage EIO preserved; no unexplained exit discrepancy hidden."
+    },
+    {
+      "id": 123,
+      "criterion": "No telemetry is found.",
+      "status": "PASS",
+      "evidence": "No telemetry found in all-module source audit or six instrumented runtime paths; stated audit limits apply."
+    },
+    {
+      "id": 124,
+      "criterion": "No analytics is found.",
+      "status": "PASS",
+      "evidence": "No analytics imports/calls/events found in the same scoped audit."
+    },
+    {
+      "id": 125,
+      "criterion": "No update checking is found.",
+      "status": "PASS",
+      "evidence": "No updater/version-network lookup; package version comes from local metadata."
+    },
+    {
+      "id": 126,
+      "criterion": "No external FITS/image metadata transmission is found.",
+      "status": "PASS",
+      "evidence": "No external image/FITS metadata transmission found; local indexes may retain metadata by design."
+    },
+    {
+      "id": 127,
+      "criterion": "No network access is introduced for validation.",
+      "status": "PASS",
+      "evidence": "No network request introduced for runtime privacy proof. Explicit setup downloads are separated from functional/audit traffic."
+    },
+    {
+      "id": 128,
+      "criterion": "Mounted network I/O is characterised accurately.",
+      "status": "PASS",
+      "evidence": "SMB filesystem I/O is user-selected storage, not Toolkit telemetry."
+    },
+    {
+      "id": 129,
+      "criterion": "Unexpected network behaviour is release-blocking.",
+      "status": "PASS",
+      "evidence": "Unexpected network events would fail the local audit; none observed; remain release-blocking if found."
+    },
+    {
+      "id": 130,
+      "criterion": "Observed macOS permission requirements are recorded.",
+      "status": "PASS",
+      "evidence": "B permission denial and C authorised I/O recorded; GUI/TCC prompt state not inferred from CLI logs."
+    },
+    {
+      "id": 131,
+      "criterion": "Privacy controls are not bypassed.",
+      "status": "PASS",
+      "evidence": "No macOS security settings changed; sandbox approvals are not TCC bypasses."
+    },
+    {
+      "id": 132,
+      "criterion": "Full Disk Access is not claimed necessary without evidence.",
+      "status": "PASS",
+      "evidence": "No Full Disk Access request or unsupported requirement claim."
+    },
+    {
+      "id": 133,
+      "criterion": "`deactivate` behaviour is recorded.",
+      "status": "PASS",
+      "evidence": "D subshell activation/deactivate restores PATH and unsets VIRTUAL_ENV; installation remains."
+    },
+    {
+      "id": 134,
+      "criterion": "package/venv removal behaviour is recorded.",
+      "status": "PASS",
+      "evidence": "D pip uninstall removes console/module; subsequent owned venv removal verified."
+    },
+    {
+      "id": 135,
+      "criterion": "Config persistence after uninstall is understood.",
+      "status": "PASS",
+      "evidence": "D config hash unchanged after uninstall."
+    },
+    {
+      "id": 136,
+      "criterion": "Separate config removal is understood.",
+      "status": "PASS",
+      "evidence": "D separate config deletion verified without changing generated/archive data."
+    },
+    {
+      "id": 137,
+      "criterion": "User/archive data is not automatically removed.",
+      "status": "PASS",
+      "evidence": "D all source/generated/archive hashes unchanged after package uninstall and venv removal."
+    },
+    {
+      "id": 138,
+      "criterion": "Development venv is untouched.",
+      "status": "PASS",
+      "evidence": "Only disposable runtime/build venvs removed; development venv not modified by dependency operations."
+    },
+    {
+      "id": 139,
+      "criterion": "Real user config is untouched.",
+      "status": "PASS",
+      "evidence": "Real user config untouched throughout; D uses explicit disposable path."
+    },
+    {
+      "id": 140,
+      "criterion": "Installed CLI inventory is committed in development evidence.",
+      "status": "FAIL",
+      "evidence": "Installed inventory is written in proposed development evidence but not committed; no-commit instruction intentionally leaves this gate unsatisfied."
+    },
+    {
+      "id": 141,
+      "criterion": "Environment provenance is recorded.",
+      "status": "PASS",
+      "evidence": "B/C/D exact Python/macOS/architecture/artifact/isolation recorded."
+    },
+    {
+      "id": 142,
+      "criterion": "Conversion evidence is recorded.",
+      "status": "PASS",
+      "evidence": "B and C pixel/source/exit evidence retained."
+    },
+    {
+      "id": 143,
+      "criterion": "Batch evidence is recorded.",
+      "status": "PASS",
+      "evidence": "B and C batch evidence retained."
+    },
+    {
+      "id": 144,
+      "criterion": "Archive evidence/limitations are recorded.",
+      "status": "PASS",
+      "evidence": "B/C archive results and original failed-device limitation retained."
+    },
+    {
+      "id": 145,
+      "criterion": "Storage evidence/limitations are recorded.",
+      "status": "PASS",
+      "evidence": "C initial failure, NAS PASS, replacement PASS and current unavailability retained."
+    },
+    {
+      "id": 146,
+      "criterion": "Error/exit evidence is recorded.",
+      "status": "PASS",
+      "evidence": "B operational/usage diagnostics and D post-uninstall module absence recorded."
+    },
+    {
+      "id": 147,
+      "criterion": "Privacy/permission/uninstall observations are recorded.",
+      "status": "PASS",
+      "evidence": "D source/runtime privacy, bounded macOS observations and uninstall facts recorded."
+    },
+    {
+      "id": 148,
+      "criterion": "No private paths/credentials/GPS are committed.",
+      "status": "PASS",
+      "evidence": "New evidence privacy scan passes; A/B/C hashes preserved; no private storage/home/credential details introduced."
+    },
+    {
+      "id": 149,
+      "criterion": "Completion report is created.",
+      "status": "PASS",
+      "evidence": "Final A\u2013N completion report appended, preserving checkpoint history."
+    },
+    {
+      "id": 150,
+      "criterion": "Structured evidence is added if useful.",
+      "status": "PASS",
+      "evidence": "A/B/C retained; D structured evidence and individual closure audit added."
+    },
+    {
+      "id": 151,
+      "criterion": "PACKAGING.md is updated where needed.",
+      "status": "PASS",
+      "evidence": "PACKAGING.md updated with current audit/uninstall/privacy facts and formal gates."
+    },
+    {
+      "id": 152,
+      "criterion": "PROJECT_Notes.md is updated where needed.",
+      "status": "PASS",
+      "evidence": "PROJECT_Notes.md updated to technically validated STARTED, pending independent closure gates."
+    },
+    {
+      "id": 153,
+      "criterion": "Final user docs are not authored.",
+      "status": "PASS",
+      "evidence": "No final User Guide/Quick Start/PDF authored."
+    },
+    {
+      "id": 154,
+      "criterion": "Full pytest passes.",
+      "status": "PASS",
+      "evidence": "Final pytest: 330 passed in 11.85s."
+    },
+    {
+      "id": 155,
+      "criterion": "Ruff passes.",
+      "status": "PASS",
+      "evidence": "Final Ruff: all checks passed."
+    },
+    {
+      "id": 156,
+      "criterion": "Formatting passes.",
+      "status": "PASS",
+      "evidence": "Configured formatter: 37 files already formatted."
+    },
+    {
+      "id": 157,
+      "criterion": "`git diff --check` passes.",
+      "status": "PASS",
+      "evidence": "Final git diff --check and new-evidence whitespace checks pass."
+    },
+    {
+      "id": 158,
+      "criterion": "Public-fixture/history validation passes.",
+      "status": "PASS",
+      "evidence": "Ten approved fixture hashes, clean public root, no oversized blobs pass."
+    },
+    {
+      "id": 159,
+      "criterion": "Installed validator passes if added.",
+      "status": "N/A",
+      "evidence": "No persistent installed Stage 9.2b validator added. Temporary D probes passed and were removed; existing helpers have no live-storage dependency."
+    },
+    {
+      "id": 160,
+      "criterion": "Distribution validation passes where relevant.",
+      "status": "PASS",
+      "evidence": "D wheel and sdist metadata/content/privacy inspection pass; wheel built from sdist installed. Independent sdist runtime already established by unchanged 9.2a metadata/runtime."
+    },
+    {
+      "id": 161,
+      "criterion": "No unexpected generated artifacts are tracked.",
+      "status": "PASS",
+      "evidence": "No tracked build/venv/wheel/tar/pyc artifacts; all owned D temporary data removed."
+    },
+    {
+      "id": 162,
+      "criterion": "No unexpected private files are tracked.",
+      "status": "PASS",
+      "evidence": "Tracked public-input checks and changed-evidence privacy audit pass."
+    },
+    {
+      "id": 163,
+      "criterion": "Pre-approval working tree contains only expected changes.",
+      "status": "PASS",
+      "evidence": "Only expected development documentation/evidence and preserved CHANGELOG differ; index untouched."
+    },
+    {
+      "id": 164,
+      "criterion": "Genuine failures are preserved.",
+      "status": "PASS",
+      "evidence": "Every B setup/harness failure and C EIO/recovery remains preserved."
+    },
+    {
+      "id": 165,
+      "criterion": "Production changes occur only for proven defects.",
+      "status": "PASS",
+      "evidence": "No production changes; no demonstrated production defect."
+    },
+    {
+      "id": 166,
+      "criterion": "Production fixes receive automated tests.",
+      "status": "N/A",
+      "evidence": "No production fix was made, so fix-specific new regression tests are inapplicable; existing tests retained."
+    },
+    {
+      "id": 167,
+      "criterion": "Affected installed validation is rerun after fixes.",
+      "status": "N/A",
+      "evidence": "No production fix requiring affected installed rerun; D installed audit still passes."
+    },
+    {
+      "id": 168,
+      "criterion": "Full validation is rerun after fixes.",
+      "status": "N/A",
+      "evidence": "No production fix requiring another full-suite rerun; final full project suite passes."
+    },
+    {
+      "id": 169,
+      "criterion": "No new feature work is introduced.",
+      "status": "PASS",
+      "evidence": "No new application feature added."
+    },
+    {
+      "id": 170,
+      "criterion": "No PyPI publication occurs.",
+      "status": "PASS",
+      "evidence": "No PyPI publication performed."
+    },
+    {
+      "id": 171,
+      "criterion": "No GitHub Release is created.",
+      "status": "PASS",
+      "evidence": "No GitHub Release created."
+    },
+    {
+      "id": 172,
+      "criterion": "No release tag is created.",
+      "status": "PASS",
+      "evidence": "No release tag created; local v1.1.0 tag absent."
+    },
+    {
+      "id": 173,
+      "criterion": "Repository is not made public.",
+      "status": "PASS",
+      "evidence": "No visibility change; user-confirmed private state preserved."
+    },
+    {
+      "id": 174,
+      "criterion": "No final release ZIP is created.",
+      "status": "PASS",
+      "evidence": "No final release ZIP assembled; disposable inspection artifacts removed."
+    },
+    {
+      "id": 175,
+      "criterion": "Stage 9.3 implementation does not begin.",
+      "status": "PASS",
+      "evidence": "Stage 9.3 not begun."
+    },
+    {
+      "id": 176,
+      "criterion": "Stage 9.4 implementation does not begin.",
+      "status": "PASS",
+      "evidence": "Stage 9.4 not begun."
+    },
+    {
+      "id": 177,
+      "criterion": "Codex returns a complete closure report.",
+      "status": "PASS",
+      "evidence": "Complete A\u2013N report delivered for review."
+    },
+    {
+      "id": 178,
+      "criterion": "All criteria are individually assessed.",
+      "status": "PASS",
+      "evidence": "All IDs 1\u2013186 individually assessed and mechanically checked for completeness."
+    },
+    {
+      "id": 179,
+      "criterion": "Every N/A has explicit justification.",
+      "status": "PASS",
+      "evidence": "Every N/A includes explicit implementation/scope-based justification."
+    },
+    {
+      "id": 180,
+      "criterion": "Unsatisfied criteria are listed.",
+      "status": "PASS",
+      "evidence": "Unsatisfied IDs 140, 182, 183, 184, 185 explicitly listed."
+    },
+    {
+      "id": 181,
+      "criterion": "Codex does not commit.",
+      "status": "PASS",
+      "evidence": "No commit performed."
+    },
+    {
+      "id": 182,
+      "criterion": "ChatGPT independently reviews evidence.",
+      "status": "FAIL",
+      "evidence": "Independent ChatGPT review of this final D report has not yet occurred."
+    },
+    {
+      "id": 183,
+      "criterion": "User commits only after explicit approval.",
+      "status": "FAIL",
+      "evidence": "The approved user closure commit does not yet exist; awaiting independent review and explicit approval."
+    },
+    {
+      "id": 184,
+      "criterion": "Post-commit repository state is verified.",
+      "status": "FAIL",
+      "evidence": "No closure commit exists to verify post-commit state against."
+    },
+    {
+      "id": 185,
+      "criterion": "Exact final commit receives green CI where required.",
+      "status": "FAIL",
+      "evidence": "No exact final Stage 9.2b commit/CI result exists. Current-base evidence cannot substitute for the later gate."
+    },
+    {
+      "id": 186,
+      "criterion": "Stage 9.2b is not marked COMPLETE until all applicable gates pass.",
+      "status": "PASS",
+      "evidence": "Stage remains STARTED; no premature COMPLETE claim."
+    }
+  ],
+  "closure_counts": {
+    "PASS": 176,
+    "FAIL": 5,
+    "N/A": 5
+  },
+  "unsatisfied_criteria": [
+    140,
+    182,
+    183,
+    184,
+    185
+  ],
+  "final_evidence_validation": {
+    "result": "PASS",
+    "prior_A_B_C_spec_CHANGELOG_and_report_prefix_hashes": "unchanged",
+    "criterion_ids": "exactly 1\u2013186, no omissions/duplicates; 176 PASS, 5 FAIL, 5 N/A",
+    "privacy": "No actual storage/home paths, private storage names or credential marker in Stage 9.2b evidence/live docs",
+    "git_scope": "exact expected tracked modifications and untracked Stage 9.2b documents; index unchanged",
+    "local_cleanup": "D root absent; no live storage check performed"
+  }
+}

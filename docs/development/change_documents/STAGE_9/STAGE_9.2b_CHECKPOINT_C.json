@@ -1,0 +1,989 @@
+{
+  "checkpoint": "C",
+  "status": "FAIL \u2014 external filesystem EIO; remaining external validation and on-device cleanup incomplete",
+  "build": {
+    "wheel": "seestar_toolkit-1.1.0-py3-none-any.whl",
+    "bytes": 46318,
+    "sha256": "e66363bd682fd405f785946f8126db3f8492c3e00a58d102f1a906358534cb9c",
+    "inspection": "PASS 39 allowed members, metadata/license/entry point/privacy",
+    "source_equality": "33 modules byte identical",
+    "build": "build 1.6.1; setuptools 84.0.0; packaging 26.3; pyproject_hooks 1.2.0",
+    "build_command": "<buildenv>/bin/python -I -m build --wheel --no-isolation --outdir <local-temp>/artifacts <local-temp>/source",
+    "installation": "normal pip install of this wheel into fresh Homebrew Python 3.13 venv; no editable install; downloads only during setup"
+  },
+  "preservation_sha256": {
+    "docs/development/CHANGELOG.md": "8e96013e345524cb84ad076ab5abb554f5babee6f46133622b306284e66ee0c7",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b.md": "5d45a10a340e8885224a861f4cb45f4daf3a7d8a27adc3b59c254d6d07b916db",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md": "cdf24238a4733da56e942d7b79ab7d2d67efaf982c47417185f40a278258b1b2",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_A.json": "657202492d554d5f28419b97a778459f4f0435d5b68ff8383f833cd312c306f3",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_B.json": "de11a63e2f831622bb9acfb5570feb2cb71b36daf26921fdfc585422d1f8257e"
+  },
+  "attempts": [
+    {
+      "checkpoint": "C",
+      "status": "FAIL",
+      "commands": [
+        {
+          "name": "pip dependency check",
+          "command": [
+            "<local-temp>/runtime/bin/python",
+            "-I",
+            "-m",
+            "pip",
+            "--isolated",
+            "--no-cache-dir",
+            "check"
+          ],
+          "exit_code": 0,
+          "stdout": "No broken requirements found.\n",
+          "stderr": ""
+        },
+        {
+          "name": "console version",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "--version"
+          ],
+          "exit_code": 0,
+          "stdout": "seestar-toolkit 1.1.0\n",
+          "stderr": ""
+        },
+        {
+          "name": "module version",
+          "command": [
+            "<local-temp>/runtime/bin/python",
+            "-I",
+            "-m",
+            "seestar_toolkit",
+            "--version"
+          ],
+          "exit_code": 0,
+          "stdout": "seestar-toolkit 1.1.0\n",
+          "stderr": ""
+        },
+        {
+          "name": "external/removable test volume single",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "convert",
+            "<external/removable test volume>/seestar-toolkit-stage92b-test/inputs with spaces/input.fit",
+            "<external/removable test volume>/seestar-toolkit-stage92b-test/single outputs/result.tiff"
+          ],
+          "exit_code": 0,
+          "stdout": "Created TIFF: <external/removable test volume>/seestar-toolkit-stage92b-test/single outputs/result.tiff\n",
+          "stderr": ""
+        },
+        {
+          "name": "external/removable test volume batch",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "convert-batch",
+            "<external/removable test volume>/seestar-toolkit-stage92b-test/batch inputs",
+            "<external/removable test volume>/seestar-toolkit-stage92b-test/batch outputs"
+          ],
+          "exit_code": 0,
+          "stdout": "Created TIFF: <external/removable test volume>/seestar-toolkit-stage92b-test/batch outputs/first.tiff\nCreated TIFF: <external/removable test volume>/seestar-toolkit-stage92b-test/batch outputs/second.tiff\nBatch complete: 2 discovered, 2 converted, 0 failed\n",
+          "stderr": ""
+        }
+      ],
+      "assertions": [
+        {
+          "name": "fresh wheel runtime isolation",
+          "pass": true
+        },
+        {
+          "name": "no build dev dependencies",
+          "pass": true
+        },
+        {
+          "name": "all approved fixtures verified",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume disposable absent",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume contained",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume disposable absent",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume contained",
+          "pass": true
+        },
+        {
+          "name": "pip dependency check exit 0",
+          "pass": true
+        },
+        {
+          "name": "console version exit 0",
+          "pass": true
+        },
+        {
+          "name": "console version",
+          "pass": true
+        },
+        {
+          "name": "module version exit 0",
+          "pass": true
+        },
+        {
+          "name": "module version",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume write read",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume single exit 0",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume single independent pixels",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume single source unchanged",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume batch exit 0",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume exact batch outputs",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume batch sources unchanged",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume batch first independent pixels",
+          "pass": true
+        },
+        {
+          "name": "external/removable test volume batch second independent pixels",
+          "pass": true
+        }
+      ],
+      "storage": {
+        "external/removable test volume": {
+          "filesystem": "exfat",
+          "mounted": true,
+          "preexisting_disposable": false,
+          "writable_verified": true
+        },
+        "mounted network/NAS test volume": {
+          "filesystem": "smbfs",
+          "mounted": true,
+          "preexisting_disposable": false
+        }
+      },
+      "cleanup": {
+        "mounted network/NAS test volume": {
+          "removed": true,
+          "only_registered_created_paths_removed": true
+        },
+        "external/removable test volume": {
+          "removed": false,
+          "error": "Unexpected entries: cleanup refused"
+        }
+      },
+      "environment": {
+        "python": "3.13.15",
+        "base_executable": "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "macos": "26.5.2",
+        "architecture": "arm64",
+        "module": "<runtime>/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+        "dependencies": {
+          "numpy": "2.5.3",
+          "astropy-iers-data": "0.2026.9.14.0.56.43",
+          "packaging": "26.3",
+          "seestar-toolkit": "1.1.0",
+          "tifffile": "2026.9.9",
+          "pip": "26.2",
+          "astropy": "8.0.1",
+          "pyerfa": "2.0.1.5",
+          "PyYAML": "6.0.3",
+          "opencv-python-headless": "5.0.0.93"
+        }
+      },
+      "failure": "OSError: [Errno 5] Input/output error"
+    },
+    {
+      "checkpoint": "C",
+      "status": "PASS",
+      "commands": [
+        {
+          "name": "pip dependency check",
+          "command": [
+            "<local-temp>/runtime/bin/python",
+            "-I",
+            "-m",
+            "pip",
+            "--isolated",
+            "--no-cache-dir",
+            "check"
+          ],
+          "exit_code": 0,
+          "stdout": "No broken requirements found.\n",
+          "stderr": ""
+        },
+        {
+          "name": "console version",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "--version"
+          ],
+          "exit_code": 0,
+          "stdout": "seestar-toolkit 1.1.0\n",
+          "stderr": ""
+        },
+        {
+          "name": "module version",
+          "command": [
+            "<local-temp>/runtime/bin/python",
+            "-I",
+            "-m",
+            "seestar_toolkit",
+            "--version"
+          ],
+          "exit_code": 0,
+          "stdout": "seestar-toolkit 1.1.0\n",
+          "stderr": ""
+        },
+        {
+          "name": "mounted network/NAS test volume single",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "convert",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/inputs with spaces/input.fit",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/single outputs/result.tiff"
+          ],
+          "exit_code": 0,
+          "stdout": "Created TIFF: <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/single outputs/result.tiff\n",
+          "stderr": ""
+        },
+        {
+          "name": "mounted network/NAS test volume batch",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "convert-batch",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/batch inputs",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/batch outputs"
+          ],
+          "exit_code": 0,
+          "stdout": "Created TIFF: <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/batch outputs/first.tiff\nCreated TIFF: <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/batch outputs/second.tiff\nBatch complete: 2 discovered, 2 converted, 0 failed\n",
+          "stderr": ""
+        },
+        {
+          "name": "mounted network/NAS test volume copy dry-run",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "archive",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy source",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy archive",
+            "--config",
+            "<local-temp>/local data network/config.toml",
+            "--non-interactive",
+            "--source-action",
+            "copy",
+            "--dry-run"
+          ],
+          "exit_code": 0,
+          "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=unknown; date=20000101; destination=<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy archive/IC 434/unknown/20000101/observation_01\n  FITS <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy source/IC 434_sub/Light_IC 434.fit -> <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy archive/IC 434/unknown/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy archive/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff\n  FITS <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy source/IC 434/Stacked_195_IC 434.fit -> <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy archive/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy archive/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy archive/IC 434/INDEX.md\n",
+          "stderr": ""
+        },
+        {
+          "name": "mounted network/NAS test volume archive copy",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "archive",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy source",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/copy archive",
+            "--config",
+            "<local-temp>/local data network/config.toml",
+            "--non-interactive",
+            "--source-action",
+            "copy"
+          ],
+          "exit_code": 0,
+          "stdout": "Archive complete: 2 copied, 0 moved, 0 skipped identical, 0 original failures\nTIFFs: 2 created, 0 skipped/collided/failed\nIndexes: 1 created, 0 updated, 0 unchanged, 0 failed\n",
+          "stderr": ""
+        },
+        {
+          "name": "local to mounted network/NAS test volume",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "convert",
+            "<local-temp>/local data network/input.fit",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/cross outputs/from local.tiff"
+          ],
+          "exit_code": 0,
+          "stdout": "Created TIFF: <mounted network/NAS test volume>/seestar-toolkit-stage92b-test/cross outputs/from local.tiff\n",
+          "stderr": ""
+        },
+        {
+          "name": "mounted network/NAS test volume to local",
+          "command": [
+            "<local-temp>/runtime/bin/seestar-toolkit",
+            "convert",
+            "<mounted network/NAS test volume>/seestar-toolkit-stage92b-test/inputs with spaces/input.fit",
+            "<local-temp>/local data network/network return.tiff"
+          ],
+          "exit_code": 0,
+          "stdout": "Created TIFF: <local-temp>/local data network/network return.tiff\n",
+          "stderr": ""
+        }
+      ],
+      "assertions": [
+        {
+          "name": "fresh wheel runtime isolation",
+          "pass": true
+        },
+        {
+          "name": "no build dev dependencies",
+          "pass": true
+        },
+        {
+          "name": "all approved fixtures verified",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume disposable absent",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume contained",
+          "pass": true
+        },
+        {
+          "name": "pip dependency check exit 0",
+          "pass": true
+        },
+        {
+          "name": "console version exit 0",
+          "pass": true
+        },
+        {
+          "name": "console version",
+          "pass": true
+        },
+        {
+          "name": "module version exit 0",
+          "pass": true
+        },
+        {
+          "name": "module version",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume write read",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume single exit 0",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume single independent pixels",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume single source unchanged",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume batch exit 0",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume exact batch outputs",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume batch sources unchanged",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume batch first independent pixels",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume batch second independent pixels",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume copy dry-run exit 0",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume copy plan",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume copy dry-run no mutation",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume archive copy exit 0",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume copy original hash equality",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume archive light copy independent pixels",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume archive stack copy independent pixels",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume copy index",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume copy source action",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume distinct local filesystem",
+          "pass": true
+        },
+        {
+          "name": "local to mounted network/NAS test volume exit 0",
+          "pass": true
+        },
+        {
+          "name": "local to mounted network/NAS test volume independent pixels",
+          "pass": true
+        },
+        {
+          "name": "local to mounted network/NAS test volume source unchanged",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume to local exit 0",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume to local independent pixels",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume to local source unchanged",
+          "pass": true
+        },
+        {
+          "name": "mounted network/NAS test volume no unexpected entries",
+          "pass": true
+        }
+      ],
+      "storage": {
+        "mounted network/NAS test volume": {
+          "filesystem": "smbfs",
+          "mounted": true,
+          "preexisting_disposable": false,
+          "writable_verified": true
+        }
+      },
+      "cleanup": {
+        "mounted network/NAS test volume": {
+          "removed": true,
+          "only_registered_created_paths_removed": true
+        }
+      },
+      "environment": {
+        "python": "3.13.15",
+        "base_executable": "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "macos": "26.5.2",
+        "architecture": "arm64",
+        "module": "<runtime>/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+        "dependencies": {
+          "numpy": "2.5.3",
+          "astropy-iers-data": "0.2026.9.14.0.56.43",
+          "packaging": "26.3",
+          "seestar-toolkit": "1.1.0",
+          "tifffile": "2026.9.9",
+          "pip": "26.2",
+          "astropy": "8.0.1",
+          "pyerfa": "2.0.1.5",
+          "PyYAML": "6.0.3",
+          "opencv-python-headless": "5.0.0.93"
+        }
+      }
+    }
+  ],
+  "external_cleanup_recovery": {
+    "reason": "Known in-flight fixture copy raised EIO before ownership registration; exact planned paths only",
+    "status": "FAIL",
+    "error": "AssertionError: "
+  },
+  "external_final_availability": {
+    "authorised_root_exists": false,
+    "authorised_root_is_mount": false,
+    "root_symlink": false,
+    "disposable_exists": false,
+    "disposable_symlink": false,
+    "lexical_containment": true
+  },
+  "findings": [
+    "External single/batch and source/pixel checks PASS before EIO during archive source preparation. Archive command not yet executed.",
+    "Initial cleanup refused the unregistered partial stack destination created by the failed copy. No unknown content was deleted.",
+    "Exact-known-path cleanup retry refused its mount guard; subsequent targeted metadata check confirmed authorised external root absent/unmounted. On-device leftovers cannot be confirmed removed.",
+    "NAS independent attempt PASS and dedicated directory removed.",
+    "External cross-storage and archive copy/move were not executed; no success inferred from NAS results.",
+    "A sandbox-only process lookup failed (sysmond service unavailable); approved scoped retry found no remaining validation process after it exited."
+  ],
+  "scope": [
+    "Only authorised mount metadata and own dedicated directories accessed; no broader mount/content enumeration",
+    "No configure/remount, credentials, telemetry inference, production changes, commits, pushes or Checkpoint D/9.3/9.4",
+    "Mounted SMB filesystem I/O is distinct from application telemetry; broader privacy validation remains D"
+  ],
+  "pixel_oracle": "astropy FITS source; raw GRBG cv2.COLOR_BayerGB2RGB or native np.moveaxis(planes,0,-1); exact array equality, shape, uint16 RGB and 16 bits/sample checked via tifffile",
+  "validation": {
+    "ruff": "PASS",
+    "format": "37 files already formatted",
+    "pytest": "Not rerun: no production/test/tool changes; Checkpoint D not begun"
+  },
+  "cleanup": {
+    "network_disposable_removed": true,
+    "external_disposable_removed": "UNVERIFIED: volume absent after EIO; known run-created files may remain on device",
+    "local_temporary_root_removed": true
+  },
+  "external_known_created_or_attempted_files_relative_to_dedicated_directory": [
+    "inputs with spaces/input.fit",
+    "single outputs/result.tiff",
+    "batch inputs/first.fit",
+    "batch inputs/second.FITS",
+    "batch outputs/first.tiff",
+    "batch outputs/second.tiff",
+    "copy source/IC 434_sub/Light_IC 434.fit",
+    "copy source/IC 434/Stacked_195_IC 434.fit"
+  ],
+  "approved_fixture_manifest": {
+    "tests/data/reference/siril_stacked.fit": {
+      "bytes": 24888960,
+      "sha256": "f6910be9d8764ea81089136c8d8c8d838ab2e1c4ec00c1a8fad9215a6bf301fe"
+    },
+    "tests/data/reference/siril_stacked_mosaic.fit": {
+      "bytes": 5760,
+      "sha256": "a7336de08d58b23412c07e34504f5c4ab1048719ec61371c0c4082094049c115"
+    },
+    "tests/data/seestar/eq.fit": {
+      "bytes": 4152960,
+      "sha256": "73274ad5d6a392bb200ab339eeee0a64219036e435ee3accd85d49eb9a60f043"
+    },
+    "tests/data/seestar/light.fit": {
+      "bytes": 4152960,
+      "sha256": "cc3fd74ebb0e7d8c0c0c434c94a24be1e5536e1831888dc6f6d5bd4930fbe5c2"
+    },
+    "tests/data/seestar/mosaic.fit": {
+      "bytes": 4152960,
+      "sha256": "f12837b9c1afb8b5b752d4d37af0be017fd88b587955963d7ccf8f73e2eb7f3b"
+    },
+    "tests/data/seestar/mosaic_1.fit": {
+      "bytes": 4152960,
+      "sha256": "bb2fa89f818d05de6b4ee7288528fd7ce7fa84c8c3a1c9fa567b98e785b9bdb1"
+    },
+    "tests/data/seestar/mosaic_4.fit": {
+      "bytes": 4152960,
+      "sha256": "3e6e11e785bec9f18c8afeb74c23d49ec4241a128e67e738349a1c14881483fc"
+    },
+    "tests/data/seestar/mosaic_6.fit": {
+      "bytes": 4152960,
+      "sha256": "35d998177ddab20bdad12eec62204a20baf8dc1dc9b84339aeec23d90b56cf41"
+    },
+    "tests/data/seestar/stacked.fit": {
+      "bytes": 49775040,
+      "sha256": "add9d082a356ebe70bd97a7bbcb7ae86ee6dd192be9f04969d2facee1d65210d"
+    },
+    "tests/data/seestar/stacked_mosaic.fit": {
+      "bytes": 17925120,
+      "sha256": "8b730dd16e4ce03124b554f3a34f8cc07d0380fb1216b4988502de88576ba7bf"
+    }
+  },
+  "replacement_device_recovery": {
+    "status": "PASS",
+    "device": "replacement external/removable test volume",
+    "physical_identity": "Different physical device at same mount path, as explicitly confirmed by user; not inferred from path",
+    "commands": [
+      {
+        "name": "pip check",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "-m",
+          "pip",
+          "--isolated",
+          "--no-cache-dir",
+          "check"
+        ],
+        "exit_code": 0,
+        "stdout": "No broken requirements found.\n",
+        "stderr": ""
+      },
+      {
+        "name": "console version",
+        "command": [
+          "<local-temp>/runtime/bin/seestar-toolkit",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "seestar-toolkit 1.1.0\n",
+        "stderr": ""
+      },
+      {
+        "name": "module version",
+        "command": [
+          "<local-temp>/runtime/bin/python",
+          "-I",
+          "-m",
+          "seestar_toolkit",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "seestar-toolkit 1.1.0\n",
+        "stderr": ""
+      },
+      {
+        "name": "copy dry-run",
+        "command": [
+          "<local-temp>/runtime/bin/seestar-toolkit",
+          "archive",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/copy source",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/copy",
+          "--config",
+          "<local-temp>/local data/config.toml",
+          "--non-interactive",
+          "--source-action",
+          "copy",
+          "--dry-run"
+        ],
+        "exit_code": 0,
+        "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=unknown; date=20000101; destination=<replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/copy/IC 434/unknown/20000101/observation_01\n  FITS <replacement external/removable test volume>/seestar-toolkit-stage92b-test/copy source/IC 434_sub/Light_IC 434.fit -> <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/copy/IC 434/unknown/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/copy/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff\n  FITS <replacement external/removable test volume>/seestar-toolkit-stage92b-test/copy source/IC 434/Stacked_195_IC 434.fit -> <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/copy/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/copy/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/copy/IC 434/INDEX.md\n",
+        "stderr": ""
+      },
+      {
+        "name": "archive copy",
+        "command": [
+          "<local-temp>/runtime/bin/seestar-toolkit",
+          "archive",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/copy source",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/copy",
+          "--config",
+          "<local-temp>/local data/config.toml",
+          "--non-interactive",
+          "--source-action",
+          "copy"
+        ],
+        "exit_code": 0,
+        "stdout": "Archive complete: 2 copied, 0 moved, 0 skipped identical, 0 original failures\nTIFFs: 2 created, 0 skipped/collided/failed\nIndexes: 1 created, 0 updated, 0 unchanged, 0 failed\n",
+        "stderr": ""
+      },
+      {
+        "name": "move dry-run",
+        "command": [
+          "<local-temp>/runtime/bin/seestar-toolkit",
+          "archive",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/move source",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/move",
+          "--config",
+          "<local-temp>/local data/config.toml",
+          "--non-interactive",
+          "--source-action",
+          "move",
+          "--dry-run"
+        ],
+        "exit_code": 0,
+        "stdout": "Dry run: 1 observation(s); action=move; collision=skip_identical\nPlan observation_01: target=IC 434; location=unknown; date=20000101; destination=<replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/move/IC 434/unknown/20000101/observation_01\n  FITS <replacement external/removable test volume>/seestar-toolkit-stage92b-test/move source/IC 434_sub/Light_IC 434.fit -> <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/move/IC 434/unknown/20000101/observation_01/lights/Light_IC 434.fit; TIFF -> <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/move/IC 434/unknown/20000101/observation_01/tiff/Light_IC 434.tiff\n  FITS <replacement external/removable test volume>/seestar-toolkit-stage92b-test/move source/IC 434/Stacked_195_IC 434.fit -> <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/move/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.fit; TIFF -> <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/move/IC 434/unknown/20000101/observation_01/seestar_stacked/Stacked_195_IC 434.tiff\nIndex: <replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/move/IC 434/INDEX.md\n",
+        "stderr": ""
+      },
+      {
+        "name": "archive move",
+        "command": [
+          "<local-temp>/runtime/bin/seestar-toolkit",
+          "archive",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/move source",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/nested archives/move",
+          "--config",
+          "<local-temp>/local data/config.toml",
+          "--non-interactive",
+          "--source-action",
+          "move"
+        ],
+        "exit_code": 0,
+        "stdout": "Archive complete: 0 copied, 2 moved, 0 skipped identical, 0 original failures\nTIFFs: 2 created, 0 skipped/collided/failed\nIndexes: 1 created, 0 updated, 0 unchanged, 0 failed\n",
+        "stderr": ""
+      },
+      {
+        "name": "local to replacement external",
+        "command": [
+          "<local-temp>/runtime/bin/seestar-toolkit",
+          "convert",
+          "<local-temp>/local data/local input.fit",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/cross outputs/from local.tiff"
+        ],
+        "exit_code": 0,
+        "stdout": "Created TIFF: <replacement external/removable test volume>/seestar-toolkit-stage92b-test/cross outputs/from local.tiff\n",
+        "stderr": ""
+      },
+      {
+        "name": "replacement external to local",
+        "command": [
+          "<local-temp>/runtime/bin/seestar-toolkit",
+          "convert",
+          "<replacement external/removable test volume>/seestar-toolkit-stage92b-test/baseline with spaces/input.fit",
+          "<local-temp>/local data/from external.tiff"
+        ],
+        "exit_code": 0,
+        "stdout": "Created TIFF: <local-temp>/local data/from external.tiff\n",
+        "stderr": ""
+      }
+    ],
+    "checks": [
+      {
+        "name": "fresh isolated 1.1.0 runtime",
+        "pass": true
+      },
+      {
+        "name": "no development/build packages",
+        "pass": true
+      },
+      {
+        "name": "all approved fixtures verified",
+        "pass": true
+      },
+      {
+        "name": "dedicated path absent",
+        "pass": true
+      },
+      {
+        "name": "resolved containment",
+        "pass": true
+      },
+      {
+        "name": "pip check exit",
+        "pass": true
+      },
+      {
+        "name": "console version exit",
+        "pass": true
+      },
+      {
+        "name": "console version",
+        "pass": true
+      },
+      {
+        "name": "module version exit",
+        "pass": true
+      },
+      {
+        "name": "module version",
+        "pass": true
+      },
+      {
+        "name": "fixture copy <replacement external/removable test volume>/seestar-toolkit-stage92b-test/baseline with spaces/input.fit",
+        "pass": true
+      },
+      {
+        "name": "fixture copy <replacement external/removable test volume>/seestar-toolkit-stage92b-test/copy source/IC 434_sub/Light_IC 434.fit",
+        "pass": true
+      },
+      {
+        "name": "fixture copy <replacement external/removable test volume>/seestar-toolkit-stage92b-test/copy source/IC 434/Stacked_195_IC 434.fit",
+        "pass": true
+      },
+      {
+        "name": "copy disjoint roots",
+        "pass": true
+      },
+      {
+        "name": "copy dry-run exit",
+        "pass": true
+      },
+      {
+        "name": "copy exact planned destinations",
+        "pass": true
+      },
+      {
+        "name": "copy dry-run nonmutation",
+        "pass": true
+      },
+      {
+        "name": "archive copy exit",
+        "pass": true
+      },
+      {
+        "name": "copy originals preserved",
+        "pass": true
+      },
+      {
+        "name": "copy light independent uint16 RGB pixels",
+        "pass": true
+      },
+      {
+        "name": "copy stack independent uint16 RGB pixels",
+        "pass": true
+      },
+      {
+        "name": "copy index",
+        "pass": true
+      },
+      {
+        "name": "copy source behaviour",
+        "pass": true
+      },
+      {
+        "name": "fixture copy <replacement external/removable test volume>/seestar-toolkit-stage92b-test/move source/IC 434_sub/Light_IC 434.fit",
+        "pass": true
+      },
+      {
+        "name": "fixture copy <replacement external/removable test volume>/seestar-toolkit-stage92b-test/move source/IC 434/Stacked_195_IC 434.fit",
+        "pass": true
+      },
+      {
+        "name": "move disjoint roots",
+        "pass": true
+      },
+      {
+        "name": "move dry-run exit",
+        "pass": true
+      },
+      {
+        "name": "move exact planned destinations",
+        "pass": true
+      },
+      {
+        "name": "move dry-run nonmutation",
+        "pass": true
+      },
+      {
+        "name": "archive move exit",
+        "pass": true
+      },
+      {
+        "name": "move originals preserved",
+        "pass": true
+      },
+      {
+        "name": "move light independent uint16 RGB pixels",
+        "pass": true
+      },
+      {
+        "name": "move stack independent uint16 RGB pixels",
+        "pass": true
+      },
+      {
+        "name": "move index",
+        "pass": true
+      },
+      {
+        "name": "move source behaviour",
+        "pass": true
+      },
+      {
+        "name": "fixture copy <local-temp>/local data/local input.fit",
+        "pass": true
+      },
+      {
+        "name": "different local/external filesystems",
+        "pass": true
+      },
+      {
+        "name": "local to replacement external exit",
+        "pass": true
+      },
+      {
+        "name": "local to replacement external independent uint16 RGB pixels",
+        "pass": true
+      },
+      {
+        "name": "local to replacement external source unchanged",
+        "pass": true
+      },
+      {
+        "name": "replacement external to local exit",
+        "pass": true
+      },
+      {
+        "name": "replacement external to local independent uint16 RGB pixels",
+        "pass": true
+      },
+      {
+        "name": "replacement external to local source unchanged",
+        "pass": true
+      },
+      {
+        "name": "no unexpected entries",
+        "pass": true
+      }
+    ],
+    "cleanup": {
+      "dedicated_directory_removed": true,
+      "only_registered_run_paths_removed": true,
+      "local_temporary_environment_removed": true
+    },
+    "environment": {
+      "python": "3.13.15",
+      "macos": "26.5.2",
+      "architecture": "arm64",
+      "base_executable": "/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+      "module": "<runtime>/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+      "dependencies": {
+        "numpy": "2.5.3",
+        "astropy-iers-data": "0.2026.9.14.0.56.43",
+        "packaging": "26.3",
+        "seestar-toolkit": "1.1.0",
+        "tifffile": "2026.9.9",
+        "pip": "26.2",
+        "astropy": "8.0.1",
+        "pyerfa": "2.0.1.5",
+        "PyYAML": "6.0.3",
+        "opencv-python-headless": "5.0.0.93"
+      }
+    },
+    "filesystem": "msdos",
+    "mounted_writable_read_verified": true,
+    "build": {
+      "wheel": "seestar_toolkit-1.1.0-py3-none-any.whl",
+      "bytes": 46318,
+      "sha256": "5d018fcad8f5a5c73c8dc26b31393ff36d7d9ada387d6c05824eb1bc243f4b9f",
+      "inspection": "PASS 39 permitted members; metadata/license/entry point/privacy; all 33 source modules match checkout",
+      "build": "build 1.6.1, setuptools 84.0.0; isolated tooling venv; python -I -m build --wheel --no-isolation",
+      "installation": "Fresh normal wheel installation in Homebrew Python 3.13.15 venv; setup-only dependency downloads approved"
+    },
+    "preservation_sha256": {
+      "docs/development/CHANGELOG.md": "8e96013e345524cb84ad076ab5abb554f5babee6f46133622b306284e66ee0c7",
+      "docs/development/change_documents/STAGE_9/STAGE_9.2b.md": "5d45a10a340e8885224a861f4cb45f4daf3a7d8a27adc3b59c254d6d07b916db",
+      "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_C.json": "12dde762a4622c3df9c9d7a36ce54b49effa3bff45daa20fce5aa08751f4d15f",
+      "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_B.json": "de11a63e2f831622bb9acfb5570feb2cb71b36daf26921fdfc585422d1f8257e",
+      "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md": "2fda9351fea2da58248c325633626fe87a39edce24734096af175a250a5fb5eb",
+      "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_A.json": "657202492d554d5f28419b97a778459f4f0435d5b68ff8383f833cd312c306f3"
+    },
+    "validation": {
+      "ruff": "PASS",
+      "format": "37 files already formatted",
+      "pytest": "Not rerun for this evidence-only checkpoint; Checkpoint D not begun"
+    }
+  },
+  "overall_checkpoint_c_status": "PASS",
+  "status_field_scope": "The original status, attempts, failure and old-device cleanup fields remain historical and unchanged. overall_checkpoint_c_status is the current disposition.",
+  "disposition_basis": [
+    "Initial physical external device: genuine EIO, disappearance and unconfirmed cleanup retained unchanged",
+    "Prior NAS PASS and cleanup retained; no NAS access or tests repeated",
+    "User explicitly confirms replacement physical USB device despite identical mount path; recovery archive copy/move and both external cross-storage directions PASS",
+    "Original single/batch PASS retained without unnecessary repetition",
+    "Replacement dedicated-directory cleanup PASS; no Toolkit production defect demonstrated",
+    "Old physical device cleanup remains an environmental limitation under explicit recovery instructions; no search or reconciliation attempted"
+  ]
+}

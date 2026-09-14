@@ -145,8 +145,15 @@ for local candidate results and all closure criteria. v1.1.0 remains unreleased.
 The [Stage 9.2a report](change_documents/STAGE_9/STAGE_9.2a_REPORT.md) and
 [structured evidence](change_documents/STAGE_9/STAGE_9.2a_EVIDENCE.json) record
 interpreter provenance, initial and final wheel/sdist results, dependency sets,
-actual temporary site-packages paths and cleanup. Stage 9.2a remains STARTED
-pending review, approved commit and green post-commit CI for its metadata change.
+actual temporary site-packages paths and cleanup. Stage 9.2a is formally
+COMPLETE at `398b771`, as confirmed by Stage review in the Stage 9.2b starting
+context. The [Stage 9.2b completion audit](change_documents/STAGE_9/STAGE_9.2b_REPORT.md)
+records passing technical checkpoints A–D, including recovered storage validation,
+local privacy/network observations and uninstall facts. Historical setup/harness
+failures and the original physical USB device's EIO/unconfirmed cleanup remain
+preserved. Stage 9.2b remains STARTED: formal closure readiness is FAIL pending
+independent review, approved user commit and post-commit gates. Previously tested
+storage need not be reconnected to review the recorded evidence.
 
 Homebrew Python 3.13.15 and 3.14.7 were available under `/opt/homebrew` (arm64).
 `python3` selected 3.14.7; its name alone did not identify the requested line.
@@ -196,3 +203,26 @@ Do not reuse environments between wheel/sdist or initial/final artifacts.
 Any metadata change requires a rebuild and a new full clean-install matrix.
 The project validator also checks final Requires-Python and classifier metadata.
 No release artifact or checksum is produced by this process.
+
+
+## Stage 9.2b installed behaviour and removal facts
+
+The public commands are `convert`, nonrecursive `convert-batch`, and `archive`.
+Archive hierarchy uses `{session_end_date}` and `observation_01`; configuration
+is read-only TOML. No saved-location writer or JPEG-policy switch is exposed.
+The completion report inventories every option and records exact error/exit
+behaviour for later user documentation.
+
+Local disposable validation establishes that `deactivate` restores the shell
+environment without uninstalling. Package uninstall removes its entry point and
+module; config and generated/archive data persist. Removing the venv also leaves
+those external-to-venv files intact. Config can be removed separately. These
+observations do not authorise deleting real user configuration or data.
+
+Source and six instrumented installed paths revealed no Toolkit telemetry,
+analytics, updater or external metadata transmission. This is scoped Python/source
+evidence, not a packet capture or exhaustive native dependency audit. Local
+indexes/diagnostics can contain user metadata. No Full Disk Access requirement
+was established and no macOS security settings were changed. D temporary data
+and environments were removed; the unavailable original failed USB device's
+cleanup remains an explicitly accepted historical environmental limitation.
