@@ -1,0 +1,36 @@
+name: Feature Request
+description: Suggest an improvement or describe a workflow need
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        You do not need to be a programmer or propose an implementation. Describe the problem or workflow that would benefit. Review all diagnostics and metadata for private information, and do not attach FIT/FITS files by default.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or workflow
+      description: What are you trying to accomplish, and where does the current workflow fall short?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Useful outcome
+      description: Describe the result that would help, without assuming a particular implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: model_context
+    attributes:
+      label: Seestar model and capture context, if relevant
+      description: Include model, firmware and available capture types or configurations when known. Do not attach capture files at this stage.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I reviewed the information above and removed private paths, coordinates, identifiers and metadata.
+          required: true

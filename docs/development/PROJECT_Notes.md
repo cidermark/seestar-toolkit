@@ -777,7 +777,50 @@ created during this audit; the pending CHANGELOG workflow is preserved.
 -   Windows executable
 -   Linux package
 -   Optional Siril integration
-
+-   Option to add the the Telescope type/name to the archive directory hierarchy
+-   Option to regenerate the entire archive structure if the user chooses a
+    different structure
+-   Archive observing-night date policy: consider making the archive date
+    convention configurable, allowing users to choose how sessions spanning
+    midnight are assigned to a calendar date (for example, start-date, end-date
+    or the current fixed observing-night rollover convention).
+-   Configurable telescope identity in archive hierarchy — Consider allowing the
+    telescope type and/or user-defined telescope name to be included as an
+    optional archive hierarchy component. This would support archives containing
+    captures from multiple Seestar models or individual telescopes while
+    preserving the existing configurable hierarchy approach.
+-   Archive structure regeneration — Consider providing a controlled method for
+    rebuilding or reorganising an existing Seestar Toolkit archive when the user
+    changes the configured archive hierarchy. The operation should reconstruct
+    the archive from existing archived data rather than requiring the user to
+    reorganise directories manually, with dry-run, collision handling,
+    verification and data-safety behaviour appropriate to a potentially large
+    archive.
+-   Configurable observing-night date rule — v1.1.0 uses a fixed 12-hour
+    rollover rule when determining the observing-night date. Consider allowing
+    the user to configure how an observing night is assigned, potentially
+    including start-date, end-date or configurable rollover-time behaviour. Any
+    future implementation must preserve deterministic grouping of captures that
+    span midnight.
+-   Location consistency checking and configuration updates — When a user
+    supplies an explicit location label and the FITS contains usable GPS
+    coordinates, consider comparing those coordinates with saved locations.
+    Detect conflicts such as coordinates matching a different saved location, or
+    a supplied name/coordinate combination not represented in the configuration.
+    In interactive use, offer an appropriate correction or the option to
+    add/update the saved location. This requires a future configuration-writing
+    capability because v1.1.0 configuration is deliberately read-only. This is
+    the enhancement we discussed yesterday. I like preserving the distinction
+    between detecting a discrepancy and deciding what the Toolkit should
+    subsequently do about it
+-   anonymise command — Consider providing an explicit command for creating
+    privacy-sanitised copies of FIT/FITS files for sharing, testing or support.
+    Remove or replace identifying metadata such as observing-site coordinates
+    and device identifiers while preserving the astronomical image data and
+    metadata required to interpret the capture correctly. The original FITS file
+    must never be modified in place; the command should produce a separate
+    anonymised copy and report what metadata was removed or changed. A future
+    workflow could support anonymise → verify → share.
 
 ## Stage 9.1b documentation boundary and future work
 
@@ -846,3 +889,62 @@ contracts remain authoritative for later documentation.
 All owned local final-audit environments and data were removed. Stage 9.3/9.4
 have not begun. The pending Stage 9.2a CHANGELOG closure entry is preserved;
 no Stage 9.2b commit exists or has been invented.
+
+## Stage 9.3a — Markdown documentation audit
+
+Current baseline is `519f0e3`, the Stage 9.2b validation closure commit supplied
+for this Stage. Earlier pre-commit status paragraphs and checkpoint failure
+evidence above remain historical records; no post-commit CI evidence is invented.
+
+Stage 9.3a is STARTED. Checkpoint A audits the validated 1.1.0 CLI and designs
+the authoritative User Guide, abbreviated Quick Start and public root documents.
+The [specification](change_documents/STAGE_9/STAGE_9.3a.md) defines 65 closure
+criteria; the [progress report](change_documents/STAGE_9/STAGE_9.3a_REPORT.md)
+records the fact matrix, discrepancies and content outlines. Checkpoints B/C
+are not begun. Python 3.11–3.14 support remains established; v1.1.0 is Unreleased.
+
+Documentation must preserve shallow archive discovery, read-only config, actual
+observation/date naming and both uint16 Seestar and float32 Siril TIFF output.
+Use explicit copy in introductory archive examples so existing config cannot
+select move. No public guide, package metadata or production change is made in A.
+The pending Stage 9.2b development CHANGELOG entry remains unchanged. PDFs and
+release checksum artifacts belong to Stage 9.3b, not this documentation stage.
+
+### Stage 9.3a Checkpoint B — guides written
+
+Checkpoint B is PASS pending independent review; Stage 9.3a remains STARTED.
+The authoritative [User Guide](../user/SEESTAR_TOOLKIT_USER_GUIDE.md) and
+abbreviated [Quick Start](../user/SEESTAR_TOOLKIT_QUICK_START.md) now document
+validated 1.1.0 behaviour, including shallow discovery, explicit dry-run/copy,
+read-only config and uint16 Seestar versus float32 Siril TIFFs.
+
+The [appended report](change_documents/STAGE_9/STAGE_9.3a_REPORT.md) records 50
+command occurrences, validation categories and the preserved helper failure/fix.
+B uses an existing source-matching installation and disposable public-safe inputs;
+no new wheel/sdist or release artifact was created. Actual clean artifact install
+proof remains Stage 9.2a. Root documentation and final validation await explicit
+Checkpoint C authorisation. The pending development CHANGELOG remains unchanged;
+v1.1.0 remains Unreleased and no Stage 9.3a commit exists.
+
+### Stage 9.3a Checkpoint C — public documentation and final audit
+
+The public README, CHANGELOG, CONTRIBUTING guidance and GitHub Bug Report /
+Feature Request forms are implemented. The README presents archive organisation
+as the principal use case, links ordinary users to `docs/user`, and keeps support
+claims within the validated S50, macOS Apple-silicon and Python 3.11–3.14 scope.
+Full pytest, configured formatting, public fixture/history checks, whitespace
+and final wheel/sdist distribution validation passed during the first audit. Its
+failure remains recorded in the Stage 9.3a evidence. Final Checkpoint C
+revalidation has not yet been run. Criteria 62–65 remain formal PENDING gates.
+No PDF, checksum, commit, push, release publication or later-stage work occurred.
+
+#### Checkpoint C final remediation revalidation
+
+Checkpoint C is PASS and Stage 9.3a technical/documentation closure readiness is
+PASS. Fresh full validation passes, including 330 tests, Ruff, configured
+formatting, whitespace, public fixture/history checks, documentation/Issue-form
+checks, installed entry points and isolated wheel/sdist validation. The original
+Checkpoint C failure and later scope cleanup remain preserved in the Stage
+evidence. Criteria 62–65 remain PENDING independent review, user closure commit
+and post-commit verification gates. Stage 9.3a remains STARTED; v1.1.0 remains
+Unreleased, and no later stage has begun.

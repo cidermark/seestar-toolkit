@@ -1,0 +1,930 @@
+{
+  "checkpoint": "C",
+  "stage_status": "STARTED",
+  "checkpoint_status": "PASS",
+  "closure_readiness": "PASS",
+  "baseline": "519f0e3",
+  "guide_preservation": {
+    "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md": {
+      "sha256": "29cf55b4beb1f1a6ebcd37c946cdc74a4a8ef41c75dbcee62353c61131fc8883",
+      "size": 64209
+    },
+    "docs/user/SEESTAR_TOOLKIT_QUICK_START.md": {
+      "sha256": "b3f61499335f7a7d15b1a323d3fa39056606b5a2d021a9cf9d82942c119ed18f",
+      "size": 9283
+    }
+  },
+  "files_created": [
+    "CONTRIBUTING.md",
+    ".github/ISSUE_TEMPLATE/bug_report.yml",
+    ".github/ISSUE_TEMPLATE/feature_request.yml",
+    ".github/ISSUE_TEMPLATE/config.yml",
+    "docs/development/change_documents/STAGE_9/STAGE_9.3a_CHECKPOINT_C.json"
+  ],
+  "files_modified": [
+    "README.md",
+    "CHANGELOG.md",
+    "docs/development/DEV_README.md",
+    "docs/development/BUGLIST.md",
+    "docs/development/PACKAGING.md",
+    "docs/development/PROJECT_Notes.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.3a_REPORT.md"
+  ],
+  "findings": [
+    {
+      "class": "documentation defect",
+      "finding": "Root README and CHANGELOG were transitional and CONTRIBUTING/issue routes were absent.",
+      "remediation": "Implemented concise public files and privacy-first issue forms."
+    },
+    {
+      "class": "documentation defect",
+      "finding": "DEV_README described archive discovery as recursive, used config-sensitive archive examples and published a named/nonzero location example.",
+      "remediation": "Documented shallow discovery, made safety options explicit and substituted a neutral zero-coordinate site."
+    },
+    {
+      "class": "privacy defect",
+      "finding": "BUGLIST contained a real mounted-volume path, capture target, timestamps and detailed filenames.",
+      "remediation": "Replaced them with neutral paths and a non-identifying summary; clarified lightweight triage status."
+    },
+    {
+      "class": "documentation integration defect",
+      "finding": "Non-ASCII README punctuation caused the first completed distribution inspection to fail raw metadata-payload equality.",
+      "remediation": "Used an ASCII version marker and archive tree; complete distribution rerun passed."
+    },
+    {
+      "class": "documentation whitespace defect",
+      "finding": "First final direct scan found intentional Markdown hard-break trailing spaces on BUGLIST metadata lines 28-30.",
+      "remediation": "Converted the four metadata fields to a Markdown list; direct changed-document whitespace rerun passes."
+    }
+  ],
+  "potential_product_defects": [],
+  "validation": {
+    "pytest": "PASS: 330 passed in 11.58s on Python 3.13.15",
+    "ruff": "FAIL: tools/add_bug.py:140:101 E501 Line too long (101 > 100)",
+    "formatting": "PASS: 37 files already formatted",
+    "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+    "whitespace": "PASS: repository-wide git diff --check exit 0",
+    "distribution_initial_environment": "FAIL: temporary environment lacked build",
+    "distribution_first_complete": "FAIL: README non-ASCII content caused metadata payload assertion",
+    "distribution_final": "PASS: wheel 39 allowed members; sdist 46 allowed members; both entry points/runtime smoke checks; temporary outputs removed",
+    "links_markdown": "PASS: local links resolve; fences balanced; direct whitespace checks pass",
+    "issue_forms": "PASS: three YAML files parse as mappings and provide Bug Report/Feature Request routes",
+    "privacy": "PASS after BUGLIST remediation; no private path/capture markers in changed public-facing files",
+    "readme_cli": "PASS: installed parser accepts the README archive example; both installed entry points report 1.1.0",
+    "final_direct_scan": "Initial FAIL on BUGLIST lines 28-30; remediated and rerun PASS"
+  },
+  "failure_history": "Preserves original B editorial FAIL, later B whitespace FAIL, final B PASS, C missing-build failure, C README metadata failure/remediation, and current Ruff failure.",
+  "criteria": [
+    {
+      "id": 1,
+      "criterion": "Starting branch and commit verified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 2,
+      "criterion": "Expected pending development CHANGELOG preserved.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 3,
+      "criterion": "Authoritative specification created before documentation implementation.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 4,
+      "criterion": "Checkpoint boundaries and exclusions explicit.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 5,
+      "criterion": "Existing public documentation and license audited.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 6,
+      "criterion": "Package metadata and release version verified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 7,
+      "criterion": "Both installed CLI entry points audited.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 8,
+      "criterion": "Full exposed command and option inventory recorded.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 9,
+      "criterion": "Existing influential command examples inventoried and checked safely.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 10,
+      "criterion": "Authoritative fact matrix recorded.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 11,
+      "criterion": "Contradictions classified without converting plans into requirements.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 12,
+      "criterion": "Potential product defects reported before Checkpoint B.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 13,
+      "criterion": "Guide table of contents covers every required topic.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 14,
+      "criterion": "Quick Start table of contents designed.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 15,
+      "criterion": "README and CONTRIBUTING structures designed.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 16,
+      "criterion": "Public Unreleased changelog entry designed.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 17,
+      "criterion": "Checkpoint A privacy review and evidence recorded.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 18,
+      "criterion": "Checkpoint A local validation passes.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 19,
+      "criterion": "Independent review authorises continuation to Checkpoint B.",
+      "status": "PASS",
+      "evidence": "Explicit user instruction to perform B"
+    },
+    {
+      "id": 20,
+      "criterion": "Full authoritative Markdown User Guide implemented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 21,
+      "criterion": "Concise Quick Start implemented and linked to Guide.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 22,
+      "criterion": "Semantic version and Unreleased status consistent.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 23,
+      "criterion": "Platform support limited to validated macOS Apple Silicon policy.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 24,
+      "criterion": "Python 3.11–3.14 support accurately documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 25,
+      "criterion": "Homebrew interpreter installation and checking documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 26,
+      "criterion": "System Python remains untouched; uv not required.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 27,
+      "criterion": "Wheel primary and sdist secondary installation documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 28,
+      "criterion": "No Toolkit PyPI or installer-script installation claims.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 29,
+      "criterion": "Recommended venv activation, deactivation and full-path alternative documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 30,
+      "criterion": "No normal global PATH, symlink or shell-profile modifications.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 31,
+      "criterion": "Both entry points and exact global-option placement documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 32,
+      "criterion": "Single conversion and flat batch behaviour documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 33,
+      "criterion": "Supported S50 and Siril data distinguished from unsupported modes.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 34,
+      "criterion": "TIFF dtype, linearity, demosaicing and RGB preservation documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 35,
+      "criterion": "Archive dry-run, backups and explicit copy safety prominent.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 36,
+      "criterion": "Move, collisions, existing TIFFs and non-transactional risks documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 37,
+      "criterion": "Actual hierarchy, observations, products, indexes and archive date documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 38,
+      "criterion": "Read-only config path, precedence and ignored XDG behaviour documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 39,
+      "criterion": "Actual location matching, prompts and fallback documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 40,
+      "criterion": "Absent config-writing, saved-location-writing and JPEG switches not invented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 41,
+      "criterion": "Diagnostics, errors, exit codes and troubleshooting documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 42,
+      "criterion": "Local, removable, mounted network and cross-storage scope qualified.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 43,
+      "criterion": "Privacy claims bounded by evidence and metadata-sharing risks explained.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 44,
+      "criterion": "macOS permissions described without Full Disk Access requirement or bypass.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 45,
+      "criterion": "Uninstall separates environment, persistent config and user data.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 46,
+      "criterion": "Getting help and limitations documented without future-feature promises.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 47,
+      "criterion": "Checkpoint B command examples verified safely and evidence preserved.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 48,
+      "criterion": "Checkpoint B documentation consistency, links and privacy checks pass.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 49,
+      "criterion": "Independent review authorises continuation to Checkpoint C.",
+      "status": "PASS",
+      "evidence": "User explicitly authorised Checkpoint C in this invocation."
+    },
+    {
+      "id": 50,
+      "criterion": "Root README concise and consistent with authoritative Guide.",
+      "status": "PASS",
+      "evidence": "README.md is a concise archive-first landing page linked to both guides."
+    },
+    {
+      "id": 51,
+      "criterion": "Concise CONTRIBUTING includes quality and FITS privacy guidance.",
+      "status": "PASS",
+      "evidence": "CONTRIBUTING.md covers non-code contributions, reports, scoped PRs, checks and privacy-first capture handling."
+    },
+    {
+      "id": 52,
+      "criterion": "Public CHANGELOG user-relevant, Unreleased and without fabricated date.",
+      "status": "PASS",
+      "evidence": "CHANGELOG.md contains concise user-facing 1.1.0 Unreleased content with no date or Stage history."
+    },
+    {
+      "id": 53,
+      "criterion": "Development status and packaging documentation updated appropriately.",
+      "status": "PASS",
+      "evidence": "PACKAGING.md and PROJECT_Notes.md record Checkpoint C status and validation accurately."
+    },
+    {
+      "id": 54,
+      "criterion": "Final Markdown content, links and command examples validated.",
+      "status": "PASS",
+      "evidence": "Local link, Markdown fence, command, issue-form and five-document consistency checks passed."
+    },
+    {
+      "id": 55,
+      "criterion": "Final public fixture/history and changed-document privacy checks pass.",
+      "status": "PASS",
+      "evidence": "Public input/history check passed; public-facing changed files were privacy scanned; BUGLIST identifying material was sanitised."
+    },
+    {
+      "id": 56,
+      "criterion": "Final full pytest, Ruff, applicable formatting and whitespace checks pass.",
+      "status": "FAIL",
+      "evidence": "pytest 330 passed; formatting and git diff --check passed; Ruff failed on tools/add_bug.py:140 E501 (101 > 100)."
+    },
+    {
+      "id": 57,
+      "criterion": "Final distribution build/inspection validates changed README metadata.",
+      "status": "PASS",
+      "evidence": "validate_distribution.py passed after retained initial dependency and README metadata-payload failures and remediation."
+    },
+    {
+      "id": 58,
+      "criterion": "Every genuine failure and remediation retained.",
+      "status": "PASS",
+      "evidence": "A/B failure history and all C failures/remediation are retained without relabelling."
+    },
+    {
+      "id": 59,
+      "criterion": "All closure criteria individually assessed with evidence.",
+      "status": "PASS",
+      "evidence": "All 65 criteria are individually assessed here with PASS, FAIL or PENDING."
+    },
+    {
+      "id": 60,
+      "criterion": "No production/test/fixture changes without demonstrated authorised defect.",
+      "status": "PASS",
+      "evidence": "No production, test or fixture change was made; package metadata and CI are unchanged."
+    },
+    {
+      "id": 61,
+      "criterion": "No PDF, timestamp sync, checksum manifest or later-stage work performed.",
+      "status": "PASS",
+      "evidence": "No PDF, timestamp sync, checksum manifest, release artifact or later-stage work was performed."
+    },
+    {
+      "id": 62,
+      "criterion": "Independent ChatGPT review accepts technical completion.",
+      "status": "PENDING",
+      "evidence": "Independent ChatGPT review has not yet accepted technical completion."
+    },
+    {
+      "id": 63,
+      "criterion": "User approves and creates closure commit; Codex never commits or pushes.",
+      "status": "PENDING",
+      "evidence": "User closure approval/commit has not occurred; Codex did not commit or push."
+    },
+    {
+      "id": 64,
+      "criterion": "Post-commit content, branch, cleanliness and required CI verified.",
+      "status": "PENDING",
+      "evidence": "No Stage 9.3a commit exists, so post-commit content, cleanliness and CI cannot be verified."
+    },
+    {
+      "id": 65,
+      "criterion": "Formal COMPLETE declared only after every closure gate passes.",
+      "status": "PENDING",
+      "evidence": "Formal COMPLETE is prohibited while criterion 56 fails and criteria 62-64 remain pending."
+    }
+  ],
+  "next_required_action": "Obtain independent review of final technical completion. After acceptance, user approval/closure commit and post-commit required CI verification remain. Do not start Stage 9.3b.",
+  "preservation": "Expected pending Stage 9.2b development CHANGELOG entry preserved. Frozen guides byte-identical to their Checkpoint B PASS state. No production/test/fixture/metadata/CI changes by Checkpoint C. No commit or push.",
+  "private_scope_cleanup": {
+    "status": "RECORDED; revalidation not performed",
+    "decision": "BUGLIST.md and tools/add_bug.py are private maintainer files outside the Seestar Toolkit repository and outside all public, release, support and utility scopes.",
+    "repository_absence": "PASS: neither filename exists anywhere inside the repository at cleanup time.",
+    "historical_preservation": "The original Checkpoint C evidence remains unchanged above: both files were present in the working tree, Ruff failed on tools/add_bug.py E501, and BUGLIST.md was reviewed and sanitised. Those facts describe the first audit and are not current repository requirements.",
+    "live_documentation_cleanup": [
+      "Removed the BUGLIST link and description from CONTRIBUTING.md.",
+      "Removed private-file-specific failure/remediation wording from PACKAGING.md.",
+      "Removed private-file-specific status wording from PROJECT_Notes.md."
+    ],
+    "public_issues": "The three .github/ISSUE_TEMPLATE files, generic GitHub Issues guidance, issue privacy guidance and other-model capture-example guidance are retained.",
+    "privacy": "No private filesystem location or restored private BUGLIST content is recorded.",
+    "validation_boundary": "No Checkpoint C revalidation was run. Existing Checkpoint C FAIL status and criterion assessments remain historical pending a separately authorised revalidation.",
+    "commit_push": "None"
+  },
+  "final_remediation_revalidation": {
+    "status": "PASS",
+    "stage_status": "STARTED; formal COMPLETE pending",
+    "history_preserved": "Original Checkpoint C FAIL and original criterion 56 FAIL remain in the earlier validation and criteria fields. Checkpoint B editorial FAIL, whitespace FAIL and final PASS, plus the private-scope cleanup, also remain recorded.",
+    "private_file_absence": "PASS: neither private filename exists anywhere in the repository; their scope decision was not revisited and no private location was inspected.",
+    "guide_preservation": {
+      "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md": {
+        "sha256": "29cf55b4beb1f1a6ebcd37c946cdc74a4a8ef41c75dbcee62353c61131fc8883",
+        "size": 64209
+      },
+      "docs/user/SEESTAR_TOOLKIT_QUICK_START.md": {
+        "sha256": "b3f61499335f7a7d15b1a323d3fa39056606b5a2d021a9cf9d82942c119ed18f",
+        "size": 9283
+      }
+    },
+    "validation": {
+      "pytest": "PASS: 330 passed in 11.75s on Python 3.13.15",
+      "ruff": "PASS: All checks passed!",
+      "formatting": "PASS: 37 files already formatted",
+      "git_diff_check": "PASS: exit 0, no output",
+      "direct_document_whitespace": "PASS",
+      "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+      "markdown_links_fences_navigation": "PASS: structures and fences valid; local links and anchors resolve",
+      "issue_forms": "PASS: bug report, feature request and config YAML parse as mappings",
+      "public_document_policy": "PASS: README/CHANGELOG/CONTRIBUTING satisfy the agreed narrative, support, contribution and privacy requirements",
+      "readme_cli": "PASS: installed parser accepts archive example",
+      "installed_entry_points": "PASS: console and python -m entry points report seestar-toolkit 1.1.0 and help succeeds",
+      "distribution": "PASS: wheel 39 allowed members; sdist 46; metadata/license/entry points, isolated installs and runtime smoke checks; temporary outputs removed"
+    },
+    "criterion_56": {
+      "original_checkpoint_c": "FAIL: Ruff found tools/add_bug.py:140:101 E501 while that untracked private utility was present.",
+      "final_revalidation": "PASS: repository-wide Ruff reports All checks passed! without exclusions or configuration changes."
+    },
+    "criteria": [
+      {
+        "id": 1,
+        "criterion": "Starting branch and commit verified.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 2,
+        "criterion": "Expected pending development CHANGELOG preserved.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 3,
+        "criterion": "Authoritative specification created before documentation implementation.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 4,
+        "criterion": "Checkpoint boundaries and exclusions explicit.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 5,
+        "criterion": "Existing public documentation and license audited.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 6,
+        "criterion": "Package metadata and release version verified.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 7,
+        "criterion": "Both installed CLI entry points audited.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 8,
+        "criterion": "Full exposed command and option inventory recorded.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 9,
+        "criterion": "Existing influential command examples inventoried and checked safely.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 10,
+        "criterion": "Authoritative fact matrix recorded.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 11,
+        "criterion": "Contradictions classified without converting plans into requirements.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 12,
+        "criterion": "Potential product defects reported before Checkpoint B.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 13,
+        "criterion": "Guide table of contents covers every required topic.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 14,
+        "criterion": "Quick Start table of contents designed.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 15,
+        "criterion": "README and CONTRIBUTING structures designed.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 16,
+        "criterion": "Public Unreleased changelog entry designed.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 17,
+        "criterion": "Checkpoint A privacy review and evidence recorded.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 18,
+        "criterion": "Checkpoint A local validation passes.",
+        "status": "PASS",
+        "evidence": "Preserved Checkpoint A"
+      },
+      {
+        "id": 19,
+        "criterion": "Independent review authorises continuation to Checkpoint B.",
+        "status": "PASS",
+        "evidence": "Explicit user instruction to perform B"
+      },
+      {
+        "id": 20,
+        "criterion": "Full authoritative Markdown User Guide implemented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 21,
+        "criterion": "Concise Quick Start implemented and linked to Guide.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 22,
+        "criterion": "Semantic version and Unreleased status consistent.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 23,
+        "criterion": "Platform support limited to validated macOS Apple Silicon policy.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 24,
+        "criterion": "Python 3.11–3.14 support accurately documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 25,
+        "criterion": "Homebrew interpreter installation and checking documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 26,
+        "criterion": "System Python remains untouched; uv not required.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 27,
+        "criterion": "Wheel primary and sdist secondary installation documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 28,
+        "criterion": "No Toolkit PyPI or installer-script installation claims.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 29,
+        "criterion": "Recommended venv activation, deactivation and full-path alternative documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 30,
+        "criterion": "No normal global PATH, symlink or shell-profile modifications.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 31,
+        "criterion": "Both entry points and exact global-option placement documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 32,
+        "criterion": "Single conversion and flat batch behaviour documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 33,
+        "criterion": "Supported S50 and Siril data distinguished from unsupported modes.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 34,
+        "criterion": "TIFF dtype, linearity, demosaicing and RGB preservation documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 35,
+        "criterion": "Archive dry-run, backups and explicit copy safety prominent.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 36,
+        "criterion": "Move, collisions, existing TIFFs and non-transactional risks documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 37,
+        "criterion": "Actual hierarchy, observations, products, indexes and archive date documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 38,
+        "criterion": "Read-only config path, precedence and ignored XDG behaviour documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 39,
+        "criterion": "Actual location matching, prompts and fallback documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 40,
+        "criterion": "Absent config-writing, saved-location-writing and JPEG switches not invented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 41,
+        "criterion": "Diagnostics, errors, exit codes and troubleshooting documented.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 42,
+        "criterion": "Local, removable, mounted network and cross-storage scope qualified.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 43,
+        "criterion": "Privacy claims bounded by evidence and metadata-sharing risks explained.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 44,
+        "criterion": "macOS permissions described without Full Disk Access requirement or bypass.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 45,
+        "criterion": "Uninstall separates environment, persistent config and user data.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 46,
+        "criterion": "Getting help and limitations documented without future-feature promises.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 47,
+        "criterion": "Checkpoint B command examples verified safely and evidence preserved.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 48,
+        "criterion": "Checkpoint B documentation consistency, links and privacy checks pass.",
+        "status": "PASS",
+        "evidence": "User Guide/Quick Start and B validation"
+      },
+      {
+        "id": 49,
+        "criterion": "Independent review authorises continuation to Checkpoint C.",
+        "status": "PASS",
+        "evidence": "User explicitly authorised Checkpoint C in this invocation."
+      },
+      {
+        "id": 50,
+        "criterion": "Root README concise and consistent with authoritative Guide.",
+        "status": "PASS",
+        "evidence": "README.md is a concise archive-first landing page linked to both guides."
+      },
+      {
+        "id": 51,
+        "criterion": "Concise CONTRIBUTING includes quality and FITS privacy guidance.",
+        "status": "PASS",
+        "evidence": "CONTRIBUTING.md covers non-code contributions, reports, scoped PRs, checks and privacy-first capture handling."
+      },
+      {
+        "id": 52,
+        "criterion": "Public CHANGELOG user-relevant, Unreleased and without fabricated date.",
+        "status": "PASS",
+        "evidence": "CHANGELOG.md contains concise user-facing 1.1.0 Unreleased content with no date or Stage history."
+      },
+      {
+        "id": 53,
+        "criterion": "Development status and packaging documentation updated appropriately.",
+        "status": "PASS",
+        "evidence": "PACKAGING.md and PROJECT_Notes.md record Checkpoint C status and validation accurately."
+      },
+      {
+        "id": 54,
+        "criterion": "Final Markdown content, links and command examples validated.",
+        "status": "PASS",
+        "evidence": "Local link, Markdown fence, command, issue-form and five-document consistency checks passed."
+      },
+      {
+        "id": 55,
+        "criterion": "Final public fixture/history and changed-document privacy checks pass.",
+        "status": "PASS",
+        "evidence": "Public input/history check passed; public-facing changed files were privacy scanned; BUGLIST identifying material was sanitised."
+      },
+      {
+        "id": 56,
+        "criterion": "Final full pytest, Ruff, applicable formatting and whitespace checks pass.",
+        "status": "PASS",
+        "evidence": "Final remediation revalidation: pytest 330 passed; Ruff all checks passed; 37 files formatted; git diff --check and direct changed-document whitespace passed."
+      },
+      {
+        "id": 57,
+        "criterion": "Final distribution build/inspection validates changed README metadata.",
+        "status": "PASS",
+        "evidence": "validate_distribution.py passed after retained initial dependency and README metadata-payload failures and remediation."
+      },
+      {
+        "id": 58,
+        "criterion": "Every genuine failure and remediation retained.",
+        "status": "PASS",
+        "evidence": "All A/B/C failures, remediations, private-scope cleanup and final revalidation are retained chronologically."
+      },
+      {
+        "id": 59,
+        "criterion": "All closure criteria individually assessed with evidence.",
+        "status": "PASS",
+        "evidence": "All 65 criteria are individually assessed here with PASS, FAIL or PENDING."
+      },
+      {
+        "id": 60,
+        "criterion": "No production/test/fixture changes without demonstrated authorised defect.",
+        "status": "PASS",
+        "evidence": "No production, test or fixture change was made; package metadata and CI are unchanged."
+      },
+      {
+        "id": 61,
+        "criterion": "No PDF, timestamp sync, checksum manifest or later-stage work performed.",
+        "status": "PASS",
+        "evidence": "No PDF, timestamp sync, checksum manifest, release artifact or later-stage work was performed."
+      },
+      {
+        "id": 62,
+        "criterion": "Independent ChatGPT review accepts technical completion.",
+        "status": "PENDING",
+        "evidence": "Independent review of final technical completion has not yet occurred; accepted private-scope cleanup is narrower."
+      },
+      {
+        "id": 63,
+        "criterion": "User approves and creates closure commit; Codex never commits or pushes.",
+        "status": "PENDING",
+        "evidence": "User closure approval and commit have not occurred; Codex did not commit or push."
+      },
+      {
+        "id": 64,
+        "criterion": "Post-commit content, branch, cleanliness and required CI verified.",
+        "status": "PENDING",
+        "evidence": "No Stage 9.3a closure commit exists; exact-commit content, cleanliness and required CI remain unverified."
+      },
+      {
+        "id": 65,
+        "criterion": "Formal COMPLETE declared only after every closure gate passes.",
+        "status": "PENDING",
+        "evidence": "Technical/documentation closure readiness passes, but formal COMPLETE awaits criteria 62-64."
+      }
+    ],
+    "technical_documentation_closure_readiness": "PASS",
+    "formal_gates": {
+      "62": "PENDING independent final technical review",
+      "63": "PENDING user approval and closure commit",
+      "64": "PENDING post-commit content/cleanliness and required CI verification",
+      "65": "PENDING formal COMPLETE after all prior gates"
+    },
+    "files_modified_by_revalidation": [
+      "docs/development/change_documents/STAGE_9/STAGE_9.3a_CHECKPOINT_C.json",
+      "docs/development/change_documents/STAGE_9/STAGE_9.3a_REPORT.md",
+      "docs/development/PACKAGING.md",
+      "docs/development/PROJECT_Notes.md"
+    ],
+    "defects": {
+      "documentation": [],
+      "product": []
+    },
+    "commit_push": "None"
+  }
+}

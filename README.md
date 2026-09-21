@@ -1,18 +1,86 @@
 # Seestar Toolkit
 
-Seestar Toolkit provides command-line tools for supported FIT/FITS conversion
-and Seestar archive organisation.
+**Version 1.1.0 - Unreleased**
 
-Preparation of the v1.1.0 release is in progress. Final installation instructions,
-validated compatibility information and user documentation will be completed
-in Stage 9.3a; this page is a transitional introduction.
+Seestar Toolkit was developed to make a growing collection of Seestar captures
+easier to preserve, understand and use. It reconstructs related captures into
+observations and organises them into a predictable archive by target, observing
+location and observing night.
 
-For development setup and existing command examples, see the
-[Developer README](docs/development/DEV_README.md). For local test-data handling,
-see [Real-data testing](docs/development/REAL_DATA_TESTING.md).
+The archive workflow keeps you in control: back up the source, preview the plan
+with `--dry-run`, inspect every proposed path, then copy before considering a
+move. A typical result is:
 
-User documentation will live in [docs/user/](docs/user/).
-The [public changelog](CHANGELOG.md) records release status; the
-[detailed development changelog](docs/development/CHANGELOG.md) retains stage history.
+```text
+Target/
+|-- INDEX.md
+`-- Location/
+    `-- 20260915/
+        `-- observation_01/
+            |-- lights/
+            |-- seestar_stacked/
+            `-- tiff/
+```
 
-Licensed under the [MIT License](LICENSE).
+The Toolkit can also convert supported FIT/FITS images into linear RGB TIFFs,
+one file at a time or as a non-recursive batch. Conversion complements archive
+organisation; it is not required to use the archive.
+
+## Supported environment and captures
+
+For v1.1.0, **supported** means tested and validated for this release:
+
+- Seestar S50 captures within the validated FIT/FITS input scope, including
+  supported raw Bayer lights, native RGB stacked images and mosaics;
+- Apple-silicon Macs using a macOS version within the release's tested and
+  Apple-supported platform envelope; and
+- Python 3.11, 3.12, 3.13 or 3.14.
+
+Other Seestar models may work, but they have not received enough validation for
+v1.1.0 to call them officially supported. Unsupported does not mean known not to
+work. Intel Macs, Windows and Linux are outside the validated v1.1.0 platform
+scope. Solar, Lunar and Planetary video processing and DSLR capture processing
+are also outside this release.
+
+## Install and start
+
+Release packages will be available from
+[GitHub Releases](https://github.com/cidermark/seestar-toolkit/releases) when
+v1.1.0 is published. The wheel is the recommended installation format; the
+Toolkit is not distributed through PyPI for v1.1.0.
+
+Follow the [Quick Start](docs/user/SEESTAR_TOOLKIT_QUICK_START.md) for the
+supported Python, virtual environment, installation and first archive steps.
+The [User Guide](docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md) is the authoritative
+reference for supported inputs, archive behaviour, conversion, configuration,
+storage, privacy, troubleshooting and uninstalling.
+
+A safe first archive begins with an explicit preview:
+
+```bash
+seestar-toolkit archive --dry-run --source-action copy \
+  --collision-policy skip-identical --location "Home" \
+  --non-interactive "/path/to/My Works" "/absolute/path/to/archive"
+```
+
+After inspecting the plan, repeat the command without `--dry-run` to copy.
+
+## Safety and privacy
+
+Keep an independent backup and verify the archive before removing source files.
+Archive and batch operations can partially succeed and do not provide
+whole-workflow rollback.
+
+FITS files, configuration, archive indexes and diagnostics can contain observing
+coordinates, timestamps, device identifiers and other private metadata. Review
+them before sharing. The audited v1.1.0 Toolkit runtime has no telemetry,
+analytics, update checking or online geocoder; mounted network storage still
+uses the network as normal filesystem storage.
+
+## Contributing and release history
+
+Bug reports, enhancement suggestions and carefully reviewed representative data
+from other Seestar models can help. See [Contributing](CONTRIBUTING.md) and the
+[public changelog](CHANGELOG.md).
+
+Seestar Toolkit is licensed under the [MIT License](LICENSE).

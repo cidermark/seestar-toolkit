@@ -226,3 +226,62 @@ indexes/diagnostics can contain user metadata. No Full Disk Access requirement
 was established and no macOS security settings were changed. D temporary data
 and environments were removed; the unavailable original failed USB device's
 cleanup remains an explicitly accepted historical environmental limitation.
+
+## Stage 9.3a — Markdown documentation audit
+
+Current baseline is `519f0e3`, the Stage 9.2b validation closure commit supplied
+for this Stage. Earlier pre-commit status paragraphs and checkpoint failure
+evidence above remain historical records; no post-commit CI evidence is invented.
+
+Stage 9.3a is STARTED. Checkpoint A audits the validated 1.1.0 CLI and designs
+the authoritative User Guide, abbreviated Quick Start and public root documents.
+The [specification](change_documents/STAGE_9/STAGE_9.3a.md) defines 65 closure
+criteria; the [progress report](change_documents/STAGE_9/STAGE_9.3a_REPORT.md)
+records the fact matrix, discrepancies and content outlines. Checkpoints B/C
+are not begun. Python 3.11–3.14 support remains established; v1.1.0 is Unreleased.
+
+Documentation must preserve shallow archive discovery, read-only config, actual
+observation/date naming and both uint16 Seestar and float32 Siril TIFF output.
+Use explicit copy in introductory archive examples so existing config cannot
+select move. No public guide, package metadata or production change is made in A.
+The pending Stage 9.2b development CHANGELOG entry remains unchanged. PDFs and
+release checksum artifacts belong to Stage 9.3b, not this documentation stage.
+
+### Stage 9.3a Checkpoint B — guides written
+
+Checkpoint B is PASS pending independent review; Stage 9.3a remains STARTED.
+The authoritative [User Guide](../user/SEESTAR_TOOLKIT_USER_GUIDE.md) and
+abbreviated [Quick Start](../user/SEESTAR_TOOLKIT_QUICK_START.md) now document
+validated 1.1.0 behaviour, including shallow discovery, explicit dry-run/copy,
+read-only config and uint16 Seestar versus float32 Siril TIFFs.
+
+The [appended report](change_documents/STAGE_9/STAGE_9.3a_REPORT.md) records 50
+command occurrences, validation categories and the preserved helper failure/fix.
+B uses an existing source-matching installation and disposable public-safe inputs;
+no new wheel/sdist or release artifact was created. Actual clean artifact install
+proof remains Stage 9.2a. Root documentation and final validation await explicit
+Checkpoint C authorisation. The pending development CHANGELOG remains unchanged;
+v1.1.0 remains Unreleased and no Stage 9.3a commit exists.
+
+### Stage 9.3a Checkpoint C — public documentation audit
+
+The root README now serves as the concise package and repository landing page;
+the public CHANGELOG retains v1.1.0 as Unreleased, and CONTRIBUTING plus GitHub
+issue forms provide privacy-first reporting routes. The final distribution
+validator passed after replacing non-ASCII README tree punctuation that caused
+its first metadata-payload comparison to fail. Both isolated wheel and sdist
+installs passed and temporary artifacts were removed.
+
+The first Checkpoint C audit and its failure remain recorded in the Stage 9.3a
+evidence. Final Checkpoint C revalidation has not yet been run. Independent
+review, user commit and post-commit verification remain pending; no release
+artifact was retained.
+
+#### Checkpoint C final remediation revalidation
+
+Checkpoint C now passes and Stage 9.3a is technically/documentationally ready
+for closure review. Fresh pytest, Ruff, configured formatting, whitespace,
+public-input/history, documentation, installed-entry-point and full isolated
+wheel/sdist validation all pass. The original Checkpoint C failure remains in
+the Stage evidence. Independent final review, user approval/commit and
+post-commit required CI verification remain pending; v1.1.0 remains Unreleased.

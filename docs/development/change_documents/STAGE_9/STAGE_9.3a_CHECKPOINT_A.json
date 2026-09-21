@@ -1,0 +1,1065 @@
+{
+  "baseline": "519f0e393bc24615b9ffdf17471f78bba9a3be7a",
+  "branch": "main",
+  "installation": {
+    "version": "1.1.0",
+    "site_packages": true,
+    "provenance": "Existing noneditable local-directory install; not fresh wheel proof",
+    "editable": false,
+    "source_files_compared": 33,
+    "source_differences": []
+  },
+  "commands": [
+    {
+      "entry_point": "console",
+      "args": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "seestar-toolkit 1.1.0\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "console",
+      "args": [
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "console",
+      "args": [
+        "convert",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert [-h] INPUT_FITS OUTPUT_TIFF\n\nConvert one FIT/FITS image to one TIFF. Supported inputs include raw Seestar\nBayer, native Seestar RGB, and Siril RGB images.\n\npositional arguments:\n  INPUT_FITS   Input FIT/FITS image path.\n  OUTPUT_TIFF  Explicit output TIFF path.\n\noptions:\n  -h, --help   show this help message and exit\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "console",
+      "args": [
+        "convert-batch",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert-batch [-h] INPUT_DIR OUTPUT_DIR\n\nConvert supported FIT/FITS files in one non-recursive input directory to an\nexplicit output directory.\n\npositional arguments:\n  INPUT_DIR   Input directory scanned non-recursively for FIT/FITS files.\n  OUTPUT_DIR  Explicit flat output directory for stem-matched .tiff files.\n\noptions:\n  -h, --help  show this help message and exit\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "console",
+      "args": [
+        "archive",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit archive [-h] [--dry-run] [--location LOCATION]\n                               [--hierarchy HIERARCHY]\n                               [--source-action {copy,move}]\n                               [--collision-policy {skip-identical,error,overwrite}]\n                               [--non-interactive] [--config PATH]\n                               SOURCE_ROOT ARCHIVE_ROOT\n\nDiscover and reconstruct a Seestar work directory, plan its archive, and\noptionally archive FITS originals with TIFF derivatives.\n\npositional arguments:\n  SOURCE_ROOT\n  ARCHIVE_ROOT\n\noptions:\n  -h, --help            show this help message and exit\n  --dry-run             Show the archive plan without writing files.\n  --location LOCATION   Use this location for every observation.\n  --hierarchy HIERARCHY\n                        Archive hierarchy template; overrides configuration.\n  --source-action {copy,move}\n                        Archive originals by copy (default) or explicit move.\n  --collision-policy {skip-identical,error,overwrite}\n                        Policy for existing FITS destinations (default: skip-\n                        identical).\n  --non-interactive     Never prompt for a location.\n  --config PATH         Explicit archive TOML configuration.\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "seestar-toolkit 1.1.0\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "convert",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert [-h] INPUT_FITS OUTPUT_TIFF\n\nConvert one FIT/FITS image to one TIFF. Supported inputs include raw Seestar\nBayer, native Seestar RGB, and Siril RGB images.\n\npositional arguments:\n  INPUT_FITS   Input FIT/FITS image path.\n  OUTPUT_TIFF  Explicit output TIFF path.\n\noptions:\n  -h, --help   show this help message and exit\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "convert-batch",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit convert-batch [-h] INPUT_DIR OUTPUT_DIR\n\nConvert supported FIT/FITS files in one non-recursive input directory to an\nexplicit output directory.\n\npositional arguments:\n  INPUT_DIR   Input directory scanned non-recursively for FIT/FITS files.\n  OUTPUT_DIR  Explicit flat output directory for stem-matched .tiff files.\n\noptions:\n  -h, --help  show this help message and exit\n",
+      "stderr": ""
+    },
+    {
+      "entry_point": "module",
+      "args": [
+        "archive",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: seestar-toolkit archive [-h] [--dry-run] [--location LOCATION]\n                               [--hierarchy HIERARCHY]\n                               [--source-action {copy,move}]\n                               [--collision-policy {skip-identical,error,overwrite}]\n                               [--non-interactive] [--config PATH]\n                               SOURCE_ROOT ARCHIVE_ROOT\n\nDiscover and reconstruct a Seestar work directory, plan its archive, and\noptionally archive FITS originals with TIFF derivatives.\n\npositional arguments:\n  SOURCE_ROOT\n  ARCHIVE_ROOT\n\noptions:\n  -h, --help            show this help message and exit\n  --dry-run             Show the archive plan without writing files.\n  --location LOCATION   Use this location for every observation.\n  --hierarchy HIERARCHY\n                        Archive hierarchy template; overrides configuration.\n  --source-action {copy,move}\n                        Archive originals by copy (default) or explicit move.\n  --collision-policy {skip-identical,error,overwrite}\n                        Policy for existing FITS destinations (default: skip-\n                        identical).\n  --non-interactive     Never prompt for a location.\n  --config PATH         Explicit archive TOML configuration.\n",
+      "stderr": ""
+    }
+  ],
+  "documents_audited": [
+    "README.md",
+    "CHANGELOG.md",
+    "AGENTS.md",
+    "docs/development/DEV_README.md",
+    "docs/development/ARCHITECTURE.md",
+    "docs/development/PACKAGING.md",
+    "docs/development/PROJECT_Notes.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1a.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1a_AUDIT.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1b.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1b_REPORT.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1c.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1c_REPORT.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1d.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1d_REPORT.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2a.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2a_REPORT.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b.md",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md"
+  ],
+  "docs_user_inventory": [
+    ".gitkeep"
+  ],
+  "contributing_exists": false,
+  "license": "LICENSE (MIT; existing attribution preserved)",
+  "command_examples": [
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 33,
+      "command_family": "--version",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 34,
+      "command_family": "--help",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 35,
+      "command_family": "convert",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 36,
+      "command_family": "convert-batch",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 37,
+      "command_family": "archive",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 38,
+      "command_family": "archive",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 39,
+      "command_family": "--version",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 40,
+      "command_family": "convert",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 41,
+      "command_family": "convert-batch",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 42,
+      "command_family": "archive",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.1a.md",
+      "line": 145,
+      "command_family": "...",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 2,
+      "assessment": "REJECTED: historical usage notation, not executable; raw result retained"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.1c.md",
+      "line": 174,
+      "command_family": "help",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.1c.md",
+      "line": 175,
+      "command_family": "help",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 0,
+      "assessment": "PASS: executable syntax accepted"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md",
+      "line": 42,
+      "command_family": "[-h]",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 2,
+      "assessment": "REJECTED: historical usage notation, not executable; raw result retained"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md",
+      "line": 43,
+      "command_family": "convert",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 2,
+      "assessment": "REJECTED: historical usage notation, not executable; raw result retained"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md",
+      "line": 44,
+      "command_family": "convert-batch",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 2,
+      "assessment": "REJECTED: historical usage notation, not executable; raw result retained"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md",
+      "line": 45,
+      "command_family": "archive",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 2,
+      "assessment": "REJECTED: historical usage notation, not executable; raw result retained"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md",
+      "line": 695,
+      "command_family": "[-h]",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 2,
+      "assessment": "REJECTED: historical usage notation, not executable; raw result retained"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md",
+      "line": 696,
+      "command_family": "convert",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 2,
+      "assessment": "REJECTED: historical usage notation, not executable; raw result retained"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md",
+      "line": 697,
+      "command_family": "convert-batch",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 2,
+      "assessment": "REJECTED: historical usage notation, not executable; raw result retained"
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md",
+      "line": 698,
+      "command_family": "archive",
+      "validation": "parser only; no workflow executed",
+      "parser_exit": 2,
+      "assessment": "REJECTED: historical usage notation, not executable; raw result retained"
+    }
+  ],
+  "fact_matrix": [
+    {
+      "claim": "Version/release",
+      "finding": "1.1.0; semantic versioning; Unreleased until GitHub publication.",
+      "authority": "pyproject.toml; CHANGELOG.md; docs/development/PACKAGING.md"
+    },
+    {
+      "claim": "Platform",
+      "finding": "macOS Apple Silicon arm64 only; qualify tested OS versions and Apple support at actual release. No Intel/Rosetta, Windows or Linux support claim.",
+      "authority": "docs/development/change_documents/STAGE_9/STAGE_9.1a_AUDIT.md \u00a77; STAGE_9.2a_REPORT.md"
+    },
+    {
+      "claim": "Python",
+      "finding": ">=3.11,<3.15; 3.11\u20133.14 supported, no longer merely candidates.",
+      "authority": "pyproject.toml; STAGE_9.2a_REPORT.md; STAGE_9.1d_REPORT.md"
+    },
+    {
+      "claim": "Distribution",
+      "finding": "Wheel primary, sdist secondary; no Toolkit PyPI, installer script or current published release implied.",
+      "authority": "docs/development/PACKAGING.md; STAGE_9.2a_REPORT.md"
+    },
+    {
+      "claim": "Interpreter/venv",
+      "finding": "Homebrew recommended; check which python3 and version; ~/.venvs/seestar-toolkit activation/deactivation/full-path alternative; no system edits, global PATH or required uv.",
+      "authority": "docs/development/PACKAGING.md; STAGE_9.1a_AUDIT.md \u00a77"
+    },
+    {
+      "claim": "Dependencies",
+      "finding": "Runtime astropy/numpy/opencv-python-headless/tifffile; dev/build extras separate; installation may download dependencies.",
+      "authority": "pyproject.toml; STAGE_9.2a_REPORT.md; tools/validate_clean_install.py"
+    },
+    {
+      "claim": "CLI",
+      "finding": "Both entry points 1.1.0; help/version/verbose global, convert/convert-batch/archive only; full help captured in JSON.",
+      "authority": "src/seestar_toolkit/cli.py:build_parser; checkpoint A commands"
+    },
+    {
+      "claim": "Single conversion",
+      "finding": "Explicit input/output; existing output rejected; no automatic stretch.",
+      "authority": "src/seestar_toolkit/conversion.py; tests/integration/test_cli_conversion.py; STAGE_9.2b_CHECKPOINT_B.json"
+    },
+    {
+      "claim": "Batch",
+      "finding": "Flat non-recursive, case-insensitive FIT/FITS, per-file continuation, totals, empty input fails; output parent constraints apply.",
+      "authority": "src/seestar_toolkit/batch.py; tests/unit/test_batch.py; STAGE_9.2b_CHECKPOINT_B.json"
+    },
+    {
+      "claim": "Archive discovery",
+      "finding": "Root and immediate child files only; not arbitrary recursion; absolute archive root required.",
+      "authority": "src/seestar_toolkit/archive/discovery.py:discover_seestar_inputs; archive/planning.py; tests/integration/test_archive_discovery.py"
+    },
+    {
+      "claim": "Archive naming",
+      "finding": "{target}/{location}/{session_end_date}; observation_01; date is capture timestamp plus 12 hours, formatted YYYYMMDD.",
+      "authority": "src/seestar_toolkit/archive/planning.py:session_end_date; tests/integration/test_archive_planning.py"
+    },
+    {
+      "claim": "Archive products",
+      "finding": "Observations, lights, TIFFs, seestar_stacked and target INDEX.md; JPEG originals untouched.",
+      "authority": "src/seestar_toolkit/archive/execution.py; archive/indexing.py; STAGE_9.2b_CHECKPOINT_B.json"
+    },
+    {
+      "claim": "Archive safety",
+      "finding": "Dry-run before mutation, backups, explicit copy first; move disposable data only in validation. No whole-operation rollback.",
+      "authority": "src/seestar_toolkit/archive/execution.py; tests/integration/test_archive_orchestration.py; STAGE_9.2b_REPORT.md"
+    },
+    {
+      "claim": "Collisions",
+      "finding": "skip-identical/error/overwrite concern FITS destinations; existing TIFF behaviour separately documented; config can override default copy.",
+      "authority": "src/seestar_toolkit/cli.py:_run_archive; archive/execution.py; STAGE_9.2b_CHECKPOINT_B.json"
+    },
+    {
+      "claim": "Configuration",
+      "finding": "Read-only ~/.config/seestar-toolkit/config.toml; explicit config replaces default lookup; absent default allowed, absent explicit file errors; XDG ignored.",
+      "authority": "src/seestar_toolkit/archive/config.py; tests/unit/test_cli.py; STAGE_9.2b_CHECKPOINT_D.json"
+    },
+    {
+      "claim": "Config schema/precedence",
+      "finding": "[archive] hierarchy/source_action/collision_policy; [[locations]] name/latitude/longitude/radius_m; CLI over config over defaults. No config/saved-location writing or JPEG switch.",
+      "authority": "src/seestar_toolkit/archive/config.py; src/seestar_toolkit/cli.py:_run_archive"
+    },
+    {
+      "claim": "Location",
+      "finding": "Explicit location overrides saved nearest GPS matching; TTY confirmation/manual fallback; --non-interactive suppresses prompts, unknown fallback. No geocoder.",
+      "authority": "src/seestar_toolkit/cli.py:_resolve_interactive_location; archive/planning.py; tests/unit/test_cli.py"
+    },
+    {
+      "claim": "Input scope",
+      "finding": "Validated S50 raw/native RGB, mosaic and evidence-qualified AltAz/EQ; tested Siril float32 RGB standard/mosaic conversion only.",
+      "authority": "STAGE_9.1a_AUDIT.md \u00a79; tests/integration/test_siril_rgb_conversion.py; tests/integration/test_rgb_handling_contract.py"
+    },
+    {
+      "claim": "Unsupported",
+      "finding": "No all Seestar files/modes promise; DSLR, S50 Pro, S30/S30 Pro and MP4 processing unsupported/unimplemented.",
+      "authority": "STAGE_9.1a_AUDIT.md \u00a79; docs/development/PROJECT_Notes.md"
+    },
+    {
+      "claim": "TIFF",
+      "finding": "Linear uint16 RGB for Seestar; float32 RGB for supported Siril. Raw Bayer demosaicing; already-RGB channels handled without second demosaic; no stretch.",
+      "authority": "src/seestar_toolkit/conversion.py; tests/integration/test_fits_to_tiff_conversion.py; tests/integration/test_siril_rgb_conversion.py"
+    },
+    {
+      "claim": "Exit codes",
+      "finding": "0 success/help/version; 2 parser misuse; 1 expected conversion, batch or archive operational failure. No blanket friendly-error guarantee for arbitrary exceptions.",
+      "authority": "src/seestar_toolkit/cli.py:main; tests/unit/test_cli.py; STAGE_9.2b_CHECKPOINT_B.json"
+    },
+    {
+      "claim": "Diagnostics",
+      "finding": "--verbose before command; summaries and stderr errors; do not claim all internal metadata diagnostics are CLI-visible.",
+      "authority": "src/seestar_toolkit/cli.py; STAGE_9.2b_CHECKPOINT_A.json"
+    },
+    {
+      "claim": "Storage",
+      "finding": "Local, replacement removable device, mounted NAS and cross-storage workflows validated; original removable failure remains historical FAIL. No new storage access here.",
+      "authority": "STAGE_9.2b_CHECKPOINT_C.json; STAGE_9.2b_CHECKPOINT_D.json; STAGE_9.2b_REPORT.md"
+    },
+    {
+      "claim": "Privacy",
+      "finding": "Audited Toolkit runtime has no telemetry, analytics, update checks or external metadata transmission; mounted NAS I/O is filesystem access. Metadata may persist in FITS/indexes/diagnostics.",
+      "authority": "STAGE_9.2b_CHECKPOINT_D.json; tests/data/PRIVACY_REVIEW.md; archive/indexing.py"
+    },
+    {
+      "claim": "Permissions",
+      "finding": "User-selected filesystem access can be restricted; no demonstrated universal Full Disk Access requirement, no bypass instructions.",
+      "authority": "STAGE_9.2b_REPORT.md; STAGE_9.1a_AUDIT.md \u00a77"
+    },
+    {
+      "claim": "Uninstall",
+      "finding": "Deactivate/remove package or venv independently of optional config cleanup; image/archive data persists.",
+      "authority": "STAGE_9.2b_CHECKPOINT_D.json; docs/development/PACKAGING.md"
+    },
+    {
+      "claim": "License",
+      "finding": "MIT; retain intentional public copyright attribution.",
+      "authority": "LICENSE; pyproject.toml"
+    },
+    {
+      "claim": "Fixture authority",
+      "finding": "Ten reviewed public-safe fixtures; synthetic Siril mosaic is 5760 bytes; never restore oversized historical object.",
+      "authority": "tests/data/public_fixtures.json; tests/data/README.md; tests/data/PRIVACY_REVIEW.md; tools/check_public_inputs.py"
+    }
+  ],
+  "findings": [
+    {
+      "id": "D1",
+      "classification": "documentation defect",
+      "detail": "DEV_README.md:59 calls archive discovery recursive; current discovery is shallow. Correct live wording when authorised in C."
+    },
+    {
+      "id": "D2",
+      "classification": "documentation defect",
+      "detail": "Root README and public CHANGELOG are transitional placeholders; docs/user contains only .gitkeep and CONTRIBUTING is absent. Implement only in B/C."
+    },
+    {
+      "id": "D3",
+      "classification": "documentation defect",
+      "detail": "A blanket 16-bit TIFF description omits validated Siril float32 output. Both types must be explicit in the new guides."
+    },
+    {
+      "id": "D4",
+      "classification": "documentation defect",
+      "detail": "DEV_README archive examples omit explicit copy, so an existing move configuration can change their action. New copy examples must specify --source-action copy and the chosen collision policy."
+    },
+    {
+      "id": "D5",
+      "classification": "documentation defect",
+      "detail": "Existing development configuration example contains a named location and nonzero coordinates. Do not promote those values; use clearly synthetic metadata. Review live example correction in C."
+    },
+    {
+      "id": "H1",
+      "classification": "not a contradiction / historical context",
+      "detail": "{date}, session_01, proposed config writing and JPEG policy belong to plans, not the installed CLI contract. Preserve historical records."
+    },
+    {
+      "id": "H2",
+      "classification": "not a contradiction / historical context",
+      "detail": "Old Python candidate language, uv validation and editable development install commands are historical/developer context, not current user installation requirements."
+    },
+    {
+      "id": "H3",
+      "classification": "not a contradiction / historical context",
+      "detail": "Stage 9.2b report retains pre-commit formal FAIL and original storage failures. Starting commit is now 519f0e3; preserve those reports and append current status only."
+    },
+    {
+      "id": "H4",
+      "classification": "not a contradiction / historical context",
+      "detail": "Nine historical usage/ellipsis parser probes returned 2. They are syntax notation, not executable examples; preserve raw outcomes and exclude from copy-paste commands."
+    },
+    {
+      "id": "H5",
+      "classification": "not a contradiction / historical context",
+      "detail": "Generic wheel tag does not imply cross-platform support; tested macOS plus Apple-supported-at-release policy does not establish every Apple-supported version."
+    }
+  ],
+  "potential_product_defects": [],
+  "other_shell_example_inventory": [
+    {
+      "document": "AGENTS.md",
+      "line": 103,
+      "family": "pytest",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "AGENTS.md",
+      "line": 109,
+      "family": "ruff",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 24,
+      "family": "python3",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 25,
+      "family": "source",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 26,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 27,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 97,
+      "family": "pytest",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/DEV_README.md",
+      "line": 98,
+      "family": "ruff",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/PACKAGING.md",
+      "line": 49,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/PACKAGING.md",
+      "line": 98,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/PACKAGING.md",
+      "line": 99,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/PACKAGING.md",
+      "line": 100,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/PACKAGING.md",
+      "line": 101,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/PACKAGING.md",
+      "line": 102,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/PACKAGING.md",
+      "line": 104,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/PACKAGING.md",
+      "line": 173,
+      "family": "python3.13",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/PACKAGING.md",
+      "line": 188,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.1a.md",
+      "line": 144,
+      "family": "source",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.1a.md",
+      "line": 146,
+      "family": "deactivate",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.1c_REPORT.md",
+      "line": 150,
+      "family": "python",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.1d.md",
+      "line": 306,
+      "family": "pytest",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    },
+    {
+      "document": "docs/development/change_documents/STAGE_9/STAGE_9.1d.md",
+      "line": 307,
+      "family": "ruff",
+      "assessment": "Developer/build/historical context; not executed or promoted as user installation. B must validate selected neutral installation sequence."
+    }
+  ],
+  "stage_status": "STARTED",
+  "checkpoint": "A",
+  "status": "PASS",
+  "privacy": "Only repository-relative references and neutral labels retained; existing license attribution preserved. No external storage or private dataset read.",
+  "validation": {
+    "pytest": "PASS: 330 passed in 10.80s (Python 3.13.15)",
+    "ruff": "PASS: All checks passed",
+    "formatting": "PASS: 37 files already formatted",
+    "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+    "metadata": "1.1.0; >=3.11,<3.15; two entry points; runtime/dev/build separated",
+    "whitespace": "PASS: git diff --check; new files also checked directly",
+    "documentation": "PASS: local Markdown links, 65 ordered criteria, 28 fact rows, JSON consistency and changed-document privacy",
+    "preservation": "PASS: protected files byte-identical to initial audit, including pending development CHANGELOG and earlier Stage evidence"
+  },
+  "closure_criteria": [
+    {
+      "id": 1,
+      "criterion": "Starting branch and commit verified",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 2,
+      "criterion": "Expected pending development CHANGELOG preserved",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 3,
+      "criterion": "Authoritative specification created before documentation implementation",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 4,
+      "criterion": "Checkpoint boundaries and exclusions explicit",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 5,
+      "criterion": "Existing public documentation and license audited",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 6,
+      "criterion": "Package metadata and release version verified",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 7,
+      "criterion": "Both installed CLI entry points audited",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 8,
+      "criterion": "Full exposed command and option inventory recorded",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 9,
+      "criterion": "Existing influential command examples inventoried and checked safely",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 10,
+      "criterion": "Authoritative fact matrix recorded",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 11,
+      "criterion": "Contradictions classified without converting plans into requirements",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 12,
+      "criterion": "Potential product defects reported before Checkpoint B",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 13,
+      "criterion": "Guide table of contents covers every required topic",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 14,
+      "criterion": "Quick Start table of contents designed",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 15,
+      "criterion": "README and CONTRIBUTING structures designed",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 16,
+      "criterion": "Public Unreleased changelog entry designed",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 17,
+      "criterion": "Checkpoint A privacy review and evidence recorded",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 18,
+      "criterion": "Checkpoint A local validation passes",
+      "status": "PASS",
+      "evidence": "Checkpoint A audit/design and validation"
+    },
+    {
+      "id": 19,
+      "criterion": "Independent review authorises continuation to Checkpoint B",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 20,
+      "criterion": "Full authoritative Markdown User Guide implemented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 21,
+      "criterion": "Concise Quick Start implemented and linked to Guide",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 22,
+      "criterion": "Semantic version and Unreleased status consistent",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 23,
+      "criterion": "Platform support limited to validated macOS Apple Silicon policy",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 24,
+      "criterion": "Python 3.11\u20133.14 support accurately documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 25,
+      "criterion": "Homebrew interpreter installation and checking documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 26,
+      "criterion": "System Python remains untouched; uv not required",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 27,
+      "criterion": "Wheel primary and sdist secondary installation documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 28,
+      "criterion": "No Toolkit PyPI or installer-script installation claims",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 29,
+      "criterion": "Recommended venv activation, deactivation and full-path alternative documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 30,
+      "criterion": "No normal global PATH, symlink or shell-profile modifications",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 31,
+      "criterion": "Both entry points and exact global-option placement documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 32,
+      "criterion": "Single conversion and flat batch behaviour documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 33,
+      "criterion": "Supported S50 and Siril data distinguished from unsupported modes",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 34,
+      "criterion": "TIFF dtype, linearity, demosaicing and RGB preservation documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 35,
+      "criterion": "Archive dry-run, backups and explicit copy safety prominent",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 36,
+      "criterion": "Move, collisions, existing TIFFs and non-transactional risks documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 37,
+      "criterion": "Actual hierarchy, observations, products, indexes and archive date documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 38,
+      "criterion": "Read-only config path, precedence and ignored XDG behaviour documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 39,
+      "criterion": "Actual location matching, prompts and fallback documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 40,
+      "criterion": "Absent config-writing, saved-location-writing and JPEG switches not invented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 41,
+      "criterion": "Diagnostics, errors, exit codes and troubleshooting documented",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 42,
+      "criterion": "Local, removable, mounted network and cross-storage scope qualified",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 43,
+      "criterion": "Privacy claims bounded by evidence and metadata-sharing risks explained",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 44,
+      "criterion": "macOS permissions described without Full Disk Access requirement or bypass",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 45,
+      "criterion": "Uninstall separates environment, persistent config and user data",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 46,
+      "criterion": "Getting help and limitations documented without future-feature promises",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 47,
+      "criterion": "Checkpoint B command examples verified safely and evidence preserved",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 48,
+      "criterion": "Checkpoint B documentation consistency, links and privacy checks pass",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 49,
+      "criterion": "Independent review authorises continuation to Checkpoint C",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 50,
+      "criterion": "Root README concise and consistent with authoritative Guide",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 51,
+      "criterion": "Concise CONTRIBUTING includes quality and FITS privacy guidance",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 52,
+      "criterion": "Public CHANGELOG user-relevant, Unreleased and without fabricated date",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 53,
+      "criterion": "Development status and packaging documentation updated appropriately",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 54,
+      "criterion": "Final Markdown content, links and command examples validated",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 55,
+      "criterion": "Final public fixture/history and changed-document privacy checks pass",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 56,
+      "criterion": "Final full pytest, Ruff, applicable formatting and whitespace checks pass",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 57,
+      "criterion": "Final distribution build/inspection validates changed README metadata",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 58,
+      "criterion": "Every genuine failure and remediation retained",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 59,
+      "criterion": "All closure criteria individually assessed with evidence",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 60,
+      "criterion": "No production/test/fixture changes without demonstrated authorised defect",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 61,
+      "criterion": "No PDF, timestamp sync, checksum manifest or later-stage work performed",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 62,
+      "criterion": "Independent ChatGPT review accepts technical completion",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 63,
+      "criterion": "User approves and creates closure commit; Codex never commits or pushes",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 64,
+      "criterion": "Post-commit content, branch, cleanliness and required CI verified",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    },
+    {
+      "id": 65,
+      "criterion": "Formal COMPLETE declared only after every closure gate passes",
+      "status": "PENDING",
+      "evidence": "Deferred checkpoint or final formal gate; not claimed complete"
+    }
+  ],
+  "preserved_files": {
+    "LICENSE": "abde3baca922ef9bd26fcd01972362248c9238e8d7b3a63f5ae7a2f0b27d5ed5",
+    "CHANGELOG.md": "6194803506adc8dcf5c467a2010aff646f4fb7d124b243a5569a7c5971a3daeb",
+    "pyproject.toml": "518d7a7654790e39ef9bd46e5729d2abd5eccd86fb047b2b53cb26d79eb92bbb",
+    "README.md": "3987c5aec7caa214c059cd51bc4e7923f003319c983e6fb6af151753fe4c533d",
+    "docs/development/CHANGELOG.md": "df9cc335f04eeaf8dfdec690e526de61262ac1f3c19eca4c95119fcf56829c90",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1b.md": "5b000eb095f2dbff81c57b66c990e3c796ac3ab15f47a609f39e75a763845026",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1c_REPORT.md": "645ab7550c2ea517dd7031afecad279759297b5e7e62555a56cafddf438fdc70",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1a_AUDIT.md": "d3b3237fb79c2e38ef3970770649073257ee2296c47a279a2c6476d3b38ce278",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b.md": "5d45a10a340e8885224a861f4cb45f4daf3a7d8a27adc3b59c254d6d07b916db",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_C.json": "28f3e6fecd180af39cdc802c993203f0b5211a7819f8d07a08782f6a84a258eb",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_B.json": "de11a63e2f831622bb9acfb5570feb2cb71b36daf26921fdfc585422d1f8257e",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1c.md": "f688f89aeeff5e3ca7a2f0ace73fd6dfea34764563211a39fef837c382cc82d1",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1b_REPORT.md": "c34236a4ec69d8b118110d8480b80aeab11a30569570ae8411b5126d7e3eec52",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1d_REPORT.md": "b766e461c291892c7b68dca4c6f5e662b4231e4c6ea5081f383e60a844506af8",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2a_REPORT.md": "85ee9cfc7ef46a62fae159f69ddfc1249967b872fdc16d9db5cc7a63e91f0ded",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_D.json": "1152c0b864dda57841af952d58e62906b63a1461f06d39987e2d08a8f93c3bc1",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_REPORT.md": "b0efcd14b7bf333a8afdd41ffb79106fe207c490681ef177d4818aa44a310720",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1d.md": "1296a4a7721895fc739bee421b0c301e72b9af0f8f1c6fa97fedcf2e753b84ea",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2b_CHECKPOINT_A.json": "657202492d554d5f28419b97a778459f4f0435d5b68ff8383f833cd312c306f3",
+    "docs/development/change_documents/STAGE_9/STAGE_9.1a.md": "49a9c205374b7f8e83bdcef4fc16ffb1ffb1295135c2e4e88e85afcc03b98d27",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2a_EVIDENCE.json": "4439a1b38033edc14e752f962152f8255d7067d1d36b2daee06cca4bc99422b3",
+    "docs/development/change_documents/STAGE_9/STAGE_9.2a.md": "899808192d18fccce8d227deadbcd55e2ef1a612029dddec851b8d0b27979130"
+  }
+}

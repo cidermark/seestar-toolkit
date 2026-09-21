@@ -1,0 +1,1496 @@
+{
+  "checkpoint": "B",
+  "stage_status": "STARTED",
+  "status": "PASS",
+  "baseline": "519f0e3",
+  "commands": [
+    {
+      "id": 1,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 97,
+      "example": "/opt/homebrew/bin/brew --version",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Homebrew 6.0.22-171-g9b93c2c\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 2,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 98,
+      "example": "which python3",
+      "shell_syntax_exit": 0,
+      "method": "executed with selected installed interpreter/entry point",
+      "result": {
+        "exit_code": 0,
+        "stdout": "<existing-runtime>/bin/python\n",
+        "stderr": ""
+      },
+      "reason": "Environment selection adapted explicitly; no private shell configuration read."
+    },
+    {
+      "id": 3,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 99,
+      "example": "python3 --version",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 4,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 108,
+      "example": "/opt/homebrew/bin/brew install python@3.13",
+      "shell_syntax_exit": 0,
+      "method": "syntax/static validated; not executed",
+      "reason": "Homebrew install verified against official formula; pip local wheel/sdist routes and named uninstall checked against pip help and prior Stage 9.2 installation/uninstall evidence. No system/package mutation or new release artifact."
+    },
+    {
+      "id": 5,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 109,
+      "example": "/opt/homebrew/bin/python3.13 --version",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 6,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 123,
+      "example": "/opt/homebrew/bin/python3.13 -m venv ~/.venvs/seestar-toolkit",
+      "shell_syntax_exit": 0,
+      "method": "executed with dedicated temporary destination",
+      "result": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 7,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 124,
+      "example": "source ~/.venvs/seestar-toolkit/bin/activate",
+      "shell_syntax_exit": 0,
+      "method": "executed in temporary venv shell lifecycle",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n<temporary-root>/environment/bin/python\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 8,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 125,
+      "example": "python --version",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 9,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 136,
+      "example": "python -m pip install \"/path/to/downloads/seestar_toolkit-1.1.0-py3-none-any.whl\"",
+      "shell_syntax_exit": 0,
+      "method": "syntax/static validated; not executed",
+      "reason": "Homebrew install verified against official formula; pip local wheel/sdist routes and named uninstall checked against pip help and prior Stage 9.2 installation/uninstall evidence. No system/package mutation or new release artifact."
+    },
+    {
+      "id": 10,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 137,
+      "example": "python -m pip check",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "No broken requirements found.\n",
+        "stderr": "WARNING: The directory '<user-path> or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.\n"
+      }
+    },
+    {
+      "id": 11,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 138,
+      "example": "seestar-toolkit --version",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "seestar-toolkit 1.1.0\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 12,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 139,
+      "example": "python -m seestar_toolkit --version",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "seestar-toolkit 1.1.0\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 13,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 152,
+      "example": "python -m pip install \"/path/to/downloads/seestar_toolkit-1.1.0.tar.gz\"",
+      "shell_syntax_exit": 0,
+      "method": "syntax/static validated; not executed",
+      "reason": "Homebrew install verified against official formula; pip local wheel/sdist routes and named uninstall checked against pip help and prior Stage 9.2 installation/uninstall evidence. No system/package mutation or new release artifact."
+    },
+    {
+      "id": 14,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 164,
+      "example": "~/.venvs/seestar-toolkit/bin/seestar-toolkit --version",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "seestar-toolkit 1.1.0\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 15,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 170,
+      "example": "deactivate",
+      "shell_syntax_exit": 0,
+      "method": "executed in temporary venv shell lifecycle",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n<temporary-root>/environment/bin/python\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 16,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 181,
+      "example": "seestar-toolkit --help",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 17,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 182,
+      "example": "seestar-toolkit convert --help",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "usage: seestar-toolkit convert [-h] INPUT_FITS OUTPUT_TIFF\n\nConvert one FIT/FITS image to one TIFF. Supported inputs include raw Seestar\nBayer, native Seestar RGB, and Siril RGB images.\n\npositional arguments:\n  INPUT_FITS   Input FIT/FITS image path.\n  OUTPUT_TIFF  Explicit output TIFF path.\n\noptions:\n  -h, --help   show this help message and exit\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 18,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 183,
+      "example": "seestar-toolkit convert-batch --help",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "usage: seestar-toolkit convert-batch [-h] INPUT_DIR OUTPUT_DIR\n\nConvert supported FIT/FITS files in one non-recursive input directory to an\nexplicit output directory.\n\npositional arguments:\n  INPUT_DIR   Input directory scanned non-recursively for FIT/FITS files.\n  OUTPUT_DIR  Explicit flat output directory for stem-matched .tiff files.\n\noptions:\n  -h, --help  show this help message and exit\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 19,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 202,
+      "example": "seestar-toolkit convert \"/path/to/input/light.fit\" \"/path/to/output/light.tiff\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Created TIFF: <temporary-root>/case-19/output/light.tiff\n",
+        "stderr": ""
+      },
+      "verified": "uint16 RGB TIFF exists; source unchanged"
+    },
+    {
+      "id": 20,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 215,
+      "example": "seestar-toolkit convert-batch \"/path/to/input images\" \"/path/to/output images\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Created TIFF: <temporary-root>/case-20/output images/light.tiff\nCreated TIFF: <temporary-root>/case-20/output images/siril.tiff\nBatch complete: 2 discovered, 2 converted, 0 failed\n",
+        "stderr": ""
+      },
+      "verified": "Two outputs reopened: uint16 Seestar and float32 Siril; sources unchanged"
+    },
+    {
+      "id": 21,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 265,
+      "example": "seestar-toolkit archive --dry-run --source-action copy --collision-policy skip-identical --location \"Synthetic Site\" --non-interactive \"/path/to/work root\" \"/path/to/archive\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "execution_adaptation": "Added explicit disposable documented config to avoid reading real user config; documented flags/paths also parser-validated unchanged.",
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=Synthetic Site; date=20000101; destination=<temporary-root>/case-21/archive/IC 434/Synthetic Site/20000101/observation_01\n  FITS <temporary-root>/case-21/work root/IC 434_sub/Light_example.fit -> <temporary-root>/case-21/archive/IC 434/Synthetic Site/20000101/observation_01/lights/Light_example.fit; TIFF -> <temporary-root>/case-21/archive/IC 434/Synthetic Site/20000101/observation_01/tiff/Light_example.tiff\nIndex: <temporary-root>/case-21/archive/IC 434/INDEX.md\n",
+        "stderr": ""
+      },
+      "verified": "Dry-run created no destination; source unchanged"
+    },
+    {
+      "id": 22,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 284,
+      "example": "seestar-toolkit archive --source-action copy --collision-policy skip-identical --location \"Synthetic Site\" --non-interactive \"/path/to/work root\" \"/path/to/archive\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "execution_adaptation": "Added explicit disposable documented config to avoid reading real user config; documented flags/paths also parser-validated unchanged.",
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Archive complete: 1 copied, 0 moved, 0 skipped identical, 0 original failures\nTIFFs: 1 created, 0 skipped/collided/failed\nIndexes: 1 created, 0 updated, 0 unchanged, 0 failed\n",
+        "stderr": ""
+      },
+      "verified": "Archive FITS, uint16 TIFF and INDEX.md exist; source unchanged"
+    },
+    {
+      "id": 23,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 302,
+      "example": "seestar-toolkit archive --dry-run --source-action move --collision-policy skip-identical --location \"Synthetic Site\" --non-interactive \"/path/to/work root\" \"/path/to/archive\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "execution_adaptation": "Added explicit disposable documented config to avoid reading real user config; documented flags/paths also parser-validated unchanged.",
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Dry run: 1 observation(s); action=move; collision=skip_identical\nPlan observation_01: target=IC 434; location=Synthetic Site; date=20000101; destination=<temporary-root>/case-23/archive/IC 434/Synthetic Site/20000101/observation_01\n  FITS <temporary-root>/case-23/work root/IC 434_sub/Light_example.fit -> <temporary-root>/case-23/archive/IC 434/Synthetic Site/20000101/observation_01/lights/Light_example.fit; TIFF -> <temporary-root>/case-23/archive/IC 434/Synthetic Site/20000101/observation_01/tiff/Light_example.tiff\nIndex: <temporary-root>/case-23/archive/IC 434/INDEX.md\n",
+        "stderr": ""
+      },
+      "verified": "Dry-run created no destination; source unchanged"
+    },
+    {
+      "id": 24,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 380,
+      "example": "seestar-toolkit archive --help",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "usage: seestar-toolkit archive [-h] [--dry-run] [--location LOCATION]\n                               [--hierarchy HIERARCHY]\n                               [--source-action {copy,move}]\n                               [--collision-policy {skip-identical,error,overwrite}]\n                               [--non-interactive] [--config PATH]\n                               SOURCE_ROOT ARCHIVE_ROOT\n\nDiscover and reconstruct a Seestar work directory, plan its archive, and\noptionally archive FITS originals with TIFF derivatives.\n\npositional arguments:\n  SOURCE_ROOT\n  ARCHIVE_ROOT\n\noptions:\n  -h, --help            show this help message and exit\n  --dry-run             Show the archive plan without writing files.\n  --location LOCATION   Use this location for every observation.\n  --hierarchy HIERARCHY\n                        Archive hierarchy template; overrides configuration.\n  --source-action {copy,move}\n                        Archive originals by copy (default) or explicit move.\n  --collision-policy {skip-identical,error,overwrite}\n                        Policy for existing FITS destinations (default: skip-\n                        identical).\n  --non-interactive     Never prompt for a location.\n  --config PATH         Explicit archive TOML configuration.\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 25,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 424,
+      "example": "seestar-toolkit archive --dry-run --source-action copy --collision-policy skip-identical --config \"/path/to/config.toml\" --non-interactive \"/path/to/work root\" \"/path/to/archive\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=Synthetic Site; date=20000101; destination=<temporary-root>/case-25/archive/IC 434/Synthetic Site/20000101/observation_01\n  FITS <temporary-root>/case-25/work root/IC 434_sub/Light_example.fit -> <temporary-root>/case-25/archive/IC 434/Synthetic Site/20000101/observation_01/lights/Light_example.fit; TIFF -> <temporary-root>/case-25/archive/IC 434/Synthetic Site/20000101/observation_01/tiff/Light_example.tiff\nIndex: <temporary-root>/case-25/archive/IC 434/INDEX.md\n",
+        "stderr": ""
+      },
+      "verified": "Dry-run created no destination; source unchanged"
+    },
+    {
+      "id": 26,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 500,
+      "example": "seestar-toolkit --verbose convert \"/path/to/input/light.fit\" \"/path/to/output/light-verbose.tiff\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Created TIFF: <temporary-root>/case-26/output/light-verbose.tiff\n",
+        "stderr": ""
+      },
+      "verified": "uint16 RGB TIFF exists; source unchanged"
+    },
+    {
+      "id": 27,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 517,
+      "example": "echo $?",
+      "shell_syntax_exit": 0,
+      "method": "executed in shell",
+      "result": {
+        "exit_code": 0,
+        "stdout": "0\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 28,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 534,
+      "example": "which python",
+      "shell_syntax_exit": 0,
+      "method": "executed with selected installed interpreter/entry point",
+      "result": {
+        "exit_code": 0,
+        "stdout": "<existing-runtime>/bin/python\n",
+        "stderr": ""
+      },
+      "reason": "Environment selection adapted explicitly; no private shell configuration read."
+    },
+    {
+      "id": 29,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 535,
+      "example": "which seestar-toolkit",
+      "shell_syntax_exit": 0,
+      "method": "executed with selected installed interpreter/entry point",
+      "result": {
+        "exit_code": 0,
+        "stdout": "<existing-runtime>/bin/seestar-toolkit\n",
+        "stderr": ""
+      },
+      "reason": "Environment selection adapted explicitly; no private shell configuration read."
+    },
+    {
+      "id": 30,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 536,
+      "example": "python --version",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 31,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 537,
+      "example": "python -m pip check",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "No broken requirements found.\n",
+        "stderr": "WARNING: The directory '<user-path> or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.\n"
+      }
+    },
+    {
+      "id": 32,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 538,
+      "example": "python -c \"import seestar_toolkit; print(seestar_toolkit.__file__)\"",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "/private<existing-runtime>/lib/python3.13/site-packages/seestar_toolkit/__init__.py\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 33,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 551,
+      "example": "python -m pip uninstall seestar-toolkit",
+      "shell_syntax_exit": 0,
+      "method": "syntax/static validated; not executed",
+      "reason": "Homebrew install verified against official formula; pip local wheel/sdist routes and named uninstall checked against pip help and prior Stage 9.2 installation/uninstall evidence. No system/package mutation or new release artifact."
+    },
+    {
+      "id": 34,
+      "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "line": 557,
+      "example": "deactivate",
+      "shell_syntax_exit": 0,
+      "method": "executed in temporary venv shell lifecycle",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n<temporary-root>/environment/bin/python\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 35,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 31,
+      "example": "which python3",
+      "shell_syntax_exit": 0,
+      "method": "executed with selected installed interpreter/entry point",
+      "result": {
+        "exit_code": 0,
+        "stdout": "<existing-runtime>/bin/python\n",
+        "stderr": ""
+      },
+      "reason": "Environment selection adapted explicitly; no private shell configuration read."
+    },
+    {
+      "id": 36,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 32,
+      "example": "python3 --version",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 37,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 33,
+      "example": "/opt/homebrew/bin/brew install python@3.13",
+      "shell_syntax_exit": 0,
+      "method": "syntax/static validated; not executed",
+      "reason": "Homebrew install verified against official formula; pip local wheel/sdist routes and named uninstall checked against pip help and prior Stage 9.2 installation/uninstall evidence. No system/package mutation or new release artifact."
+    },
+    {
+      "id": 38,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 34,
+      "example": "/opt/homebrew/bin/python3.13 --version",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 39,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 42,
+      "example": "/opt/homebrew/bin/python3.13 -m venv ~/.venvs/seestar-toolkit",
+      "shell_syntax_exit": 0,
+      "method": "executed with dedicated temporary destination",
+      "result": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 40,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 43,
+      "example": "source ~/.venvs/seestar-toolkit/bin/activate",
+      "shell_syntax_exit": 0,
+      "method": "executed in temporary venv shell lifecycle",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n<temporary-root>/environment/bin/python\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 41,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 44,
+      "example": "python -m pip install \"/path/to/downloads/seestar_toolkit-1.1.0-py3-none-any.whl\"",
+      "shell_syntax_exit": 0,
+      "method": "syntax/static validated; not executed",
+      "reason": "Homebrew install verified against official formula; pip local wheel/sdist routes and named uninstall checked against pip help and prior Stage 9.2 installation/uninstall evidence. No system/package mutation or new release artifact."
+    },
+    {
+      "id": 42,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 45,
+      "example": "python -m pip check",
+      "shell_syntax_exit": 0,
+      "method": "executed",
+      "result": {
+        "exit_code": 0,
+        "stdout": "No broken requirements found.\n",
+        "stderr": "WARNING: The directory '<user-path> or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.\n"
+      }
+    },
+    {
+      "id": 43,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 46,
+      "example": "seestar-toolkit --version",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "seestar-toolkit 1.1.0\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 44,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 47,
+      "example": "python -m seestar_toolkit --version",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "seestar-toolkit 1.1.0\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 45,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 64,
+      "example": "seestar-toolkit convert \"/path/to/input/light.fit\" \"/path/to/output/light.tiff\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Created TIFF: <temporary-root>/case-45/output/light.tiff\n",
+        "stderr": ""
+      },
+      "verified": "uint16 RGB TIFF exists; source unchanged"
+    },
+    {
+      "id": 46,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 65,
+      "example": "seestar-toolkit convert-batch \"/path/to/input images\" \"/path/to/output images\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Created TIFF: <temporary-root>/case-46/output images/light.tiff\nCreated TIFF: <temporary-root>/case-46/output images/siril.tiff\nBatch complete: 2 discovered, 2 converted, 0 failed\n",
+        "stderr": ""
+      },
+      "verified": "Two outputs reopened: uint16 Seestar and float32 Siril; sources unchanged"
+    },
+    {
+      "id": 47,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 83,
+      "example": "seestar-toolkit archive --dry-run --source-action copy --collision-policy skip-identical --location \"Synthetic Site\" --non-interactive \"/path/to/work root\" \"/path/to/archive\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "execution_adaptation": "Added explicit disposable documented config to avoid reading real user config; documented flags/paths also parser-validated unchanged.",
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Dry run: 1 observation(s); action=copy; collision=skip_identical\nPlan observation_01: target=IC 434; location=Synthetic Site; date=20000101; destination=<temporary-root>/case-47/archive/IC 434/Synthetic Site/20000101/observation_01\n  FITS <temporary-root>/case-47/work root/IC 434_sub/Light_example.fit -> <temporary-root>/case-47/archive/IC 434/Synthetic Site/20000101/observation_01/lights/Light_example.fit; TIFF -> <temporary-root>/case-47/archive/IC 434/Synthetic Site/20000101/observation_01/tiff/Light_example.tiff\nIndex: <temporary-root>/case-47/archive/IC 434/INDEX.md\n",
+        "stderr": ""
+      },
+      "verified": "Dry-run created no destination; source unchanged"
+    },
+    {
+      "id": 48,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 91,
+      "example": "seestar-toolkit archive --source-action copy --collision-policy skip-identical --location \"Synthetic Site\" --non-interactive \"/path/to/work root\" \"/path/to/archive\"",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "execution_adaptation": "Added explicit disposable documented config to avoid reading real user config; documented flags/paths also parser-validated unchanged.",
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Archive complete: 1 copied, 0 moved, 0 skipped identical, 0 original failures\nTIFFs: 1 created, 0 skipped/collided/failed\nIndexes: 1 created, 0 updated, 0 unchanged, 0 failed\n",
+        "stderr": ""
+      },
+      "verified": "Archive FITS, uint16 TIFF and INDEX.md exist; source unchanged"
+    },
+    {
+      "id": 49,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 112,
+      "example": "seestar-toolkit --help",
+      "shell_syntax_exit": 0,
+      "parser_exit": 0,
+      "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+      "result": {
+        "exit_code": 0,
+        "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+        "stderr": ""
+      }
+    },
+    {
+      "id": 50,
+      "document": "docs/user/SEESTAR_TOOLKIT_QUICK_START.md",
+      "line": 113,
+      "example": "deactivate",
+      "shell_syntax_exit": 0,
+      "method": "executed in temporary venv shell lifecycle",
+      "result": {
+        "exit_code": 0,
+        "stdout": "Python 3.13.15\n<temporary-root>/environment/bin/python\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "failures": [
+    {
+      "classification": "validation harness failure",
+      "status": "FAIL",
+      "diagnostic": "FileExistsError: [Errno 17] File exists: '.'",
+      "cause": "Harness classified convert --help as a conversion requiring input/output setup; failed before CLI execution. Documentation and product unaffected.",
+      "remediation": "Treat help/version probes as read-only commands before fixture setup.",
+      "completed_commands_before_failure": [
+        {
+          "id": 1,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 97,
+          "example": "/opt/homebrew/bin/brew --version",
+          "shell_syntax_exit": 0,
+          "method": "executed",
+          "result": {
+            "exit_code": 0,
+            "stdout": "Homebrew 6.0.22-171-g9b93c2c\n",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 2,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 98,
+          "example": "which python3",
+          "shell_syntax_exit": 0,
+          "method": "executed with selected installed interpreter/entry point",
+          "result": {
+            "exit_code": 0,
+            "stdout": "<existing-runtime>/bin/python\n",
+            "stderr": ""
+          },
+          "reason": "Environment selection adapted explicitly; no private shell configuration read."
+        },
+        {
+          "id": 3,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 99,
+          "example": "python3 --version",
+          "shell_syntax_exit": 0,
+          "method": "executed",
+          "result": {
+            "exit_code": 0,
+            "stdout": "Python 3.13.15\n",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 4,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 108,
+          "example": "/opt/homebrew/bin/brew install python@3.13",
+          "shell_syntax_exit": 0,
+          "method": "syntax/static validated; not executed",
+          "reason": "Homebrew install verified against official formula; pip local wheel/sdist routes and named uninstall checked against pip help and prior Stage 9.2 installation/uninstall evidence. No system/package mutation or new release artifact."
+        },
+        {
+          "id": 5,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 109,
+          "example": "/opt/homebrew/bin/python3.13 --version",
+          "shell_syntax_exit": 0,
+          "method": "executed",
+          "result": {
+            "exit_code": 0,
+            "stdout": "Python 3.13.15\n",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 6,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 123,
+          "example": "/opt/homebrew/bin/python3.13 -m venv ~/.venvs/seestar-toolkit",
+          "shell_syntax_exit": 0,
+          "method": "executed with dedicated temporary destination",
+          "result": {
+            "exit_code": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 7,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 124,
+          "example": "source ~/.venvs/seestar-toolkit/bin/activate",
+          "shell_syntax_exit": 0,
+          "method": "executed in temporary venv shell lifecycle",
+          "result": {
+            "exit_code": 0,
+            "stdout": "Python 3.13.15\n<temporary-root>/environment/bin/python\n",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 8,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 125,
+          "example": "python --version",
+          "shell_syntax_exit": 0,
+          "method": "executed",
+          "result": {
+            "exit_code": 0,
+            "stdout": "Python 3.13.15\n",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 9,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 136,
+          "example": "python -m pip install \"/path/to/downloads/seestar_toolkit-1.1.0-py3-none-any.whl\"",
+          "shell_syntax_exit": 0,
+          "method": "syntax/static validated; not executed",
+          "reason": "Homebrew install verified against official formula; pip local wheel/sdist routes and named uninstall checked against pip help and prior Stage 9.2 installation/uninstall evidence. No system/package mutation or new release artifact."
+        },
+        {
+          "id": 10,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 137,
+          "example": "python -m pip check",
+          "shell_syntax_exit": 0,
+          "method": "executed",
+          "result": {
+            "exit_code": 0,
+            "stdout": "No broken requirements found.\n",
+            "stderr": "WARNING: The directory '<user-path> or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.\n"
+          }
+        },
+        {
+          "id": 11,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 138,
+          "example": "seestar-toolkit --version",
+          "shell_syntax_exit": 0,
+          "parser_exit": 0,
+          "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+          "result": {
+            "exit_code": 0,
+            "stdout": "seestar-toolkit 1.1.0\n",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 12,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 139,
+          "example": "python -m seestar_toolkit --version",
+          "shell_syntax_exit": 0,
+          "parser_exit": 0,
+          "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+          "result": {
+            "exit_code": 0,
+            "stdout": "seestar-toolkit 1.1.0\n",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 13,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 152,
+          "example": "python -m pip install \"/path/to/downloads/seestar_toolkit-1.1.0.tar.gz\"",
+          "shell_syntax_exit": 0,
+          "method": "syntax/static validated; not executed",
+          "reason": "Homebrew install verified against official formula; pip local wheel/sdist routes and named uninstall checked against pip help and prior Stage 9.2 installation/uninstall evidence. No system/package mutation or new release artifact."
+        },
+        {
+          "id": 14,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 164,
+          "example": "~/.venvs/seestar-toolkit/bin/seestar-toolkit --version",
+          "shell_syntax_exit": 0,
+          "parser_exit": 0,
+          "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+          "result": {
+            "exit_code": 0,
+            "stdout": "seestar-toolkit 1.1.0\n",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 15,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 170,
+          "example": "deactivate",
+          "shell_syntax_exit": 0,
+          "method": "executed in temporary venv shell lifecycle",
+          "result": {
+            "exit_code": 0,
+            "stdout": "Python 3.13.15\n<temporary-root>/environment/bin/python\n",
+            "stderr": ""
+          }
+        },
+        {
+          "id": 16,
+          "document": "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+          "line": 181,
+          "example": "seestar-toolkit --help",
+          "shell_syntax_exit": 0,
+          "parser_exit": 0,
+          "method": "executed installed CLI (placeholders mapped to isolated public-safe data)",
+          "result": {
+            "exit_code": 0,
+            "stdout": "usage: seestar-toolkit [-h] [--version] [--verbose]\n                       {convert,convert-batch,archive} ...\n\nConvert supported FIT/FITS images into linear RGB TIFF files.\n\npositional arguments:\n  {convert,convert-batch,archive}\n    convert             Convert one FIT/FITS image to one TIFF.\n    convert-batch       Convert a flat directory of FIT/FITS images to TIFF.\n    archive             Plan or execute a Seestar session archive.\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  --verbose             Enable detailed logging.\n",
+            "stderr": ""
+          }
+        }
+      ],
+      "cleanup": "TemporaryDirectory context removed owned environment/data on exception."
+    }
+  ],
+  "checks": [
+    "All bash examples syntax checked; all CLI examples parsed and executed against installed matching source; disposable FITS copies only."
+  ],
+  "privacy": "Temporary paths normalised; approved public-safe fixture copies only; no external or NAS storage accessed.",
+  "runtime": {
+    "version": "1.1.0",
+    "module": "/private<existing-runtime>/lib/python3.13/site-packages/seestar_toolkit/__init__.py",
+    "editable": false,
+    "provenance": "Existing noneditable local-directory installation, not a fresh wheel install. Installed module in temporary site-packages; current source compared.",
+    "source_files_compared": 33,
+    "source_differences": []
+  },
+  "venv_activation": {
+    "exit_code": 0,
+    "stdout": "Python 3.13.15\n<temporary-root>/environment/bin/python\n",
+    "stderr": ""
+  },
+  "toml_schema": {
+    "exit_code": 0,
+    "stdout": "PASS: actual config loader accepts documented schema\n",
+    "stderr": ""
+  },
+  "pip_interface_checks": {
+    "install": 0,
+    "uninstall": 0,
+    "check": 0
+  },
+  "cleanup": "PASS: owned temporary environment and all disposable inputs/outputs removed; pre-existing CLI environment retained.",
+  "command_counts": {
+    "executed": 11,
+    "executed in shell": 1,
+    "executed in temporary venv shell lifecycle": 5,
+    "executed installed CLI (placeholders mapped to isolated public-safe data)": 21,
+    "executed with dedicated temporary destination": 2,
+    "executed with selected installed interpreter/entry point": 4,
+    "syntax/static validated; not executed": 6
+  },
+  "starting_state": {
+    "branch": "main",
+    "head": "519f0e3",
+    "expected_dirty": [
+      "docs/development/CHANGELOG.md",
+      "docs/development/PACKAGING.md",
+      "docs/development/PROJECT_Notes.md",
+      "docs/development/change_documents/STAGE_9/STAGE_9.3a.md",
+      "docs/development/change_documents/STAGE_9/STAGE_9.3a_CHECKPOINT_A.json",
+      "docs/development/change_documents/STAGE_9/STAGE_9.3a_REPORT.md"
+    ],
+    "unexpected_dirty": []
+  },
+  "documents_created": [
+    "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md",
+    "docs/user/SEESTAR_TOOLKIT_QUICK_START.md"
+  ],
+  "upstream_sources": [
+    {
+      "url": "https://docs.brew.sh/Installation",
+      "checked": "2026-09-14",
+      "finding": "Official Homebrew setup/prerequisites; standard Apple Silicon prefix /opt/homebrew. Guide uses explicit paths; does not prescribe shell profile changes."
+    },
+    {
+      "url": "https://formulae.brew.sh/formula/python@3.13",
+      "checked": "2026-09-14",
+      "finding": "brew install python@3.13 and versioned executable supported by official formula."
+    }
+  ],
+  "installation_validation_limit": "No release artifacts created or installed in B. Wheel/sdist commands checked as local-artifact syntax with pip help, pyproject naming and preserved Stage 9.2a clean-install evidence. Homebrew install and package uninstall are static only. Empty temporary venv creation/activation/deactivation executed once and covers repeated identical examples. Installed CLI is the source-matching existing noneditable installation, not new wheel proof.",
+  "inline_example_review": {
+    "method": "syntax/static and existing parser/help evidence",
+    "examples": [
+      "seestar-toolkit convert INPUT_FITS OUTPUT_TIFF",
+      "seestar-toolkit convert-batch INPUT_DIR OUTPUT_DIR"
+    ],
+    "non_executable_notation": "CLI table choices and hierarchy braces describe syntax, not literal shell input. Actual executable examples are the 50 bash lines."
+  },
+  "validation": {
+    "command_examples": "PASS: all 50 bash occurrences classified and syntax checked; 44 executed or covered by shared executed lifecycle evidence, 6 static-only",
+    "toml": "PASS: documented synthetic TOML accepted by installed config loader and archive dry-run",
+    "links": "PASS: relative targets and heading fragments resolve; Homebrew primary links inspected; no fabricated release link",
+    "version_platform_python_inputs": "PASS: both documents reviewed against all 28 Checkpoint A facts and metadata; Unreleased, arm64-only and Python >=3.11,<3.15 retained",
+    "archive_safety": "PASS: first archive command in both documents is dry-run plus explicit copy; shallow discovery, backup, collisions and no rollback explained",
+    "privacy": "PASS: changed public docs/evidence reviewed and scanned; only neutral paths, labels and explicitly synthetic coordinates; no identifying storage/user data",
+    "markdown": "PASS: balanced fences, existing local links, heading anchors and no trailing whitespace",
+    "ruff": "PASS: All checks passed",
+    "formatting": "PASS: 37 files already formatted",
+    "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+    "git_diff_check": "PASS, supplemented with direct whitespace checks for new files",
+    "pytest": "Not rerun: documentation/evidence only. Specification section 6 requires full suite at C or behaviour-capable changes. Preserved Checkpoint A result is 330 passed; not claimed as a new B run."
+  },
+  "discrepancies": [
+    {
+      "id": "D1",
+      "classification": "documentation defect",
+      "resolution": "New guides accurately describe root/direct-child discovery; live DEV_README correction remains C."
+    },
+    {
+      "id": "D2",
+      "classification": "documentation defect",
+      "resolution": "Guide and Quick Start now written; public root documentation remains C."
+    },
+    {
+      "id": "D3",
+      "classification": "documentation defect",
+      "resolution": "Seestar uint16 and supported Siril float32 output distinguished."
+    },
+    {
+      "id": "D4",
+      "classification": "documentation defect",
+      "resolution": "First archive examples explicitly dry-run/copy/skip-identical, followed by copy."
+    },
+    {
+      "id": "D5",
+      "classification": "documentation defect",
+      "resolution": "No development location/coordinate example copied; new schema uses Synthetic Site at 0.0/0.0. Old live example remains C."
+    }
+  ],
+  "potential_product_defects": [],
+  "unresolved_findings": [
+    "Independent review of B; C and formal closure gates pending.",
+    "Root public documentation and previously identified live development prose corrections remain C.",
+    "Actual publication URL and final macOS release compatibility remain publication-time qualifications, not invented evidence."
+  ],
+  "closure_criteria_at_B": [
+    {
+      "id": 1,
+      "criterion": "Starting branch and commit verified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 2,
+      "criterion": "Expected pending development CHANGELOG preserved.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 3,
+      "criterion": "Authoritative specification created before documentation implementation.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 4,
+      "criterion": "Checkpoint boundaries and exclusions explicit.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 5,
+      "criterion": "Existing public documentation and license audited.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 6,
+      "criterion": "Package metadata and release version verified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 7,
+      "criterion": "Both installed CLI entry points audited.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 8,
+      "criterion": "Full exposed command and option inventory recorded.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 9,
+      "criterion": "Existing influential command examples inventoried and checked safely.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 10,
+      "criterion": "Authoritative fact matrix recorded.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 11,
+      "criterion": "Contradictions classified without converting plans into requirements.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 12,
+      "criterion": "Potential product defects reported before Checkpoint B.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 13,
+      "criterion": "Guide table of contents covers every required topic.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 14,
+      "criterion": "Quick Start table of contents designed.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 15,
+      "criterion": "README and CONTRIBUTING structures designed.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 16,
+      "criterion": "Public Unreleased changelog entry designed.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 17,
+      "criterion": "Checkpoint A privacy review and evidence recorded.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 18,
+      "criterion": "Checkpoint A local validation passes.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A"
+    },
+    {
+      "id": 19,
+      "criterion": "Independent review authorises continuation to Checkpoint B.",
+      "status": "PASS",
+      "evidence": "Explicit user instruction to perform B"
+    },
+    {
+      "id": 20,
+      "criterion": "Full authoritative Markdown User Guide implemented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 21,
+      "criterion": "Concise Quick Start implemented and linked to Guide.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 22,
+      "criterion": "Semantic version and Unreleased status consistent.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 23,
+      "criterion": "Platform support limited to validated macOS Apple Silicon policy.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 24,
+      "criterion": "Python 3.11\u20133.14 support accurately documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 25,
+      "criterion": "Homebrew interpreter installation and checking documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 26,
+      "criterion": "System Python remains untouched; uv not required.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 27,
+      "criterion": "Wheel primary and sdist secondary installation documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 28,
+      "criterion": "No Toolkit PyPI or installer-script installation claims.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 29,
+      "criterion": "Recommended venv activation, deactivation and full-path alternative documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 30,
+      "criterion": "No normal global PATH, symlink or shell-profile modifications.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 31,
+      "criterion": "Both entry points and exact global-option placement documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 32,
+      "criterion": "Single conversion and flat batch behaviour documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 33,
+      "criterion": "Supported S50 and Siril data distinguished from unsupported modes.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 34,
+      "criterion": "TIFF dtype, linearity, demosaicing and RGB preservation documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 35,
+      "criterion": "Archive dry-run, backups and explicit copy safety prominent.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 36,
+      "criterion": "Move, collisions, existing TIFFs and non-transactional risks documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 37,
+      "criterion": "Actual hierarchy, observations, products, indexes and archive date documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 38,
+      "criterion": "Read-only config path, precedence and ignored XDG behaviour documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 39,
+      "criterion": "Actual location matching, prompts and fallback documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 40,
+      "criterion": "Absent config-writing, saved-location-writing and JPEG switches not invented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 41,
+      "criterion": "Diagnostics, errors, exit codes and troubleshooting documented.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 42,
+      "criterion": "Local, removable, mounted network and cross-storage scope qualified.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 43,
+      "criterion": "Privacy claims bounded by evidence and metadata-sharing risks explained.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 44,
+      "criterion": "macOS permissions described without Full Disk Access requirement or bypass.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 45,
+      "criterion": "Uninstall separates environment, persistent config and user data.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 46,
+      "criterion": "Getting help and limitations documented without future-feature promises.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 47,
+      "criterion": "Checkpoint B command examples verified safely and evidence preserved.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 48,
+      "criterion": "Checkpoint B documentation consistency, links and privacy checks pass.",
+      "status": "PASS",
+      "evidence": "User Guide/Quick Start and B validation"
+    },
+    {
+      "id": 49,
+      "criterion": "Independent review authorises continuation to Checkpoint C.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 50,
+      "criterion": "Root README concise and consistent with authoritative Guide.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 51,
+      "criterion": "Concise CONTRIBUTING includes quality and FITS privacy guidance.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 52,
+      "criterion": "Public CHANGELOG user-relevant, Unreleased and without fabricated date.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 53,
+      "criterion": "Development status and packaging documentation updated appropriately.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 54,
+      "criterion": "Final Markdown content, links and command examples validated.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 55,
+      "criterion": "Final public fixture/history and changed-document privacy checks pass.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 56,
+      "criterion": "Final full pytest, Ruff, applicable formatting and whitespace checks pass.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 57,
+      "criterion": "Final distribution build/inspection validates changed README metadata.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 58,
+      "criterion": "Every genuine failure and remediation retained.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 59,
+      "criterion": "All closure criteria individually assessed with evidence.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 60,
+      "criterion": "No production/test/fixture changes without demonstrated authorised defect.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 61,
+      "criterion": "No PDF, timestamp sync, checksum manifest or later-stage work performed.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 62,
+      "criterion": "Independent ChatGPT review accepts technical completion.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 63,
+      "criterion": "User approves and creates closure commit; Codex never commits or pushes.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 64,
+      "criterion": "Post-commit content, branch, cleanliness and required CI verified.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    },
+    {
+      "id": 65,
+      "criterion": "Formal COMPLETE declared only after every closure gate passes.",
+      "status": "PENDING",
+      "evidence": "Deferred C or formal gate"
+    }
+  ],
+  "protected_baseline": {
+    "docs/development/CHANGELOG.md": {
+      "digest": "df9cc335f04eeaf8dfdec690e526de61262ac1f3c19eca4c95119fcf56829c90",
+      "size": 15943
+    },
+    "README.md": {
+      "digest": "3987c5aec7caa214c059cd51bc4e7923f003319c983e6fb6af151753fe4c533d",
+      "size": 812
+    },
+    "CHANGELOG.md": {
+      "digest": "6194803506adc8dcf5c467a2010aff646f4fb7d124b243a5569a7c5971a3daeb",
+      "size": 365
+    },
+    "pyproject.toml": {
+      "digest": "518d7a7654790e39ef9bd46e5729d2abd5eccd86fb047b2b53cb26d79eb92bbb",
+      "size": 1594
+    },
+    "LICENSE": {
+      "digest": "abde3baca922ef9bd26fcd01972362248c9238e8d7b3a63f5ae7a2f0b27d5ed5",
+      "size": 1067
+    },
+    "docs/development/change_documents/STAGE_9/STAGE_9.3a.md": {
+      "digest": "cc956625069124461a43d5767dbd19c76382a83ae8696c60f0235b4c1478dd4a",
+      "size": 14315
+    },
+    "docs/development/change_documents/STAGE_9/STAGE_9.3a_CHECKPOINT_A.json": {
+      "digest": "597a4e0796cb057ca7fcadad1f4fc836eb6df715686c7facd7f1e973f4daca19",
+      "size": 49306
+    },
+    "docs/development/change_documents/STAGE_9/STAGE_9.3a_REPORT.md": {
+      "digest": "ea49455a13d11aa107579c600093490ab29b1ebe84d5768c7e81ec99823cd136",
+      "size": 18289
+    }
+  },
+  "preservation": "PASS: protected files unchanged; existing accumulating report retained byte-for-byte as prefix before appending B.",
+  "final_prose_adjustment": "Moved archive help example after introductory dry-run/copy sequence so the first archive command is unambiguously dry-run/copy. Repeated all command validations on final prose; PASS. Original helper failure remains retained."
+,
+  "checkpoint_b_revalidation": {
+    "decision": "FAIL",
+    "historical_editorial_review": {
+      "status": "FAIL",
+      "classification": "documentation-quality failure",
+      "disposition": "Preserved as a genuine failed review; the earlier pre-review technical PASS and validation-helper failure are historical evidence, not recast as editorial approval.",
+      "remediation": "The current Guide and Quick Start are separately editorially approved candidates."
+    },
+    "candidate_validation": {
+      "user_guide": "PASS after objective line-level corrections",
+      "quick_start": "PASS after objective line-level corrections",
+      "installed_cli": "PASS; temporary Python 3.13 editable install of 1.1.0, both entry points and command help, global option placement, parser checks",
+      "support_boundaries": "PASS against Stage 9.1a/9.1d/9.2a evidence and metadata",
+      "archive_config_storage_privacy": "PASS against source and Stage 9.2b evidence; no new external-storage access",
+      "markdown_navigation": "PASS; Guide level-1/2 Contents complete, anchors and reciprocal links valid, fences balanced",
+      "documentation_whitespace": "PASS for both candidate guides"
+    },
+    "objective_corrections": [
+      "Guide first dry-run archive path changed to /absolute/path/to/archive, matching its copy command.",
+      "Guide uninstall module entry-point code fence corrected to inline code.",
+      "Reciprocal Guide/Quick Start relative Markdown links added.",
+      "Quick Start release download made conditional on publication.",
+      "Quick Start callout trailing space removed.",
+      "Quick Start sharing warning added for FITS, config, indexes and diagnostics."
+    ],
+    "potential_product_defects": [],
+    "new_validation": {
+      "pytest": "PASS: 330 passed in 26.90s",
+      "ruff": "PASS: all checks passed",
+      "formatting": "PASS: 37 files already formatted",
+      "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+      "installed_cli": "PASS: both entry points 1.1.0; root and three subcommand help; --verbose --version accepted before command; convert --version rejected with code 2 as expected",
+      "pip_check": "PASS: no broken requirements",
+      "git_diff_check": "FAIL: pre-existing trailing whitespace in modified docs/development/PROJECT_Notes.md lines 781-817; left untouched under scope/preservation instruction",
+      "guide_direct_whitespace": "PASS: no trailing whitespace; terminal newline present",
+      "installation_limit": "New validation uses a temporary editable development install. Prior Stage 9.2a clean wheel/sdist results remain historical authority."
+    },
+    "closure_accounting": "Applicable B criteria 19-48 are substantively satisfied after corrections; repository-wide whitespace validation requested for this revalidation is unresolved, so Checkpoint B remains FAIL. Criteria 49-65 remain PENDING; Checkpoint C not started.",
+    "preservation": "No earlier B fields, failed editorial review, helper failure, Stage 9.2b pending CHANGELOG entry, production, tests, fixtures, package metadata, CI or public root files were changed. No commit or push."
+  }
+,
+  "whitespace_remediation_revalidation": {
+    "decision": "PASS",
+    "sequence": "After the original editorial-quality FAIL and the later content-validation PASS / repository-whitespace FAIL recorded above.",
+    "git_diff_check": "PASS: exit 0, no output, after the user's PROJECT_Notes.md trailing-whitespace correction.",
+    "project_notes_verification": "Compared current added future-enhancement lines against the exact lines flagged by the previous git diff --check failure. Wording and ordering remain; only their trailing spaces were removed. All PROJECT_Notes.md lines now pass direct trailing-whitespace scan.",
+    "guide_preservation": "PASS: both authoritative candidates are present; matching archive dry-run/copy path, corrected uninstall code span, reciprocal links, conditional release download and sharing-privacy warning remain. Both guides have no trailing whitespace and balanced fences.",
+    "checks_rerun": {
+      "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+      "checkpoint_json": "PASS: valid JSON",
+      "protected_baseline": "PASS: pending development CHANGELOG, root README/CHANGELOG, pyproject.toml, LICENSE, Stage specification and A JSON match prior protected SHA-256 digests",
+      "scope": "PASS: git status/diff show no production, tests, fixtures, metadata or CI changes; only expected documentation changes"
+    },
+    "prior_validation_reused": "The preceding content revalidation's 330 passing tests, Ruff, formatting, installed CLI and claim/link review remain recorded and applicable; no behaviour or guide content changed since that run.",
+    "criteria": "All applicable Checkpoint B criteria 19–48 individually remain PASS. Criteria 49–65 remain PENDING; Checkpoint C and Stage 9.3b have not started.",
+    "preservation": "Original editorial-quality FAIL and subsequent whitespace-gate FAIL remain in chronological evidence. No commit or push."
+  }
+}

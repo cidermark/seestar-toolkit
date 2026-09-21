@@ -34,12 +34,12 @@ seestar-toolkit --version
 seestar-toolkit --help
 seestar-toolkit convert input.fit output.tiff
 seestar-toolkit convert-batch input-directory output-directory
-seestar-toolkit archive source-root /absolute/archive-root --dry-run --non-interactive
-seestar-toolkit archive source-root /absolute/archive-root --location "Home"
+seestar-toolkit archive --dry-run --source-action copy --collision-policy skip-identical --non-interactive source-root /absolute/archive-root
+seestar-toolkit archive --source-action copy --collision-policy skip-identical --location "Example Site" source-root /absolute/archive-root
 python -m seestar_toolkit --version
 python -m seestar_toolkit convert input.fit output.tiff
 python -m seestar_toolkit convert-batch input-directory output-directory
-python -m seestar_toolkit archive source-root /absolute/archive-root --dry-run
+python -m seestar_toolkit archive --dry-run --source-action copy --collision-policy skip-identical source-root /absolute/archive-root
 ```
 
 Single-file conversion uses one explicit output path. Batch conversion scans
@@ -56,7 +56,8 @@ for command-usage errors.
 
 This batch command performs conversion only and remains flat and
 non-recursive. The separate `archive SOURCE_ROOT ARCHIVE_ROOT` command uses
-recursive Seestar-aware discovery. It supports `--dry-run`, `--location`,
+shallow Seestar-aware discovery: files in the selected source root and its
+immediate child directories only. It supports `--dry-run`, `--location`,
 `--hierarchy`, `--source-action {copy,move}`, `--collision-policy
 {skip-identical,error,overwrite}`, `--non-interactive`, and `--config PATH`.
 COPY and non-destructive identical-file skipping are the defaults.
@@ -73,10 +74,10 @@ source_action = "copy"
 collision_policy = "skip-identical"
 
 [[locations]]
-name = "Warfield"
-latitude = 51.4
-longitude = -0.7
-radius_m = 500
+name = "Example Site"
+latitude = 0.0
+longitude = 0.0
+radius_m = 100
 ```
 
 Dry-run performs the same discovery, observation reconstruction, location
