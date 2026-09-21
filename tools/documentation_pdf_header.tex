@@ -1,0 +1,51 @@
+% Repository-controlled, deliberately restrained documentation PDF styling.
+\usepackage{fvextra}
+\usepackage{xurl}
+\usepackage{fancyhdr}
+\usepackage{needspace}
+\usepackage{microtype}
+
+% Resolve fonts through TeX Live rather than the developer machine's font registry.
+\setmainfont{texgyreheros-regular.otf}[
+  BoldFont=texgyreheros-bold.otf,
+  ItalicFont=texgyreheros-italic.otf,
+  BoldItalicFont=texgyreheros-bolditalic.otf
+]
+\setmonofont{DejaVuSansMono.ttf}[
+  BoldFont=DejaVuSansMono-Bold.ttf,
+  ItalicFont=DejaVuSansMono-Oblique.ttf,
+  BoldItalicFont=DejaVuSansMono-BoldOblique.ttf,
+  Scale=MatchLowercase
+]
+
+\setlength{\emergencystretch}{3em}
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\raggedbottom
+
+\fvset{
+  breaklines=true,
+  breakanywhere=true,
+  samepage=true,
+  breaksymbolleft={},
+  breaksymbolright=\tiny\ensuremath{\hookrightarrow},
+  commandchars=\\\{\},
+  fontsize=\small
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+\makeatletter
+\renewcommand{\section}{\needspace{5\baselineskip}\@startsection
+  {section}{1}{\z@}{-3.5ex \@plus -1ex \@minus -.2ex}
+  {2.3ex \@plus.2ex}{\normalfont\Large\bfseries}}
+\renewcommand{\subsection}{\needspace{4\baselineskip}\@startsection
+  {subsection}{2}{\z@}{-3.25ex\@plus -1ex \@minus -.2ex}
+  {1.5ex \@plus .2ex}{\normalfont\large\bfseries}}
+\makeatother

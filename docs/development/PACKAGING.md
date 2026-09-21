@@ -285,3 +285,25 @@ public-input/history, documentation, installed-entry-point and full isolated
 wheel/sdist validation all pass. The original Checkpoint C failure remains in
 the Stage evidence. Independent final review, user approval/commit and
 post-commit required CI verification remain pending; v1.1.0 remains Unreleased.
+
+## Stage 9.3b — PDF generation design
+
+Stage 9.3b Checkpoint A is PASS. The authoritative
+[specification](change_documents/STAGE_9/STAGE_9.3b.md) defines a
+development-only Pandoc/XeLaTeX pipeline for the two frozen Markdown guides,
+with independent PDF inspection, two-build byte reproducibility, source-mtime
+synchronisation and strict per-guide two-entry SHA-256 manifests. PDF tooling
+does not enter Toolkit runtime dependencies, wheel/sdist contents or ordinary
+user installation. No CI change is proposed for v1.1.0.
+
+Checkpoint B remains pending independent review and explicit authorisation. No
+generator, PDF, checksum manifest or Stage 9.4 release artifact was created in A.
+
+### Stage 9.3b Checkpoint B continuation
+
+The authorised PDF implementation and validation are recorded in the
+[Stage 9.3b report](change_documents/STAGE_9/STAGE_9.3b_REPORT.md).
+Both frozen guides and their approved PDFs are preserved. Independent human
+visual review of all 32 pages is PASS. The final technical evidence is recorded
+separately from independent closure review, user commit and post-commit gates.
+Stage 9.3b remains STARTED; no Stage 9.4 artifact has been assembled.

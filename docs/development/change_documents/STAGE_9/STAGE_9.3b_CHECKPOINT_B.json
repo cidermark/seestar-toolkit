@@ -1,0 +1,710 @@
+{
+  "stage": "9.3b",
+  "checkpoint": "B",
+  "stage_status": "STARTED",
+  "technical_status": "PASS",
+  "human_visual_review": "PASS",
+  "formal_completion": "PENDING",
+  "baseline_head": "41c000fb98fdd42ab6f3f9f486f531eafcb520e2",
+  "continuation": {
+    "prior_report": "A only; no B JSON existed at resumption",
+    "known_changes_since_prior_successful_run": "Validator page/footer and link checks were added after earlier validation; attempted evidence patches did not land. No complete prior untracked-file hash snapshot was recorded, so an exhaustive byte delta from that earlier run cannot be reconstructed. Current resume snapshot and full final reruns establish the present state.",
+    "changed_existing_files_this_continuation": [
+      "docs/development/PDF_TOOLCHAIN.md",
+      "docs/development/change_documents/STAGE_9/STAGE_9.3b.md",
+      "docs/development/change_documents/STAGE_9/STAGE_9.3b_REPORT.md",
+      "tools/generate_documentation_pdfs.py",
+      "tools/validate_documentation_pdfs.py",
+      "docs/development/PACKAGING.md",
+      "docs/development/PROJECT_Notes.md"
+    ],
+    "accepted_pdfs_replaced": false,
+    "created_this_continuation": [
+      "docs/development/change_documents/STAGE_9/STAGE_9.3b_CHECKPOINT_B.json"
+    ]
+  },
+  "toolchain": {
+    "platform": "macOS arm64",
+    "pandoc": "3.11",
+    "xelatex_executable": "/opt/homebrew/bin/xelatex",
+    "xelatex": "XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew)",
+    "texlive_formula": "20260301",
+    "kpathsea": "6.4.2",
+    "poppler": "26.09.0",
+    "mupdf": "1.28.4",
+    "optional_imagemagick": "7.1.2-31",
+    "fonts": {
+      "TeX Gyre Heros": "2.004",
+      "DejaVu Sans Mono": "2.34"
+    },
+    "manual_basictex": {
+      "executable": "/Library/TeX/texbin/xelatex",
+      "version": "XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026), kpathsea 6.4.2",
+      "provenance": "User manually installed after automated cask failed; not the accepted PDF producer."
+    },
+    "producer_proof": "Original generation logs and current clean-build logs identify Homebrew; two current builds reproduce accepted hashes exactly. Agent PATH resolves Homebrew first; user shell had selected system BasicTeX.",
+    "determinism": "Stable TeX basename; two XeLaTeX passes; UTC/C.UTF-8; SOURCE_DATE_EPOCH, FORCE_SOURCE_DATE, SOURCE_DATE_EPOCH_TEX_PRIMITIVES; source mtime unchanged."
+  },
+  "failure_remediation_chronology": [
+    {
+      "attempt": "BasicTeX automated installation",
+      "original_result": "FAIL",
+      "detail": "Homebrew cask required interactive administrator authentication; cask attempt purged. Homebrew texlive 20260301 was installed successfully. User later installed system BasicTeX manually; both installations remain distinct."
+    },
+    {
+      "attempt": "Initial tool quality",
+      "original_result": "FAIL",
+      "detail": "Unused os import (F401), 153-character line (E501) and formatting failures corrected in the new tools; no configuration weakened."
+    },
+    {
+      "attempt": "Initial font resolution",
+      "original_result": "FAIL",
+      "detail": "Fontspec could not resolve family names. Explicit TeX-distributed filenames fixed resolution; no font binaries committed."
+    },
+    {
+      "attempt": "Pandoc argument repair",
+      "original_result": "FAIL",
+      "detail": "Missing --variable made colorlinks=true an input filename; restored the flag."
+    },
+    {
+      "attempt": "Header ordering",
+      "original_result": "FAIL",
+      "detail": "hypersetup was used before hyperref existed; removed the premature call and used Pandoc variables."
+    },
+    {
+      "attempt": "Initial reproducibility",
+      "original_result": "FAIL",
+      "detail": "Pandoc direct PDF builds differed: ff16f1c73309c5363f62042ad99ddde1b92a5ea7ff20d80da7d3932b9fab53be versus 7a8555ef1bb4d6070428ea8a9af39d9bf23c957268e6e294bb5e1a90c32a09e9. Extracted text matched but embedded font subset names differed."
+    },
+    {
+      "attempt": "Deterministic time alone",
+      "original_result": "FAIL",
+      "detail": "Further debug pairs differed (f059839edea7637e553a49322b99879ffb9f6f880c566f21bad2bbfc7d3209b2 / 4675c26cf379231ffb010893b0bb7d7aa897cd0731ca781629487f93afb8b118; FORCE_SOURCE_DATE pair a60c4fcd68b24e3663739ac4361c55abfba7950afad5de54026c5bbc2f883a0b / 0a8540079488c39361303790e743db1784a4fc56613f41a5cff96e8c1150b10c). Stable relative TeX basename plus two direct XeLaTeX passes repaired font-subset nondeterminism."
+    },
+    {
+      "attempt": "A4 check",
+      "original_result": "FAIL",
+      "detail": "Literal decimal precision differed in pdfinfo; numeric A4 bounds replaced string equality."
+    },
+    {
+      "attempt": "Heading extraction",
+      "original_result": "FAIL",
+      "detail": "Markup stripping removed meaningful underscores; preserved underscores."
+    },
+    {
+      "attempt": "Prose extraction",
+      "original_result": "FAIL",
+      "detail": "Discretionary end-of-line hyphenation required normalization; substantive text remains checked."
+    },
+    {
+      "attempt": "Font embedding parser",
+      "original_result": "FAIL",
+      "detail": "Variable type-column width invalidated fixed column indexing; parse embedding/Unicode columns relative to row end."
+    },
+    {
+      "attempt": "Bookmarks",
+      "original_result": "FAIL",
+      "detail": "Raw-byte Outlines search missed compressed objects; added declared MuPDF inspection."
+    },
+    {
+      "attempt": "Privacy false positive",
+      "original_result": "FAIL",
+      "detail": "Generic /Volumes matched approved synthetic user examples; distinguish approved examples from private home paths."
+    },
+    {
+      "attempt": "Cross-page code extraction",
+      "original_result": "FAIL",
+      "detail": "Quick Start code/tree crosses a footer; ordered code-line validation handles pagination without dropping command content."
+    },
+    {
+      "attempt": "Contact-sheet font",
+      "original_result": "FAIL",
+      "detail": "ImageMagick default font unavailable; use explicit TeX DejaVu Sans font."
+    },
+    {
+      "attempt": "Later tool formatting",
+      "original_result": "FAIL",
+      "detail": "New comprehension required formatting; corrected before passing quality checks."
+    },
+    {
+      "attempt": "Interrupted evidence writing",
+      "original_result": "INCOMPLETE",
+      "detail": "Two evidence patches failed context matching and did not land. The usage interruption left the report at A and no B JSON; this continuation records B without deleting A history."
+    },
+    {
+      "attempt": "Resume validation gaps",
+      "original_result": "REMEDIATED",
+      "detail": "Inspection found no version guard despite the specification, and HTML outline links inflated annotation counts. Added tested Pandoc/XeTeX guards and direct PDF action/destination checks; expanded list/opening coverage and corrected an inaccurate heading-check comment. No rendering inputs or accepted PDF bytes changed."
+    },
+    {
+      "attempt": "Resume list normalization",
+      "original_result": "FAIL",
+      "detail": "Five list openings used Markdown triple hyphens rendered as em dashes. Equivalent punctuation normalization repaired these extraction false positives; all 111/17 list openings now pass."
+    },
+    {
+      "attempt": "Resume distribution sandbox",
+      "original_result": "FAIL",
+      "detail": "Isolated build could not resolve PyPI inside sandbox; authorized network retry passed all unchanged distribution gates."
+    },
+    {
+      "attempt": "Font-version diagnostic",
+      "original_result": "WARNING",
+      "detail": "fc-scan returned versions but warned about unwritable caches; otfinfo independently confirmed exact font versions without that cache dependency."
+    },
+    {
+      "attempt": "Continuation report writer",
+      "original_result": "FAIL",
+      "detail": "Temporary evidence helper shadowed a Path variable; JSON was written but report write failed. Corrected the helper and wrote the report; repository implementation/artifacts were unaffected."
+    }
+  ],
+  "artifacts": [
+    {
+      "source": "SEESTAR_TOOLKIT_USER_GUIDE.md",
+      "pdf": "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
+      "sha256": "8600d48d03ca8bcdf8bc4e3f2f3403143592a45fa3e769d7c3734ebec11ee70b",
+      "pages": 27,
+      "title": "Seestar Toolkit User Guide",
+      "author": "Mark Wymer",
+      "subject": "Seestar Toolkit 1.1.0 documentation",
+      "fonts": [
+        "DejaVuSansMono",
+        "DejaVuSansMono-Bold",
+        "TeXGyreHeros-Bold-Identity-H",
+        "TeXGyreHeros-Regular-Identity-H"
+      ],
+      "headings": 103,
+      "code_blocks": 79,
+      "representative_prose_blocks": 49,
+      "bookmarks": 102,
+      "source_links": 90,
+      "rendered_html_links": 192,
+      "pdf_link_annotations": 90,
+      "build_hashes": [
+        "8600d48d03ca8bcdf8bc4e3f2f3403143592a45fa3e769d7c3734ebec11ee70b",
+        "8600d48d03ca8bcdf8bc4e3f2f3403143592a45fa3e769d7c3734ebec11ee70b"
+      ],
+      "logs": [
+        {
+          "engine": "This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  18 SEP 2026 12:21",
+          "overfull": 0,
+          "missing_characters": 0
+        },
+        {
+          "engine": "This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  18 SEP 2026 12:21",
+          "overfull": 0,
+          "missing_characters": 0
+        }
+      ],
+      "source_sha256": "29cf55b4beb1f1a6ebcd37c946cdc74a4a8ef41c75dbcee62353c61131fc8883",
+      "source_mtime_ns": 1789734082074713848,
+      "pdf_mtime_ns": 1789734082074713848,
+      "metadata": {
+        "Title": "Seestar Toolkit User Guide",
+        "Subject": "Seestar Toolkit 1.1.0 documentation",
+        "Keywords": "Seestar Toolkit, 1.1.0, documentation",
+        "Author": "Mark Wymer",
+        "Creator": "LaTeX via pandoc",
+        "Producer": "xdvipdfmx (20260113)",
+        "CreationDate": "Fri Sep 18 13:21:22 2026 BST",
+        "Custom Metadata": "no",
+        "Metadata Stream": "no",
+        "Tagged": "no",
+        "UserProperties": "no",
+        "Suspects": "no",
+        "Form": "none",
+        "JavaScript": "no",
+        "Pages": "27",
+        "Encrypted": "no",
+        "Page size": "595.28 x 841.89 pts (A4)",
+        "Page rot": "0",
+        "File size": "120047 bytes",
+        "Optimized": "no",
+        "PDF version": "1.7"
+      },
+      "list_items": 111,
+      "manifest": "29cf55b4beb1f1a6ebcd37c946cdc74a4a8ef41c75dbcee62353c61131fc8883  SEESTAR_TOOLKIT_USER_GUIDE.md\n8600d48d03ca8bcdf8bc4e3f2f3403143592a45fa3e769d7c3734ebec11ee70b  SEESTAR_TOOLKIT_USER_GUIDE.pdf\n",
+      "bytes": 120047
+    },
+    {
+      "source": "SEESTAR_TOOLKIT_QUICK_START.md",
+      "pdf": "SEESTAR_TOOLKIT_QUICK_START.pdf",
+      "sha256": "56f0a92641f86742e0e066b3d3727424396bef76705d27b29cc1f5f59656b033",
+      "pages": 5,
+      "title": "Seestar Toolkit Quick Start",
+      "author": "Mark Wymer",
+      "subject": "Seestar Toolkit 1.1.0 documentation",
+      "fonts": [
+        "DejaVuSansMono",
+        "DejaVuSansMono-Bold",
+        "TeXGyreHeros-Bold-Identity-H",
+        "TeXGyreHeros-Regular-Identity-H"
+      ],
+      "headings": 13,
+      "code_blocks": 29,
+      "representative_prose_blocks": 9,
+      "bookmarks": 12,
+      "source_links": 2,
+      "rendered_html_links": 14,
+      "pdf_link_annotations": 2,
+      "build_hashes": [
+        "56f0a92641f86742e0e066b3d3727424396bef76705d27b29cc1f5f59656b033",
+        "56f0a92641f86742e0e066b3d3727424396bef76705d27b29cc1f5f59656b033"
+      ],
+      "logs": [
+        {
+          "engine": "This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  18 SEP 2026 12:23",
+          "overfull": 0,
+          "missing_characters": 0
+        },
+        {
+          "engine": "This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  18 SEP 2026 12:23",
+          "overfull": 0,
+          "missing_characters": 0
+        }
+      ],
+      "source_sha256": "b3f61499335f7a7d15b1a323d3fa39056606b5a2d021a9cf9d82942c119ed18f",
+      "source_mtime_ns": 1789734207766841774,
+      "pdf_mtime_ns": 1789734207766841774,
+      "metadata": {
+        "Title": "Seestar Toolkit Quick Start",
+        "Subject": "Seestar Toolkit 1.1.0 documentation",
+        "Keywords": "Seestar Toolkit, 1.1.0, documentation",
+        "Author": "Mark Wymer",
+        "Creator": "LaTeX via pandoc",
+        "Producer": "xdvipdfmx (20260113)",
+        "CreationDate": "Fri Sep 18 13:23:27 2026 BST",
+        "Custom Metadata": "no",
+        "Metadata Stream": "no",
+        "Tagged": "no",
+        "UserProperties": "no",
+        "Suspects": "no",
+        "Form": "none",
+        "JavaScript": "no",
+        "Pages": "5",
+        "Encrypted": "no",
+        "Page size": "595.28 x 841.89 pts (A4)",
+        "Page rot": "0",
+        "File size": "43803 bytes",
+        "Optimized": "no",
+        "PDF version": "1.7"
+      },
+      "list_items": 17,
+      "manifest": "b3f61499335f7a7d15b1a323d3fa39056606b5a2d021a9cf9d82942c119ed18f  SEESTAR_TOOLKIT_QUICK_START.md\n56f0a92641f86742e0e066b3d3727424396bef76705d27b29cc1f5f59656b033  SEESTAR_TOOLKIT_QUICK_START.pdf\n",
+      "bytes": 43803
+    }
+  ],
+  "visual_review": {
+    "codex_prior_pass": "All 32 pages rasterized at 150 dpi and reviewed via contact sheets; full-resolution samples UG 1,2,4,15,27 and QS 1,2,3,5. No source tables.",
+    "human_pass": "User independently reviewed all 32 exact artifact pages; typography, hierarchy, numbering, code, archive trees, configurations, transitions, clipping/overflow and glyphs accepted. No required rendering changes.",
+    "accepted_sha256": [
+      "8600d48d03ca8bcdf8bc4e3f2f3403143592a45fa3e769d7c3734ebec11ee70b",
+      "56f0a92641f86742e0e066b3d3727424396bef76705d27b29cc1f5f59656b033"
+    ],
+    "temporary_artifacts": "32 page PNGs plus two contact sheets; removed after accepted review. PDFs preserved."
+  },
+  "validation": {
+    "prior_run": "330 passed in 12.66s; later tooling changes require current rerun",
+    "pytest": "PASS: 330 passed in 11.95s on final tool implementation (earlier resume run: 330 passed in 11.68s)",
+    "ruff": "All checks passed! (0.16.8)",
+    "configured_formatting": "37 files already formatted",
+    "new_tool_formatting": "2 files already formatted",
+    "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+    "distribution": "PASS: isolated build; 39 allowed wheel members, 46 sdist members; runtime-only dependency/import and FITS/TIFF smoke; both entry points 1.1.0 for each; temporary outputs removed",
+    "installed_entry_points": "seestar-toolkit 1.1.0; python -m seestar_toolkit 1.1.0",
+    "issue_forms": "All three YAML files parse, required form keys and unique IDs pass; files unchanged",
+    "negative_checks": "Both sources: reject changed source, wrong package version and extra manifest entry; separately installed BasicTeX rejected by toolchain guard without replacing artifacts",
+    "direct_whitespace": "No new trailing whitespace; historical unchanged CHANGELOG line 170 retained as instructed",
+    "markdown": {
+      "documents": 12,
+      "local_links": 126,
+      "external_uris": [
+        "https://docs.astral.sh/uv/guides/install-python/",
+        "https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+        "https://github.com/cidermark/seestar-toolkit/releases",
+        "https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html"
+      ],
+      "errors": []
+    },
+    "pdf_privacy": [
+      {
+        "pdf": "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
+        "creation_date": "D:20260918122122Z",
+        "private_markers": false,
+        "modification_date": false,
+        "embedded_files": false,
+        "javascript": false
+      },
+      {
+        "pdf": "SEESTAR_TOOLKIT_QUICK_START.pdf",
+        "creation_date": "D:20260918122327Z",
+        "private_markers": false,
+        "modification_date": false,
+        "embedded_files": false,
+        "javascript": false
+      }
+    ],
+    "git_diff_check": "PASS: exit 0, no diagnostics",
+    "distribution_final_rerun": "PASS after final validator edits: isolated wheel/sdist build, allowlists, runtime smoke and both entry points; exit 0",
+    "implementation_sha256": {
+      "tools/generate_documentation_pdfs.py": "5b2fba9b99709b583f5627c5fab350c35c42ebc10ffa6b014b08d97429e408c9",
+      "tools/validate_documentation_pdfs.py": "7b89f4296b218ae2596bb7c13ae09e4738dbfdc909365c317f7d0acdc218f6d7",
+      "tools/documentation_pdf_filter.lua": "2328b9734ed23db5ec76989680fd3f6776e1a9faa451c3bb9d5faf90b2de5a46",
+      "tools/documentation_pdf_header.tex": "1e6378f558caf06852d11f50ac3db39ab686caa84125653a0fe62849c0e0679d",
+      "pyproject.toml": "518d7a7654790e39ef9bd46e5729d2abd5eccd86fb047b2b53cb26d79eb92bbb",
+      "MANIFEST.in": "9861d81b0ec918c31fa213cd2bd163e76d0d1de5ca1c0f0464b6f6772de0a206"
+    },
+    "evidence_recording_note": "Full gates rerun after final tooling edits; subsequent changes only record their results in report/JSON and receive final JSON/Markdown/whitespace/privacy checks.",
+    "external_link_scope": "PDF URI schemes/values checked where present; repository HTTP link availability is not claimed. Local links and anchors validated.",
+    "repository_status": [
+      " M docs/development/CHANGELOG.md",
+      " M docs/development/PACKAGING.md",
+      " M docs/development/PROJECT_Notes.md",
+      "?? docs/development/PDF_TOOLCHAIN.md",
+      "?? docs/development/change_documents/STAGE_9/STAGE_9.3b.md",
+      "?? docs/development/change_documents/STAGE_9/STAGE_9.3b_CHECKPOINT_A.json",
+      "?? docs/development/change_documents/STAGE_9/STAGE_9.3b_CHECKPOINT_B.json",
+      "?? docs/development/change_documents/STAGE_9/STAGE_9.3b_REPORT.md",
+      "?? docs/user/SEESTAR_TOOLKIT_QUICK_START.pdf",
+      "?? docs/user/SEESTAR_TOOLKIT_QUICK_START.sha256",
+      "?? docs/user/SEESTAR_TOOLKIT_USER_GUIDE.pdf",
+      "?? docs/user/SEESTAR_TOOLKIT_USER_GUIDE.sha256",
+      "?? tools/documentation_pdf_filter.lua",
+      "?? tools/documentation_pdf_header.tex",
+      "?? tools/generate_documentation_pdfs.py",
+      "?? tools/validate_documentation_pdfs.py"
+    ]
+  },
+  "closure_criteria": [
+    {
+      "id": 1,
+      "criterion": "Starting branch, exact commit subject and expected dirty state verified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 2,
+      "criterion": "Pending Stage 9.3a development CHANGELOG row preserved byte-for-byte.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 3,
+      "criterion": "Both authoritative Markdown sources exist and match approved SHA-256 values.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 4,
+      "criterion": "Stage 9.3a completion and relevant Stage 9 evidence reviewed.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 5,
+      "criterion": "Repository PDF tools, scripts, dependencies, ignore rules and artifacts audited.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 6,
+      "criterion": "Existing CI and distribution boundaries audited.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 7,
+      "criterion": "Markdown feature, link, glyph, length and structure inventory recorded.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 8,
+      "criterion": "Existing PDF policy distinguished from prior non-binding proposals.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 9,
+      "criterion": "Exact inputs and six-file final user-document set specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 10,
+      "criterion": "Checkpoint scope, exclusions and A/B boundary specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 11,
+      "criterion": "Repository wrapper architecture specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 12,
+      "criterion": "Development-only dependency and declaration policy specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 13,
+      "criterion": "Runtime, user-installation and distribution isolation specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 14,
+      "criterion": "Single-authority version and deterministic metadata policy specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 15,
+      "criterion": "Two-build byte-reproducibility policy specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 16,
+      "criterion": "Source/PDF timestamp synchronization policy specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 17,
+      "criterion": "Exact two-entry checksum format and independent verification specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 18,
+      "criterion": "Layout, typography, navigation, wrapping and page-number policy specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 19,
+      "criterion": "Machine content-integrity checks specified without OCR dependence.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 20,
+      "criterion": "Rendered all-page and representative-page visual procedure specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 21,
+      "criterion": "Privacy, release-ZIP boundary and CI recommendation specified.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 22,
+      "criterion": "Checkpoint A evidence/report and local quality checks pass.",
+      "status": "PASS",
+      "evidence": "Preserved Checkpoint A PASS evidence; frozen hashes, baseline, scope and pending changelog reconfirmed in final continuation."
+    },
+    {
+      "id": 23,
+      "criterion": "Independent review accepts A and explicitly authorises Checkpoint B.",
+      "status": "PASS",
+      "evidence": "Independent Checkpoint A review explicitly authorised PASS with refinements, now recorded in specification section 16."
+    },
+    {
+      "id": 24,
+      "criterion": "Documentation toolchain declaration and installation instructions implemented.",
+      "status": "PASS",
+      "evidence": "PDF_TOOLCHAIN.md declares commands, versions, fonts and installation route."
+    },
+    {
+      "id": 25,
+      "criterion": "Exact tool/font versions and environment recorded.",
+      "status": "PASS",
+      "evidence": "Resolved Homebrew XeLaTeX, exact versions/font versions, environment and separate manual BasicTeX recorded."
+    },
+    {
+      "id": 26,
+      "criterion": "Generator wrapper implemented with fixed input/output mappings.",
+      "status": "PASS",
+      "evidence": "Fixed mappings and temporary two-build wrapper present."
+    },
+    {
+      "id": 27,
+      "criterion": "Independent PDF/manifest validator implemented.",
+      "status": "PASS",
+      "evidence": "Independent Poppler/MuPDF validator and strict manifests pass."
+    },
+    {
+      "id": 28,
+      "criterion": "Generator rejects source/version drift and avoids shell interpolation.",
+      "status": "PASS",
+      "evidence": "Source/version negative checks reject drift; subprocess argument lists, shell escape disabled; exact tool versions guarded."
+    },
+    {
+      "id": 29,
+      "criterion": "Generation uses only local approved inputs and temporary staging.",
+      "status": "PASS",
+      "evidence": "Local fixed source/header/filter inputs, temporary staging; no remote generation input."
+    },
+    {
+      "id": 30,
+      "criterion": "Both PDFs generated without changing either Markdown source or timestamp.",
+      "status": "PASS",
+      "evidence": "Approved source SHA-256 and A-recorded nanosecond mtimes unchanged; existing approved PDFs not replaced during continuation."
+    },
+    {
+      "id": 31,
+      "criterion": "User Guide PDF meets layout, navigation and metadata contract.",
+      "status": "PASS",
+      "evidence": "27-page A4 User Guide metadata/navigation/geometry and independent human visual PASS."
+    },
+    {
+      "id": 32,
+      "criterion": "Quick Start PDF meets layout, navigation and metadata contract.",
+      "status": "PASS",
+      "evidence": "5-page A4 Quick Start metadata/navigation/geometry and independent human visual PASS."
+    },
+    {
+      "id": 33,
+      "criterion": "All fonts are present, suitable, embedded and cover required glyphs.",
+      "status": "PASS",
+      "evidence": "TeX Gyre Heros 2.004 and DejaVu Sans Mono 2.34 embedded with Unicode mapping; no missing glyph log messages."
+    },
+    {
+      "id": 34,
+      "criterion": "Two clean builds of each PDF are byte-identical.",
+      "status": "PASS",
+      "evidence": "Two new clean builds of each equal each other and the accepted artifact SHA-256."
+    },
+    {
+      "id": 35,
+      "criterion": "Each final PDF mtime exactly matches its Markdown source mtime.",
+      "status": "PASS",
+      "evidence": "Each PDF/source st_mtime_ns equals A evidence."
+    },
+    {
+      "id": 36,
+      "criterion": "Each strict two-entry manifest is generated and independently verifies.",
+      "status": "PASS",
+      "evidence": "Strict manifests independently rehashed; extra-entry negative checks rejected."
+    },
+    {
+      "id": 37,
+      "criterion": "Automated content-integrity validation passes for both PDFs.",
+      "status": "PASS",
+      "evidence": "All headings, all code lines, representative prose, all list openings, beginning/end pass; no source tables."
+    },
+    {
+      "id": 38,
+      "criterion": "Local and external PDF link validation passes.",
+      "status": "PASS",
+      "evidence": "90/2 real annotations; internal named destinations exist; cross-document files exist; external URI preservation checked where present."
+    },
+    {
+      "id": 39,
+      "criterion": "Automated page geometry, blank-page and numbering checks pass.",
+      "status": "PASS",
+      "evidence": "27/5 nonblank A4 pages; every footer numbered in sequence; bounding boxes inside pages; zero overfull log warnings."
+    },
+    {
+      "id": 40,
+      "criterion": "Every page is rendered and visually inspected; required samples are recorded.",
+      "status": "PASS",
+      "evidence": "Earlier 150-dpi render of all 32 pages and Codex inspection; independent human review now PASS for exact matching artifacts."
+    },
+    {
+      "id": 41,
+      "criterion": "No clipping, overflow, missing glyph, malformed structure or Markdown leakage remains.",
+      "status": "PASS",
+      "evidence": "Human accepted typography, hierarchy, numbering, code/trees, configurations, transitions, clipping, overflow and glyphs; no required changes."
+    },
+    {
+      "id": 42,
+      "criterion": "Generated artifacts and evidence pass privacy review.",
+      "status": "PASS",
+      "evidence": "Metadata/text/object/manifest review excludes private paths/credentials; approved synthetic source examples retained; evidence uses repository-relative paths or public tool paths."
+    },
+    {
+      "id": 43,
+      "criterion": "Release ZIP inclusion/exclusion and wheel/sdist isolation are verified.",
+      "status": "PASS",
+      "evidence": "MANIFEST.in prunes docs/tools; strict wheel/sdist allowlists pass. Future ZIP policy includes only PDFs; actual ZIP assembly remains Stage 9.4."
+    },
+    {
+      "id": 44,
+      "criterion": "Full pytest, Ruff, configured formatting and whitespace gates pass.",
+      "status": "PASS",
+      "evidence": "Final full pytest, repository Ruff, configured/new-tool formatting, diff and direct new-document whitespace pass; untouched pending changelog whitespace preserved."
+    },
+    {
+      "id": 45,
+      "criterion": "Markdown navigation, public fixture/history and installed CLI checks pass.",
+      "status": "PASS",
+      "evidence": "Local Markdown/fence/anchor checks, public input/history checks, both installed entry points pass."
+    },
+    {
+      "id": 46,
+      "criterion": "Full distribution validation passes with no PDF tooling/artifact leakage.",
+      "status": "PASS",
+      "evidence": "Full isolated distribution validator passes: wheel 39 members, sdist 46; runtime-only imports and both entry points pass."
+    },
+    {
+      "id": 47,
+      "criterion": "Every genuine failure and remediation is preserved in evidence.",
+      "status": "PASS",
+      "evidence": "Separate failed attempts and remediations retained in this chronology; A and Stage 9.3a evidence untouched."
+    },
+    {
+      "id": 48,
+      "criterion": "Checkpoint B report accounts for every criterion and unresolved defect.",
+      "status": "PASS",
+      "evidence": "This structured evidence and report individually account for criteria 1\u201353 and pending formal gates."
+    },
+    {
+      "id": 49,
+      "criterion": "No production, test, fixture, runtime dependency or CI change exceeds scope.",
+      "status": "PASS",
+      "evidence": "No production/tests/fixtures/metadata/CI edits; frozen guides and accepted PDFs unchanged."
+    },
+    {
+      "id": 50,
+      "criterion": "Independent review accepts technical completion.",
+      "status": "PENDING",
+      "evidence": "PENDING independent review of final technical closure evidence; human visual PASS does not substitute."
+    },
+    {
+      "id": 51,
+      "criterion": "User approves and creates the closure commit; Codex does not commit or push.",
+      "status": "PENDING",
+      "evidence": "PENDING user authorisation and user-created closure commit; no commit/push performed."
+    },
+    {
+      "id": 52,
+      "criterion": "Exact post-commit content, cleanliness and required CI are verified.",
+      "status": "PENDING",
+      "evidence": "PENDING exact post-commit cleanliness/content and required CI verification."
+    },
+    {
+      "id": 53,
+      "criterion": "Formal COMPLETE is declared only after every preceding criterion passes.",
+      "status": "PENDING",
+      "evidence": "PENDING independent formal COMPLETE declaration after all preceding gates."
+    }
+  ],
+  "defects": {
+    "unresolved_rendering": [],
+    "source_document": [],
+    "potential_product": []
+  },
+  "scope": {
+    "guides_unchanged": true,
+    "pdfs_unchanged_on_resume": true,
+    "checkpoint_a_and_stage93a_evidence_unchanged": true,
+    "pending_changelog_unchanged": true,
+    "production_tests_fixtures_metadata_ci_unchanged": true,
+    "commit_push_tag_release_stage94": false
+  }
+}

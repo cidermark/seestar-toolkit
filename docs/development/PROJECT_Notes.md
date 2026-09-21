@@ -948,3 +948,28 @@ Checkpoint C failure and later scope cleanup remain preserved in the Stage
 evidence. Criteria 62–65 remain PENDING independent review, user closure commit
 and post-commit verification gates. Stage 9.3a remains STARTED; v1.1.0 remains
 Unreleased, and no later stage has begun.
+
+## Stage 9.3b — PDF generation and documentation validation
+
+Stage 9.3a closed at `41c000f`. Stage 9.3b Checkpoint A is PASS and defines the
+repository PDF pipeline without implementing it. The two approved Markdown guide
+hashes remain unchanged. The proposed development-only wrapper uses Pandoc with
+an explicit XeLaTeX toolchain and embedded declared fonts, then independently
+checks extracted content, links, metadata, geometry, fonts and rendered pages.
+Two clean builds must be byte-identical before the PDFs are accepted.
+
+The final repository artifacts will be a PDF and a two-entry SHA-256 manifest
+beside each authoritative Markdown guide. Accepted PDF mtimes will match their
+Markdown source mtimes. Only the PDFs enter the later release ZIP; Stage 9.4 owns
+ZIP assembly and its external checksum. Checkpoint B requires independent review
+and explicit authorisation. No generator, PDF, manifest, CI change or later-stage
+artifact was produced in A.
+
+### Stage 9.3b Checkpoint B continuation
+
+The authorised PDF implementation and validation are recorded in the
+[Stage 9.3b report](change_documents/STAGE_9/STAGE_9.3b_REPORT.md).
+Both frozen guides and their approved PDFs are preserved. Independent human
+visual review of all 32 pages is PASS. The final technical evidence is recorded
+separately from independent closure review, user commit and post-commit gates.
+Stage 9.3b remains STARTED; no Stage 9.4 artifact has been assembled.

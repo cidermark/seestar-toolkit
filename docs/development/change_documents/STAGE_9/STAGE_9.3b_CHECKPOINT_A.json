@@ -1,0 +1,172 @@
+{
+  "stage": "9.3b",
+  "checkpoint": "A",
+  "stage_status": "STARTED",
+  "checkpoint_status": "PASS",
+  "baseline": {
+    "branch": "main",
+    "head": "41c000fb98fdd42ab6f3f9f486f531eafcb520e2",
+    "subject": "Stage 9.3a: complete user and public documentation",
+    "expected_initial_change": "docs/development/CHANGELOG.md",
+    "pending_entry": "| 9.3a       | complete user and public documentation    | 41c000f   | 2026-09-21 |"
+  },
+  "authoritative_sources": {
+    "docs/user/SEESTAR_TOOLKIT_USER_GUIDE.md": {
+      "sha256": "29cf55b4beb1f1a6ebcd37c946cdc74a4a8ef41c75dbcee62353c61131fc8883",
+      "bytes": 64209,
+      "mtime_ns": 1789734082074713848
+    },
+    "docs/user/SEESTAR_TOOLKIT_QUICK_START.md": {
+      "sha256": "b3f61499335f7a7d15b1a323d3fa39056606b5a2d021a9cf9d82942c119ed18f",
+      "bytes": 9283,
+      "mtime_ns": 1789734207766841774
+    }
+  },
+  "repository_audit": {
+    "package_version": "1.1.0",
+    "existing_pdf_generator": false,
+    "tracked_pdf_or_sha256_artifacts": false,
+    "pdf_ci_job": false,
+    "pdf_dependencies_declared": false,
+    "pandoc_on_audit_path": false,
+    "xelatex_on_audit_path": false,
+    "poppler_tools_on_audit_path": false,
+    "prior_policy": "Stage 9.1a recommends, but does not prove, a Pandoc wrapper with explicit XeLaTeX and known fonts.",
+    "runtime_isolation_evidence": "Clean-install and distribution validators assert that reportlab, weasyprint and fpdf are absent from runtime-only installations."
+  },
+  "source_inventory": {
+    "user_guide": {
+      "lines": 1880,
+      "level_1_headings": 14,
+      "level_2_headings": 77,
+      "fenced_blocks": 79,
+      "links": 90,
+      "tables": 0,
+      "images": 0,
+      "maximum_line_length": 172
+    },
+    "quick_start": {
+      "lines": 379,
+      "level_1_headings": 1,
+      "level_2_headings": 12,
+      "fenced_blocks": 29,
+      "links": 2,
+      "tables": 0,
+      "images": 0,
+      "maximum_line_length": 108
+    },
+    "non_ascii_glyph_classes": [
+      "right arrow",
+      "box drawing horizontal",
+      "box drawing vertical",
+      "box drawing branch",
+      "box drawing corner"
+    ]
+  },
+  "proposed_architecture": {
+    "orchestrator": "Repository standard-library Python wrapper with fixed document mappings",
+    "generation_command": "python tools/generate_documentation_pdfs.py --all",
+    "validation_command": "python tools/validate_documentation_pdfs.py --all",
+    "renderer": "Version-checked Pandoc with explicit XeLaTeX engine, committed defaults/template material and declared TeX fonts",
+    "inspection": "Independent Poppler pdfinfo, pdftotext, pdffonts and pdftoppm commands",
+    "dependency_declaration": "Separate repository documentation-toolchain declaration and instructions; no project runtime dependency or ordinary user requirement",
+    "reproducibility": "Two clean temporary builds per source with fixed locale/timezone/SOURCE_DATE_EPOCH/toolchain; require byte-identical SHA-256",
+    "timestamp": "After successful validation, set PDF st_mtime_ns to source st_mtime_ns with os.utime and verify equality",
+    "manifest": "Exactly two LF-terminated '<sha256><two spaces><basename>' lines, Markdown first and PDF second",
+    "ci": "No v1.1.0 CI change; complete local generation and validation is mandatory"
+  },
+  "established_requirements": [
+    "Markdown is authoritative and PDFs are generated artifacts.",
+    "Both PDFs and both per-guide manifests are committed.",
+    "Each manifest hashes its Markdown and PDF.",
+    "Each PDF mtime is synchronized to its Markdown source.",
+    "PDF tooling is development/release-only.",
+    "Rendered visual and non-OCR content validation are required.",
+    "Only PDFs later enter the release ZIP; Stage 9.4 owns ZIP assembly and its external checksum."
+  ],
+  "approval_required": [
+    "Independent acceptance of the Checkpoint A specification and architecture",
+    "Acceptance of the separate development-toolchain declaration",
+    "Acceptance of Pandoc/XeLaTeX rendering and Poppler inspection",
+    "Acceptance of strict two-build byte equality",
+    "Acceptance of the exact manifest format and visual/content gates",
+    "Explicit authorisation to begin Checkpoint B"
+  ],
+  "validation": {
+    "frozen_hashes": "PASS",
+    "pending_changelog_entry": "PASS: preserved",
+    "unexpected_initial_changes": "PASS: none",
+    "json_parse": "PASS: 53 individually numbered closure criteria",
+    "direct_new_document_whitespace": "PASS: no trailing whitespace in new or modified Checkpoint A documents",
+    "git_diff_check": "PASS: tracked diff and each untracked Checkpoint A file",
+    "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+    "ruff": "PASS: Ruff 0.16.8, All checks passed! in existing Stage validation environment",
+    "formatting": "PASS: 37 files already formatted",
+    "default_python_note": "Homebrew Python 3.14 lacked Ruff; no dependency was installed or changed, and the checks were rerun successfully in the existing Stage validation environment."
+  },
+  "closure_criteria": [
+    {"id": 1, "status": "PASS", "criterion": "Starting branch, exact commit subject and expected dirty state verified."},
+    {"id": 2, "status": "PASS", "criterion": "Pending Stage 9.3a development CHANGELOG row preserved byte-for-byte."},
+    {"id": 3, "status": "PASS", "criterion": "Both authoritative Markdown sources exist and match approved SHA-256 values."},
+    {"id": 4, "status": "PASS", "criterion": "Stage 9.3a completion and relevant Stage 9 evidence reviewed."},
+    {"id": 5, "status": "PASS", "criterion": "Repository PDF tools, scripts, dependencies, ignore rules and artifacts audited."},
+    {"id": 6, "status": "PASS", "criterion": "Existing CI and distribution boundaries audited."},
+    {"id": 7, "status": "PASS", "criterion": "Markdown feature, link, glyph, length and structure inventory recorded."},
+    {"id": 8, "status": "PASS", "criterion": "Existing PDF policy distinguished from prior non-binding proposals."},
+    {"id": 9, "status": "PASS", "criterion": "Exact inputs and six-file final user-document set specified."},
+    {"id": 10, "status": "PASS", "criterion": "Checkpoint scope, exclusions and A/B boundary specified."},
+    {"id": 11, "status": "PASS", "criterion": "Repository wrapper architecture specified."},
+    {"id": 12, "status": "PASS", "criterion": "Development-only dependency and declaration policy specified."},
+    {"id": 13, "status": "PASS", "criterion": "Runtime, user-installation and distribution isolation specified."},
+    {"id": 14, "status": "PASS", "criterion": "Single-authority version and deterministic metadata policy specified."},
+    {"id": 15, "status": "PASS", "criterion": "Two-build byte-reproducibility policy specified."},
+    {"id": 16, "status": "PASS", "criterion": "Source/PDF timestamp synchronization policy specified."},
+    {"id": 17, "status": "PASS", "criterion": "Exact two-entry checksum format and independent verification specified."},
+    {"id": 18, "status": "PASS", "criterion": "Layout, typography, navigation, wrapping and page-number policy specified."},
+    {"id": 19, "status": "PASS", "criterion": "Machine content-integrity checks specified without OCR dependence."},
+    {"id": 20, "status": "PASS", "criterion": "Rendered all-page and representative-page visual procedure specified."},
+    {"id": 21, "status": "PASS", "criterion": "Privacy, release-ZIP boundary and CI recommendation specified."},
+    {"id": 22, "status": "PASS", "criterion": "Checkpoint A evidence/report and local quality checks pass."},
+    {"id": 23, "status": "PENDING", "criterion": "Independent review accepts A and explicitly authorises Checkpoint B."},
+    {"id": 24, "status": "PENDING", "criterion": "Documentation toolchain declaration and installation instructions implemented."},
+    {"id": 25, "status": "PENDING", "criterion": "Exact tool/font versions and environment recorded."},
+    {"id": 26, "status": "PENDING", "criterion": "Generator wrapper implemented with fixed input/output mappings."},
+    {"id": 27, "status": "PENDING", "criterion": "Independent PDF/manifest validator implemented."},
+    {"id": 28, "status": "PENDING", "criterion": "Generator rejects source/version drift and avoids shell interpolation."},
+    {"id": 29, "status": "PENDING", "criterion": "Generation uses only local approved inputs and temporary staging."},
+    {"id": 30, "status": "PENDING", "criterion": "Both PDFs generated without changing either Markdown source or timestamp."},
+    {"id": 31, "status": "PENDING", "criterion": "User Guide PDF meets layout, navigation and metadata contract."},
+    {"id": 32, "status": "PENDING", "criterion": "Quick Start PDF meets layout, navigation and metadata contract."},
+    {"id": 33, "status": "PENDING", "criterion": "All fonts are present, suitable, embedded and cover required glyphs."},
+    {"id": 34, "status": "PENDING", "criterion": "Two clean builds of each PDF are byte-identical."},
+    {"id": 35, "status": "PENDING", "criterion": "Each final PDF mtime exactly matches its Markdown source mtime."},
+    {"id": 36, "status": "PENDING", "criterion": "Each strict two-entry manifest is generated and independently verifies."},
+    {"id": 37, "status": "PENDING", "criterion": "Automated content-integrity validation passes for both PDFs."},
+    {"id": 38, "status": "PENDING", "criterion": "Local and external PDF link validation passes."},
+    {"id": 39, "status": "PENDING", "criterion": "Automated page geometry, blank-page and numbering checks pass."},
+    {"id": 40, "status": "PENDING", "criterion": "Every page is rendered and visually inspected; required samples are recorded."},
+    {"id": 41, "status": "PENDING", "criterion": "No clipping, overflow, missing glyph, malformed structure or Markdown leakage remains."},
+    {"id": 42, "status": "PENDING", "criterion": "Generated artifacts and evidence pass privacy review."},
+    {"id": 43, "status": "PENDING", "criterion": "Release ZIP inclusion/exclusion and wheel/sdist isolation are verified."},
+    {"id": 44, "status": "PENDING", "criterion": "Full pytest, Ruff, configured formatting and whitespace gates pass."},
+    {"id": 45, "status": "PENDING", "criterion": "Markdown navigation, public fixture/history and installed CLI checks pass."},
+    {"id": 46, "status": "PENDING", "criterion": "Full distribution validation passes with no PDF tooling/artifact leakage."},
+    {"id": 47, "status": "PENDING", "criterion": "Every genuine failure and remediation is preserved in evidence."},
+    {"id": 48, "status": "PENDING", "criterion": "Checkpoint B report accounts for every criterion and unresolved defect."},
+    {"id": 49, "status": "PENDING", "criterion": "No production, test, fixture, runtime dependency or CI change exceeds scope."},
+    {"id": 50, "status": "PENDING", "criterion": "Independent review accepts technical completion."},
+    {"id": 51, "status": "PENDING", "criterion": "User approves and creates the closure commit; Codex does not commit or push."},
+    {"id": 52, "status": "PENDING", "criterion": "Exact post-commit content, cleanliness and required CI are verified."},
+    {"id": 53, "status": "PENDING", "criterion": "Formal COMPLETE is declared only after every preceding criterion passes."}
+  ],
+  "scope_confirmation": {
+    "guides_modified": false,
+    "generator_implemented": false,
+    "pdfs_generated": false,
+    "final_manifests_generated": false,
+    "production_tests_fixtures_package_ci_modified": false,
+    "commit_or_push": false,
+    "checkpoint_b_started": false,
+    "stage_9_4_started": false
+  }
+}
