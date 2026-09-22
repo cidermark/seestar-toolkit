@@ -821,6 +821,24 @@ created during this audit; the pending CHANGELOG workflow is preserved.
     must never be modified in place; the command should produce a separate
     anonymised copy and report what metadata was removed or changed. A future
     workflow could support anonymise → verify → share.
+-   Archive with batch conversion option
+    Add an explicit option to seestar-toolkit archive allowing the user to
+    request FITS → TIFF batch conversion of archived light frames as part
+    of the same operation.
+    Default archive behaviour remains archive-only. Batch conversion occurs only
+    when explicitly requested. The option should reuse the existing
+    convert-batch processing pipeline rather than introduce a separate
+    conversion implementation.
+
+## BUG-001 — archive light-TIFF side effect
+
+Normal archive operation now preserves individual light FITS files without
+automatically converting them or creating an observation-level `tiff/`
+directory. The required TIFF companion for a Seestar-created stacked FITS
+continues to be generated under `seestar_stacked/`. The earlier Stage 7 records
+describe the former contract and remain unchanged as historical evidence. The
+explicit archive plus batch-conversion option above remains a separate future
+enhancement.
 
 ## Stage 9.1b documentation boundary and future work
 

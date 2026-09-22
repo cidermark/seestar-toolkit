@@ -33,14 +33,14 @@ DOCUMENTS = (
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.md",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.sha256",
-        "29cf55b4beb1f1a6ebcd37c946cdc74a4a8ef41c75dbcee62353c61131fc8883",
+        "fa4f1b3908d1b43b8e71321cf885eacdd6c855c0824536b153da074951525ffa",
         "Seestar Toolkit User Guide",
     ),
     Document(
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.md",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.sha256",
-        "b3f61499335f7a7d15b1a323d3fa39056606b5a2d021a9cf9d82942c119ed18f",
+        "35252f89b8e31c8bbd560188c3a18ceb1d73295ec4fbb3162384ca00d76f4d83",
         "Seestar Toolkit Quick Start",
     ),
 )

@@ -213,20 +213,19 @@ ARCHIVE_ROOT/
         └── {session_end_date}/
             ├── observation_01/
             │   ├── lights/
-            │   ├── seestar_stacked/
-            │   └── tiff/
+            │   └── seestar_stacked/
             └── observation_02/
                 ├── lights/
-                ├── seestar_stacked/
-                └── tiff/
+                └── seestar_stacked/
 ```
 
 Original light FIT/FITS files are placed directly in `lights/`, without an
 extra `source/` or `fits/` level, so the observation remains convenient for
-Siril and similar stacking software. TIFF derivatives of individual lights go
-in `tiff/`. The original Seestar stack and its `.tiff` derivative remain
-together in `seestar_stacked/`. Original FITS basenames are preserved wherever
-practical; derivatives replace `.fit` or `.fits` with `.tiff`.
+Siril and similar stacking software. Normal archive operations do not request
+TIFF derivatives for individual lights. The original Seestar stack and its
+required `.tiff` companion remain together in `seestar_stacked/`. Original FITS
+basenames are preserved wherever practical; the stack derivative replaces
+`.fit` or `.fits` with `.tiff`.
 
 Future sibling frame directories such as `darks/`, `flats/` and `biases/` are
 permitted by the architecture, but unused directories and calibration-frame
@@ -335,11 +334,11 @@ remain available, and planning has no network or reverse-geocoder dependency.
 Within each target/location/session group, observations are sorted by retained
 capture time and deterministic source-path evidence and numbered from
 `observation_01`. Width expands above 99 observations to prevent ambiguity.
-Planned original lights retain their filenames under `lights/`; their `.tiff`
-derivatives are planned under `tiff/`. A Seestar stack and its `.tiff`
-derivative are both planned under `seestar_stacked/`. In-memory destination
-collisions between distinct sources are rejected; filesystem collision and
-content policy remains Stage 7.1e.
+Planned original lights retain their filenames under `lights/` and have no
+planned TIFF derivative. A Seestar stack and its `.tiff` derivative are both
+planned under `seestar_stacked/`. In-memory destination collisions between
+distinct sources consider only destinations that are actually planned;
+filesystem collision and content policy remains Stage 7.1e.
 
 ### Safe archive file execution
 
@@ -386,12 +385,13 @@ result for later presentation and does not duplicate FITS inspection,
 demosaicing, RGB normalization, TIFF writing, reconstruction, placement or
 original-file safety logic.
 
-TIFF conversion occurs only after the corresponding original archive result is
-`COPIED`, `MOVED` or `SKIPPED_IDENTICAL`. `COLLISION`, `FAILED` and `PARTIAL`
-original outcomes are conservatively ineligible. The archived FITS destination
-is always the conversion input, allowing TIFF creation after MOVE and ensuring
-an identical archived FITS can produce a missing derivative. The TIFF output
-is exactly the destination retained in its Stage 7.1d `PlannedFile`.
+TIFF conversion occurs only for a Seestar stack with a planned derivative and
+only after the corresponding original archive result is `COPIED`, `MOVED` or
+`SKIPPED_IDENTICAL`. `COLLISION`, `FAILED` and `PARTIAL` original outcomes are
+conservatively ineligible. The archived stack FITS destination is always the
+conversion input, allowing TIFF creation after MOVE and ensuring an identical
+archived stack can produce a missing derivative. Individual light FITS files
+have no derivative destination during a normal archive operation.
 
 Eligible TIFF parent directories are created only after resolved-path archive
 containment is revalidated. A pre-existing TIFF is preserved and reported as a
@@ -431,8 +431,9 @@ Skip-identical is the safe default, error and overwrite policies are explicit,
 and the same filename with different content is never silently overwritten.
 
 Dry-run follows the same discovery, classification, reconstruction, metadata,
-path, collision, TIFF-placement and file-action planning path as a real run,
-but performs zero filesystem mutation and generates no archive TIFF or index.
+path, collision, stack-TIFF placement and file-action planning path as a real
+run, but performs zero filesystem mutation and generates no archive TIFF or
+index. It does not advertise a TIFF destination for individual lights.
 
 ### Ancillary products and indexes
 

@@ -314,7 +314,7 @@ def _planned_observation(
         PlannedFile(
             source_path=item.source_path,
             fits_destination=lights_directory / item.source_path.name,
-            tiff_destination=tiff_directory / item.source_path.with_suffix(".tiff").name,
+            tiff_destination=None,
         )
         for item in observation.lights
     )
@@ -345,7 +345,10 @@ def _record_destinations(
 ) -> None:
     files = (*observation.lights, *((observation.stack,) if observation.stack else ()))
     for planned_file in files:
-        for destination in (planned_file.fits_destination, planned_file.tiff_destination):
+        destinations_to_record = (planned_file.fits_destination,)
+        if planned_file.tiff_destination is not None:
+            destinations_to_record += (planned_file.tiff_destination,)
+        for destination in destinations_to_record:
             previous = destinations.get(destination)
             if previous is not None and previous != planned_file.source_path:
                 raise ArchivePlanningCollisionError(

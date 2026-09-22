@@ -38,11 +38,11 @@ class ArchivePlanningProblem:
 
 @dataclass(frozen=True, slots=True)
 class PlannedFile:
-    """One source FITS and its planned source and TIFF destinations."""
+    """One source FITS and its planned archive and optional TIFF destinations."""
 
     source_path: Path
     fits_destination: Path
-    tiff_destination: Path
+    tiff_destination: Path | None
 
 
 @dataclass(frozen=True, slots=True)

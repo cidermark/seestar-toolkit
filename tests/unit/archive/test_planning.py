@@ -397,7 +397,7 @@ def test_missing_telescope_identifier_remains_explicitly_absent() -> None:
     assert _plan(_observation(lights=(light,))).observations[0].metadata.telescope is None
 
 
-def test_light_and_stack_fits_and_tiff_destinations_follow_contract() -> None:
+def test_only_stack_has_planned_tiff_destination() -> None:
     light = _item("Light_Target.FITS", DiscoveryClassification.LIGHT_FITS)
     stack = _item("Stacked_1_Target.fit", DiscoveryClassification.SEESTAR_STACK_FITS)
     observation = _observation(
@@ -410,7 +410,7 @@ def test_light_and_stack_fits_and_tiff_destinations_follow_contract() -> None:
     assert planned.tiff_directory.name == "tiff"
     assert planned.seestar_stacked_directory.name == "seestar_stacked"
     assert planned.lights[0].fits_destination.name == "Light_Target.FITS"
-    assert planned.lights[0].tiff_destination.name == "Light_Target.tiff"
+    assert planned.lights[0].tiff_destination is None
     assert planned.stack is not None
     assert planned.stack.fits_destination.name == "Stacked_1_Target.fit"
     assert planned.stack.tiff_destination.name == "Stacked_1_Target.tiff"
@@ -420,11 +420,20 @@ def test_light_and_stack_fits_and_tiff_destinations_follow_contract() -> None:
         path.is_relative_to(ARCHIVE_ROOT)
         for path in (
             planned.lights[0].fits_destination,
-            planned.lights[0].tiff_destination,
             planned.stack.fits_destination,
             planned.stack.tiff_destination,
         )
     )
+
+
+def test_fit_and_fits_lights_do_not_collide_through_unrequested_tiff() -> None:
+    first = _item("Light.fit", DiscoveryClassification.LIGHT_FITS)
+    second = _item("Light.fits", DiscoveryClassification.LIGHT_FITS)
+
+    planned = _plan(_observation(lights=(first, second))).observations[0]
+
+    assert [item.fits_destination.name for item in planned.lights] == ["Light.fit", "Light.fits"]
+    assert all(item.tiff_destination is None for item in planned.lights)
 
 
 @pytest.mark.parametrize("status", [ObservationStatus.AMBIGUOUS, ObservationStatus.UNRESOLVED])

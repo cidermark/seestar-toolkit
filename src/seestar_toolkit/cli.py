@@ -93,7 +93,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Plan or execute a Seestar session archive.",
         description=(
             "Discover and reconstruct a Seestar work directory, plan its archive, "
-            "and optionally archive FITS originals with TIFF derivatives."
+            "archive FITS originals, and create a TIFF companion for each Seestar stack."
         ),
     )
     archive_parser.add_argument("source_root", metavar="SOURCE_ROOT", type=Path)
@@ -308,10 +308,10 @@ def _print_archive_plan(
             f"destination={observation.observation_directory}"
         )
         for planned in (*observation.lights, *((observation.stack,) if observation.stack else ())):
-            print(
-                f"  FITS {planned.source_path} -> {planned.fits_destination}; "
-                f"TIFF -> {planned.tiff_destination}"
-            )
+            message = f"  FITS {planned.source_path} -> {planned.fits_destination}"
+            if planned.tiff_destination is not None:
+                message += f"; TIFF -> {planned.tiff_destination}"
+            print(message)
     for problem in prepared.plan.problems:
         print(f"Planning problem: {'; '.join(problem.messages)}", file=sys.stderr)
     for item in prepared.discovery.items:

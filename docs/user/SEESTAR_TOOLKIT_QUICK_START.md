@@ -190,7 +190,7 @@ seestar-toolkit archive --source-action copy \
   --non-interactive "/path/to/My Works" "/path/to/archive"
 ```
 
-The default archive hierarchy is:
+The default archive hierarchy keeps a stack TIFF companion beside its stack FITS:
 
 ``` text
 Target/
@@ -198,8 +198,7 @@ Target/
     └── Observing night/
         └── observation_01/
             ├── lights/
-            ├── seestar_stacked/
-            └── tiff/
+            └── seestar_stacked/
 ```
 
 The Toolkit may create additional observation directories when the captures
@@ -219,7 +218,7 @@ Confirm that:
 1.  the original source captures are still present;
 2.  the expected target, location and observing-night directories exist;
 3.  the expected observation directories and files are present;
-4.  generated TIFFs and the target index are where expected;
+4.  the stack TIFF companion and target index are where expected;
 5.  the command did not report unresolved observations, collisions or failures.
 
 Do **not** delete your originals simply because the command completed.

@@ -141,7 +141,11 @@ def _rename_planned_observation(observation, name: str):
         replace(
             item,
             fits_destination=lights_directory / item.fits_destination.name,
-            tiff_destination=tiff_directory / item.tiff_destination.name,
+            tiff_destination=(
+                tiff_directory / item.tiff_destination.name
+                if item.tiff_destination is not None
+                else None
+            ),
         )
         for item in observation.lights
     )
@@ -178,10 +182,11 @@ def execute_prepared_seestar_archive(
         action=source_action,
         collision_policy=collision_policy,
     )
-    planned_files = _planned_files(prepared.plan)
+    paired_files = zip(_planned_files(prepared.plan), execution.files, strict=True)
     tiffs = tuple(
         _generate_tiff(prepared.plan, planned_file, file_execution)
-        for planned_file, file_execution in zip(planned_files, execution.files, strict=True)
+        for planned_file, file_execution in paired_files
+        if planned_file.tiff_destination is not None
     )
     indexes = generate_archive_indexes(prepared.plan, execution)
     return SeestarArchiveResult(
@@ -212,6 +217,8 @@ def _generate_tiff(
 ) -> ArchiveTiffResult:
     archived_fits = file_execution.destination_path
     destination = planned_file.tiff_destination
+    if destination is None:
+        raise ValueError("TIFF generation requires a planned TIFF destination")
     base = {
         "archived_fits_path": archived_fits,
         "tiff_destination": destination,

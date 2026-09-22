@@ -11,6 +11,12 @@
   linear RGB TIFF.
 - Read-only archive configuration and local saved-location matching.
 
+### Fixed
+
+- Normal archive operations preserve individual light FITS files without
+  automatically creating light TIFFs or an observation-level `tiff/` directory;
+  the Seestar stack TIFF companion is still generated.
+
 ### Supported
 
 - Validated Seestar S50 raw Bayer, native RGB stacked and mosaic FIT/FITS inputs,

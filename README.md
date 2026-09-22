@@ -18,9 +18,12 @@ Target/
     `-- 20260915/
         `-- observation_01/
             |-- lights/
-            |-- seestar_stacked/
-            `-- tiff/
+            `-- seestar_stacked/
 ```
+
+Individual light FITS files remain in `lights/` without automatic TIFF
+conversion. When a Seestar-created stacked FITS is present, its required TIFF
+companion is generated beside it in `seestar_stacked/`.
 
 The Toolkit can also convert supported FIT/FITS images into linear RGB TIFFs,
 one file at a time or as a non-recursive batch. Conversion complements archive

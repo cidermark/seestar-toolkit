@@ -131,11 +131,10 @@ def test_real_seestar_copy_cli_reopens_tiffs_and_verifies_index(
     archived_stack = next(archive_root.rglob("seestar_stacked/*.fit"))
     assert _fingerprint(archived_light) == _fingerprint(source_light)
     assert _fingerprint(archived_stack) == _fingerprint(source_stack)
-    light_tiff = tifffile.imread(next(archive_root.rglob("tiff/*.tiff")))
     stack_tiff = tifffile.imread(next(archive_root.rglob("seestar_stacked/*.tiff")))
-    assert light_tiff.shape == (1920, 1080, 3)
     assert stack_tiff.shape == (3840, 2160, 3)
-    assert light_tiff.dtype == stack_tiff.dtype == np.uint16
+    assert stack_tiff.dtype == np.uint16
+    assert not tuple(archive_root.rglob("tiff"))
     index = (archive_root / "IC 434/INDEX.md").read_text()
     assert "# IC 434" in index
     assert "### Observation 01" in index
@@ -146,7 +145,7 @@ def test_real_seestar_copy_cli_reopens_tiffs_and_verifies_index(
     assert "Archive complete" in capsys.readouterr().out
 
 
-def test_full_copy_workflow_generates_raw_light_and_native_stack_tiffs(
+def test_full_copy_workflow_preserves_light_without_tiff_and_generates_stack_tiff(
     tmp_path: Path,
 ) -> None:
     root, lights, stack = _source_tree(tmp_path)
@@ -159,18 +158,23 @@ def test_full_copy_workflow_generates_raw_light_and_native_stack_tiffs(
 
     assert result.status is SeestarArchiveStatus.COMPLETE
     assert result.execution.copied_count == 2
-    assert all(item.outcome is ArchiveTiffOutcome.CREATED for item in result.tiffs)
+    assert len(result.tiffs) == 1
+    assert result.tiffs[0].outcome is ArchiveTiffOutcome.CREATED
     planned = result.plan.observations[0]
-    assert result.tiffs[0].tiff_destination == planned.lights[0].tiff_destination
-    assert result.tiffs[1].tiff_destination == planned.stack.tiff_destination
-    assert planned.lights[0].tiff_destination.parent.name == "tiff"
+    assert planned.lights[0].tiff_destination is None
+    assert result.tiffs[0].tiff_destination == planned.stack.tiff_destination
+    assert not planned.tiff_directory.exists()
     assert planned.stack.tiff_destination.parent.name == "seestar_stacked"
-    raw_tiff = tifffile.imread(planned.lights[0].tiff_destination)
     stack_tiff = tifffile.imread(planned.stack.tiff_destination)
-    assert raw_tiff.shape == stack_tiff.shape == (8, 10, 3)
-    assert raw_tiff.dtype == stack_tiff.dtype == np.uint16
+    assert stack_tiff.shape == (8, 10, 3)
+    assert stack_tiff.dtype == np.uint16
+    assert planned.lights[0].fits_destination.read_bytes() == lights[0].read_bytes()
+    assert planned.stack.fits_destination.read_bytes() == stack.read_bytes()
     assert {path: _fingerprint(path) for path in (*lights, stack, jpeg)} == before
     assert tuple(archive_root.rglob("INDEX.md")) == (archive_root / "Target/INDEX.md",)
+    index = (archive_root / "Target/INDEX.md").read_text()
+    assert "Light subs: 1" in index
+    assert "Stacked_1_Target_20260903-010030.fit" in index
 
 
 def test_target_index_contains_required_structured_metadata(tmp_path: Path) -> None:
@@ -314,9 +318,14 @@ def test_lights_only_and_stack_only_workflows_do_not_invent_missing_frames(
 
     assert lights_result.status is SeestarArchiveStatus.COMPLETE
     assert lights_result.plan.observations[0].stack is None
+    assert lights_result.tiffs == ()
+    assert not lights_result.plan.observations[0].tiff_directory.exists()
     assert "Seestar stack: none" in lights_result.indexes[0].index_path.read_text()
     assert stack_result.status is SeestarArchiveStatus.COMPLETE
     assert stack_result.plan.observations[0].lights == ()
+    assert len(stack_result.tiffs) == 1
+    assert stack_result.tiffs[0].outcome is ArchiveTiffOutcome.CREATED
+    assert stack_result.tiffs[0].tiff_destination.is_file()
     assert "Light subs: 0" in stack_result.indexes[0].index_path.read_text()
     assert "Stacked_3_Target" in stack_result.indexes[0].index_path.read_text()
 
@@ -345,7 +354,7 @@ def test_multiple_observations_have_separate_outputs_and_one_complete_index(
         "observation_02",
     ]
     assert all(item.observation_directory.is_dir() for item in result.plan.observations)
-    assert len(result.tiffs) == 4
+    assert len(result.tiffs) == 2
     assert all(item.tiff_destination.is_file() for item in result.tiffs)
     content = result.indexes[0].index_path.read_text()
     assert content.count("### Observation") == 2
@@ -374,7 +383,10 @@ def test_archive_cli_dry_run_plans_without_any_filesystem_mutation(
     assert "Plan observation_01" in output
     assert "target=Target" in output
     assert "location=unknown" in output
-    assert "FITS" in output and "TIFF" in output
+    light_line = next(line for line in output.splitlines() if "Light_1_Target" in line)
+    stack_line = next(line for line in output.splitlines() if "Stacked_1_Target" in line)
+    assert "FITS" in light_line and "TIFF" not in light_line
+    assert "FITS" in stack_line and "TIFF" in stack_line
     assert f"Index: {archive_root / 'Target/INDEX.md'}" in output
 
 
@@ -399,7 +411,8 @@ def test_archive_cli_real_copy_and_move_workflows(
     assert status == 0
     assert all(path.exists() is source_exists for path in (*lights, stack))
     assert len(tuple(archive_root.rglob("*.fit"))) == 2
-    assert len(tuple(archive_root.rglob("*.tiff"))) == 2
+    assert len(tuple(archive_root.rglob("*.tiff"))) == 1
+    assert not tuple(archive_root.rglob("tiff"))
     output = capsys.readouterr().out
     assert summary in output
     assert tuple(archive_root.rglob("INDEX.md")) == (archive_root / "Target/INDEX.md",)
@@ -579,20 +592,37 @@ def test_identical_archived_fits_can_generate_missing_tiffs(tmp_path: Path) -> N
     assert second.status is SeestarArchiveStatus.COMPLETE
 
 
-def test_original_collision_is_ineligible_for_tiff(tmp_path: Path) -> None:
-    root, _, _ = _source_tree(tmp_path, include_stack=False)
+def test_existing_light_tiff_is_not_deleted_or_migrated(tmp_path: Path) -> None:
+    root, _, _ = _source_tree(tmp_path)
     archive_root = tmp_path / "archive"
     plan = _planned(root, archive_root)
-    planned_file = plan.observations[0].lights[0]
+    legacy_tiff = plan.observations[0].tiff_directory / "Light_1_Target_20260903-010000.tiff"
+    legacy_tiff.parent.mkdir(parents=True)
+    legacy_tiff.write_bytes(b"existing light TIFF")
+
+    result = archive_seestar_session(root, archive_root=archive_root)
+
+    assert result.status is SeestarArchiveStatus.COMPLETE
+    assert legacy_tiff.read_bytes() == b"existing light TIFF"
+    assert len(result.tiffs) == 1
+    assert result.tiffs[0].tiff_destination.parent.name == "seestar_stacked"
+
+
+def test_original_collision_is_ineligible_for_tiff(tmp_path: Path) -> None:
+    root, _, _ = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+    plan = _planned(root, archive_root)
+    planned_file = plan.observations[0].stack
+    assert planned_file is not None
     planned_file.fits_destination.parent.mkdir(parents=True)
     planned_file.fits_destination.write_bytes(b"different archived FITS")
 
     result = archive_seestar_session(root, archive_root=archive_root)
 
-    assert result.execution.files[0].outcome is ArchiveFileOutcome.COLLISION
+    assert result.execution.files[1].outcome is ArchiveFileOutcome.COLLISION
     assert result.tiffs[0].outcome is ArchiveTiffOutcome.INELIGIBLE
     assert not planned_file.tiff_destination.exists()
-    assert result.status is SeestarArchiveStatus.FAILED
+    assert result.status is SeestarArchiveStatus.PARTIAL
 
 
 def test_explicit_overwrite_replaces_different_fits_via_existing_safe_path(
@@ -617,36 +647,36 @@ def test_explicit_overwrite_replaces_different_fits_via_existing_safe_path(
     assert second.execution.files[0].outcome is ArchiveFileOutcome.COPIED
     assert destination.read_bytes() == replacement
     assert lights[0].read_bytes() == replacement
-    assert second.tiffs[0].outcome is ArchiveTiffOutcome.COLLISION
+    assert second.tiffs == ()
     assert second.indexes[0].outcome in {
         ArchiveIndexOutcome.UPDATED,
         ArchiveIndexOutcome.UNCHANGED,
     }
-    assert second.status is SeestarArchiveStatus.PARTIAL
+    assert second.status is SeestarArchiveStatus.COMPLETE
 
 
 def test_failed_original_archive_operation_does_not_generate_tiff(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    root, _, _ = _source_tree(tmp_path)
     archive_root = tmp_path / "archive"
     real_execute = execute_archive_plan
 
     def remove_source_then_execute(plan, **kwargs):
-        plan.observations[0].lights[0].source_path.unlink()
+        plan.observations[0].stack.source_path.unlink()
         return real_execute(plan, **kwargs)
 
     monkeypatch.setattr(orchestration, "execute_archive_plan", remove_source_then_execute)
     result = archive_seestar_session(root, archive_root=archive_root)
 
-    assert result.execution.files[0].outcome is ArchiveFileOutcome.FAILED
+    assert result.execution.files[1].outcome is ArchiveFileOutcome.FAILED
     assert result.tiffs[0].outcome is ArchiveTiffOutcome.INELIGIBLE
     assert not result.tiffs[0].tiff_destination.exists()
-    assert result.status is SeestarArchiveStatus.FAILED
+    assert result.status is SeestarArchiveStatus.PARTIAL
 
 
 def test_existing_tiff_is_preserved_and_reported(tmp_path: Path) -> None:
-    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    root, _, _ = _source_tree(tmp_path)
     archive_root = tmp_path / "archive"
     first = archive_seestar_session(root, archive_root=archive_root)
     destination = first.tiffs[0].tiff_destination
@@ -663,10 +693,11 @@ def test_existing_tiff_is_preserved_and_reported(tmp_path: Path) -> None:
 def test_tiff_failure_after_move_preserves_archived_fits_without_restoring_source(
     tmp_path: Path,
 ) -> None:
-    root, lights, _ = _source_tree(tmp_path, include_stack=False)
+    root, lights, stack = _source_tree(tmp_path)
     archive_root = tmp_path / "archive"
     plan = _planned(root, archive_root)
-    tiff_destination = plan.observations[0].lights[0].tiff_destination
+    tiff_destination = plan.observations[0].stack.tiff_destination
+    assert tiff_destination is not None
     tiff_destination.parent.mkdir(parents=True)
     tiff_destination.write_bytes(b"existing TIFF")
 
@@ -679,32 +710,30 @@ def test_tiff_failure_after_move_preserves_archived_fits_without_restoring_sourc
     assert result.execution.files[0].outcome is ArchiveFileOutcome.MOVED
     assert result.tiffs[0].outcome is ArchiveTiffOutcome.COLLISION
     assert result.tiffs[0].archived_fits_path.exists()
-    assert not lights[0].exists()
+    assert not lights[0].exists() and not stack.exists()
     assert tiff_destination.read_bytes() == b"existing TIFF"
     assert result.indexes[0].outcome is ArchiveIndexOutcome.CREATED
     assert "### Observation 01" in result.indexes[0].index_path.read_text()
     assert result.status is SeestarArchiveStatus.PARTIAL
 
 
-def test_independent_tiff_generation_continues_after_conversion_failure(
+def test_stack_tiff_conversion_failure_preserves_archived_originals(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     root, _, _ = _source_tree(tmp_path, light_count=2)
     archive_root = tmp_path / "archive"
     real_convert = convert_fits_to_tiff
 
-    def fail_first_light(input_path: Path, output_path: Path) -> Path:
-        if input_path.name.startswith("Light_1_"):
+    def fail_stack(input_path: Path, output_path: Path) -> Path:
+        if input_path.name.startswith("Stacked_"):
             raise ValueError("simulated conversion failure")
         return real_convert(input_path, output_path)
 
-    monkeypatch.setattr(orchestration, "convert_fits_to_tiff", fail_first_light)
+    monkeypatch.setattr(orchestration, "convert_fits_to_tiff", fail_stack)
     result = archive_seestar_session(root, archive_root=archive_root)
 
     assert [item.outcome for item in result.tiffs] == [
         ArchiveTiffOutcome.FAILED,
-        ArchiveTiffOutcome.CREATED,
-        ArchiveTiffOutcome.CREATED,
     ]
     assert all(item.archived_fits_path.exists() for item in result.tiffs)
     assert result.indexes[0].outcome is ArchiveIndexOutcome.CREATED
@@ -758,7 +787,7 @@ def test_malformed_fits_only_workflow_is_failed(tmp_path: Path) -> None:
 def test_forged_tiff_destination_escape_is_not_executed(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    root, _, _ = _source_tree(tmp_path)
     archive_root = tmp_path / "archive"
     outside = tmp_path / "outside.tiff"
     real_plan = plan_seestar_archive
@@ -766,8 +795,8 @@ def test_forged_tiff_destination_escape_is_not_executed(
     def forge_tiff_destination(reconstruction, **kwargs):
         plan = real_plan(reconstruction, **kwargs)
         observation = plan.observations[0]
-        forged_file = replace(observation.lights[0], tiff_destination=outside)
-        forged_observation = replace(observation, lights=(forged_file,))
+        forged_stack = replace(observation.stack, tiff_destination=outside)
+        forged_observation = replace(observation, stack=forged_stack)
         return replace(plan, observations=(forged_observation,))
 
     monkeypatch.setattr(orchestration, "plan_seestar_archive", forge_tiff_destination)
@@ -795,4 +824,4 @@ def test_source_policies_are_passed_through_to_execution(tmp_path: Path) -> None
     assert first.execution.collision_policy is CollisionPolicy.SKIP_IDENTICAL
     assert second.execution.collision_policy is CollisionPolicy.ERROR
     assert second.execution.files[0].outcome is ArchiveFileOutcome.COLLISION
-    assert second.tiffs[0].outcome is ArchiveTiffOutcome.INELIGIBLE
+    assert second.tiffs == ()

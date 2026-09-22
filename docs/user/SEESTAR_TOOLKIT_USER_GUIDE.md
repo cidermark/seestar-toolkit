@@ -133,10 +133,10 @@ session.
 
 ### Keep related captures together
 
-Individual light frames, Seestar stacked products and generated TIFFs can be
-kept together within each reconstructed observation. Your original Seestar
-stacked images are preserved---the Toolkit does not create a replacement stack
-from the individual lights.
+Individual light frames and Seestar stacked products can be kept together within
+each reconstructed observation. Your original Seestar stacked images are
+preserved, and their TIFF companions are generated alongside them---the Toolkit
+does not create a replacement stack from the individual lights.
 
 This gives each observing night a predictable structure instead of leaving you
 to manually sort a growing collection of capture files.
@@ -197,8 +197,7 @@ Astronomy Archive/
 │       └── 20260910/
 │           └── observation_01/
 │               ├── lights/
-│               ├── seestar_stacked/
-│               └── tiff/
+│               └── seestar_stacked/
 │
 └── M 57/
     └── ...
@@ -620,8 +619,8 @@ seestar-toolkit archive --source-action copy \
 ```
 
 The Toolkit can now create the planned archive directories, copy eligible
-original FITS files, create TIFF derivatives where appropriate and maintain the
-target index.
+original FITS files, create the Seestar stack TIFF companion where appropriate
+and maintain the target index.
 
 Because we explicitly selected `copy`, the source FITS files remain in their
 original location.
@@ -638,7 +637,8 @@ Check that:
 2.  the expected target/location/night directories exist beneath the archive
     root;
 3.  the expected observation directories and files are present;
-4.  generated TIFFs and the target index are where you expect them;
+4.  any expected Seestar stack TIFF companion and the target index are where you
+    expect them;
 5.  the command did not report unresolved observations, collisions or other
     failures.
 
@@ -767,8 +767,7 @@ as:
 ``` text
 observation_01/
 ├── lights/
-├── seestar_stacked/
-└── tiff/
+└── seestar_stacked/
 ```
 
 ### `lights/`
@@ -779,14 +778,13 @@ observation.
 ### `seestar_stacked/`
 
 This contains an original Seestar stacked FITS product when one is available.
-The Toolkit preserves that stack; it does **not** recreate a new astronomical
-stack from the individual light frames.
+The Toolkit preserves that stack and creates its required TIFF companion in the
+same directory. It does **not** recreate a new astronomical stack from the
+individual light frames.
 
-### `tiff/`
-
-Eligible archived FITS images can also have RGB TIFF derivatives created by the
-Toolkit. These are additional images; the original FITS files remain the
-authoritative captures and should be retained.
+Normal archive operations do not convert individual light FITS files to TIFF and
+do not create an observation-level `tiff/` directory. You can still use
+`convert` or `convert-batch` separately when you explicitly want light TIFFs.
 
 Not every observation will necessarily contain every directory. The contents
 depend on what was present in the source material and what could be safely
@@ -1286,9 +1284,9 @@ them.
 You do not need to convert your existing FITS collection before archiving it,
 and you do not need to archive a FITS image before converting it.
 
-The archive workflow can create TIFF derivatives where appropriate as part of
-the organised archive, while the standalone conversion commands are useful when
-you simply want TIFF files for another part of your imaging workflow.
+The archive workflow creates the TIFF companion for a Seestar-created stacked
+FITS where appropriate. It does not automatically convert individual lights;
+use the standalone conversion commands when you want those TIFF files.
 
 ## Where should I put converted TIFFs?
 
@@ -1312,9 +1310,9 @@ observation_01/
 └── tiff/              <- your standalone converted TIFFs
 ```
 
-This is separate from any TIFF derivatives that the archive workflow itself
-creates. With the standalone conversion commands, **you choose the TIFF
-destination explicitly**.
+This is separate from the Seestar stack TIFF companion that the archive workflow
+creates in `seestar_stacked/`. With the standalone conversion commands, **you
+choose the TIFF destination explicitly**.
 
 ## Check the result
 
