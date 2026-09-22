@@ -24,9 +24,9 @@ def main() -> None:
             f"Fixture changed; repeat privacy review: {name}"
         )
     assert (ROOT / "tests/data/PRIVACY_REVIEW.md").is_file()
-    subprocess.run(["git", "merge-base", "--is-ancestor", "c294ffd", "HEAD"], cwd=ROOT, check=True)
+    subprocess.run(["git", "merge-base", "--is-ancestor", "0cdc6c2", "HEAD"], cwd=ROOT, check=True)
     assert git("rev-list", "--max-parents=0", "HEAD").split() == [
-        git("rev-parse", "c294ffd").strip()
+        git("rev-parse", "0cdc6c2").strip()
     ], "Unexpected history root"
     objects = git("rev-list", "--objects", "HEAD")
     sizes = subprocess.check_output(

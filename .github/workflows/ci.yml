@@ -49,7 +49,7 @@ jobs:
           if [ -n "$BASE_SHA" ] && [ "$BASE_SHA" != 0000000000000000000000000000000000000000 ]; then
             git diff --check "$BASE_SHA" HEAD
           else
-            git diff --check c294ffd HEAD
+            git diff --check 0cdc6c2 HEAD
           fi
       - name: Build and inspect distributions; smoke-test isolated installations
         run: python tools/validate_distribution.py
