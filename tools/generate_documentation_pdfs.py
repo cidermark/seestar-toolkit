@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 USER_DOCS = ROOT / "docs" / "user"
 HEADER = ROOT / "tools" / "documentation_pdf_header.tex"
 FILTER = ROOT / "tools" / "documentation_pdf_filter.lua"
+RELEASE_DATE = "2026-09-23"
 
 
 @dataclass(frozen=True)
@@ -33,14 +34,14 @@ DOCUMENTS = (
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.md",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.sha256",
-        "fa4f1b3908d1b43b8e71321cf885eacdd6c855c0824536b153da074951525ffa",
+        "6da3bb935401535a7145cfda3ecdc1ed0da4bf23bd0f534f4883f8dc800faa25",
         "Seestar Toolkit User Guide",
     ),
     Document(
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.md",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.sha256",
-        "35252f89b8e31c8bbd560188c3a18ceb1d73295ec4fbb3162384ca00d76f4d83",
+        "6eff27daf2e0424dda33727fa0be65c08bd6ab2f7b5fdedf3ca9f27831def8f6",
         "Seestar Toolkit Quick Start",
     ),
 )
@@ -82,7 +83,7 @@ def validate_source(document: Document, version: str) -> None:
     if actual_hash != document.expected_hash:
         raise SystemExit(f"frozen source hash mismatch for {document.source}: {actual_hash}")
     text = document.source.read_text(encoding="utf-8")
-    if not text.startswith(f"# {document.title}\n\n**Version {version} --- Unreleased**\n"):
+    if not text.startswith(f"# {document.title}\n\n**Version {version} --- {RELEASE_DATE}**\n"):
         raise SystemExit(f"title/version mismatch in {document.source}")
 
 

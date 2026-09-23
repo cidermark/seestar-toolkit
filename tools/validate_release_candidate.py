@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import hashlib
+import re
 import stat
 import subprocess
 import sys
@@ -135,8 +137,13 @@ def validate_wheel_safety(wheel: Path) -> None:
 
 def validate_release_documents(files: dict[str, bytes], project: dict) -> None:
     changelog = files["CHANGELOG.md"].decode()
-    if "## [1.1.0] - Unreleased" not in changelog:
-        raise AssertionError("public CHANGELOG is not v1.1.0 Unreleased")
+    heading = re.search(r"(?m)^## \[1\.1\.0\] - ([^\n]+)$", changelog)
+    if heading is None or re.fullmatch(r"\d{4}-\d{2}-\d{2}", heading.group(1)) is None:
+        raise AssertionError("public CHANGELOG has no ISO-dated v1.1.0 release heading")
+    try:
+        dt.date.fromisoformat(heading.group(1))
+    except ValueError as error:
+        raise AssertionError("public CHANGELOG has no ISO-dated v1.1.0 release heading") from error
     readme = files["README.md"].decode()
     required_readme = (
         "Individual light FITS files remain in `lights/` without automatic TIFF",

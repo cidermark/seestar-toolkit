@@ -1,6 +1,6 @@
 # Seestar Toolkit
 
-**Version 1.1.0 - Unreleased**
+**Version 1.1.0 - 2026-09-23**
 
 Seestar Toolkit was developed to make a growing collection of Seestar captures
 easier to preserve, understand and use. It reconstructs related captures into
@@ -47,10 +47,10 @@ are also outside this release.
 
 ## Install and start
 
-Release packages will be available from
-[GitHub Releases](https://github.com/cidermark/seestar-toolkit/releases) when
-v1.1.0 is published. The wheel is the recommended installation format; the
-Toolkit is not distributed through PyPI for v1.1.0.
+The v1.1.0 release package is available from
+[GitHub Releases](https://github.com/cidermark/seestar-toolkit/releases). The
+wheel is the recommended installation format; the Toolkit is not distributed
+through PyPI for v1.1.0.
 
 Follow the [Quick Start](docs/user/SEESTAR_TOOLKIT_QUICK_START.md) for the
 supported Python, virtual environment, installation and first archive steps.

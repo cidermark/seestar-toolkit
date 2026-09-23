@@ -316,3 +316,30 @@ Both frozen guides and their approved PDFs are preserved. Independent human
 visual review of all 32 pages is PASS. The final technical evidence is recorded
 separately from independent closure review, user commit and post-commit gates.
 Stage 9.3b remains STARTED; no Stage 9.4 artifact has been assembled.
+
+## Stage 9.4b — final release and publication gates
+
+Stage 9.4b Checkpoint A is PASS for audit/design only. The authoritative
+[specification](change_documents/STAGE_9/STAGE_9.4b.md) defines 60 criteria for
+the final exact-tree GO/NO-GO audit, publication, public verification and closure.
+Execution criteria remain pending.
+
+The final annotated `v1.1.0` tag must carry the release date deliberately
+declared by the release owner. An incidental UTC rollover during a continuous
+publication operation does not require a new commit or retagging. A deliberate
+postponement to a different chosen release day requires updated affected outputs,
+a full Gate 1 rerun and a new GO; never backdate or silently move a public tag.
+
+After GO, build twice from the exact tag and upload only the release ZIP and
+external SHA-256 file. Wheel and sdist stay inside the seven-file ZIP. v1.1.0 is
+not published to PyPI. Completion requires Gate 2 using public downloads.
+
+### Stage 9.4b Checkpoint B — proposed final release tree
+
+The declared v1.1.0 date is `2026-09-23`. Public documents, reproducible
+PDFs/manifests and dated release validation are prepared. Full tests, quality,
+privacy/history, distribution, repeated candidate, clean-install, entry-point
+and conversion-smoke checks pass. Artifacts remain outside Git.
+
+Criteria 13–25 pass technically. Criteria 26–28 await the authorized final
+commit and clean tree, push/exact-commit Actions, and independent Gate 1 GO.

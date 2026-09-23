@@ -19,10 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 USER_DOCS = ROOT / "docs" / "user"
 EXPECTED_HASHES = {
     "SEESTAR_TOOLKIT_USER_GUIDE.md": (
-        "fa4f1b3908d1b43b8e71321cf885eacdd6c855c0824536b153da074951525ffa"
+        "6da3bb935401535a7145cfda3ecdc1ed0da4bf23bd0f534f4883f8dc800faa25"
     ),
     "SEESTAR_TOOLKIT_QUICK_START.md": (
-        "35252f89b8e31c8bbd560188c3a18ceb1d73295ec4fbb3162384ca00d76f4d83"
+        "6eff27daf2e0424dda33727fa0be65c08bd6ab2f7b5fdedf3ca9f27831def8f6"
     ),
 }
 

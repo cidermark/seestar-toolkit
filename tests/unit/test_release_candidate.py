@@ -19,6 +19,35 @@ def project() -> dict:
     return {"name": "seestar-toolkit", "version": "1.1.0"}
 
 
+def release_documents(changelog_heading: str) -> dict[str, bytes]:
+    return {
+        "CHANGELOG.md": f"# Changelog\n\n{changelog_heading}\n".encode(),
+        "README.md": (
+            b"Individual light FITS files remain in `lights/` without automatic TIFF\n"
+            b"its required TIFF\ncompanion is generated beside it in `seestar_stacked/`\n"
+            b"--dry-run --source-action copy\n"
+        ),
+    }
+
+
+def test_release_documents_require_iso_dated_release_heading() -> None:
+    validation.validate_release_documents(release_documents("## [1.1.0] - 2026-09-23"), project())
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        "## [1.1.0] - Unreleased",
+        "## [1.1.0] - 23 September 2026",
+        "## [1.1.0] - 2026-9-23",
+        "## [1.1.0] - 2026-99-99",
+    ],
+)
+def test_release_documents_reject_non_iso_release_heading(heading: str) -> None:
+    with pytest.raises(AssertionError, match="ISO-dated"):
+        validation.validate_release_documents(release_documents(heading), project())
+
+
 @pytest.mark.parametrize("defect", [None, "extra", "duplicate", "traversal", "mode"])
 def test_release_zip_inventory_rejects_contract_violations(
     tmp_path: Path, defect: str | None

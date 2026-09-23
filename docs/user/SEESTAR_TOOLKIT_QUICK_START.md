@@ -1,6 +1,6 @@
 # Seestar Toolkit Quick Start
 
-**Version 1.1.0 --- Unreleased**
+**Version 1.1.0 --- 2026-09-23**
 
 This Quick Start gets you from installation to a **safe first archive** and,
 optionally, a FITS-to-TIFF conversion.
@@ -83,8 +83,7 @@ it again; you do **not** need to reinstall the Toolkit each time.
 
 ## 3. Install Seestar Toolkit
 
-Download the v1.1.0 release package from the project's GitHub Releases page
-when the release is published.
+Download the v1.1.0 release package from the project's GitHub Releases page.
 
 The recommended installation file is:
 

@@ -1,0 +1,62 @@
+{
+  "stage": "9.4b",
+  "checkpoint": "A",
+  "title": "Final release requirements, publication sequence and closure audit",
+  "result": "PASS",
+  "scope": "audit/design only",
+  "stage_status": "STARTED",
+  "baseline": {
+    "head": "6784f8d3fc2af7814cdf9e7c328fa0eef2981b06",
+    "subject": "Stage 9.4a: assemble and validate release candidate",
+    "origin_main_matches": true,
+    "repository_visibility": "PRIVATE (release-owner confirmation)",
+    "exact_commit_actions": "GREEN (release-owner confirmation)",
+    "local_tags": [],
+    "remote_tags": [],
+    "expected_carry_forward": "pending Stage 9.4a development CHANGELOG row"
+  },
+  "authenticated_github_access": false,
+  "github_evidence_limitation": "Server-only facts require release-owner authenticated UI/API evidence at execution gates.",
+  "release_date_policy": {
+    "declared_date": "The release date deliberately declared by the release owner when preparing final release state.",
+    "tagged_content": "The exact Gate 1 approved/tagged commit contains the declared date.",
+    "publication_operation": "Publication proceeds as one controlled operation associated with the declared date.",
+    "gate_2": "Record the actual GitHub Release timestamp and verify the correct tag and exact approved commit.",
+    "incidental_utc_rollover": "Does not require a new commit or retagging during a continuous publication operation.",
+    "deliberate_postponement": "Stop, update the declared date and every affected output, repeat Gate 1, and obtain a new GO.",
+    "prohibitions": [
+      "Do not backdate to match an earlier preparation date.",
+      "Do not silently move or replace a publicly accessible release tag."
+    ]
+  },
+  "final_release_commit_subject": "Release Seestar Toolkit v1.1.0",
+  "tag": {
+    "name": "v1.1.0",
+    "type": "annotated",
+    "annotation": "Seestar Toolkit v1.1.0",
+    "target": "exact Gate 1 approved release commit"
+  },
+  "release_assets": [
+    "seestar-toolkit-1.1.0-release.zip",
+    "seestar-toolkit-1.1.0-release.zip.sha256"
+  ],
+  "pypi_publication": false,
+  "criteria": {
+    "count": 60,
+    "audit_design": {"range": "1-12", "status": "PASS"},
+    "gate_1": {"range": "13-28", "status": "PENDING"},
+    "publication": {"range": "29-40", "status": "PENDING"},
+    "gate_2": {"range": "41-55", "status": "PENDING"},
+    "final_closure": {"range": "56-60", "status": "PENDING"}
+  },
+  "actions_performed": {
+    "release_commit": false,
+    "tag": false,
+    "push": false,
+    "visibility_change": false,
+    "github_release": false,
+    "asset_upload": false,
+    "pypi": false,
+    "gate_2": false
+  }
+}

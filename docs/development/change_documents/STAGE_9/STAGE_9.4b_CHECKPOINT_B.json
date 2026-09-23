@@ -1,0 +1,60 @@
+{
+  "stage": "9.4b",
+  "checkpoint": "B",
+  "technical_result": "PASS",
+  "gate_1_status": "PENDING criteria 26-28",
+  "declared_release_date": "2026-09-23",
+  "baseline": {
+    "head": "6784f8d3fc2af7814cdf9e7c328fa0eef2981b06",
+    "origin_main": "6784f8d3fc2af7814cdf9e7c328fa0eef2981b06",
+    "tags": [],
+    "visibility": "PRIVATE (release-owner evidence)"
+  },
+  "pdfs": {
+    "quick_start": {"markdown_sha256": "6eff27daf2e0424dda33727fa0be65c08bd6ab2f7b5fdedf3ca9f27831def8f6", "pdf_sha256": "0f53427c2f3f6c3527eda561bd177214f7ca21e9d90c62e004f78ac2f5b88fb0", "pages": 5},
+    "user_guide": {"markdown_sha256": "6da3bb935401535a7145cfda3ecdc1ed0da4bf23bd0f534f4883f8dc800faa25", "pdf_sha256": "ef423be5a4215d13208bfef4e6752d0b6fba04ff3570e1494ee7a59a33b0d5ad", "pages": 27},
+    "two_build_reproducibility": "PASS",
+    "all_32_pages_render_inspected": true
+  },
+  "candidate": {
+    "method": "isolated temporary repository representing the proposed uncommitted tree",
+    "builder_invocations": 2,
+    "builds_per_invocation": 2,
+    "byte_identical": true,
+    "wheel": {"bytes": 47807, "sha256": "e7edceb7c81ae99c006fef783f0e04939727c4635d1f0928984faf11ed9d3265"},
+    "sdist": {"bytes": 34036, "sha256": "19aefb4d8f815e7f441ef2eec11320f46df6081875e4a35652f2843bf951601d"},
+    "zip": {"bytes": 243118, "sha256": "6793535544b5709ee50430be1d742e9eae278e9c644568d07d2d61c15b8cf368"},
+    "checksum": {"bytes": 101, "sha256": "0514ef8871656702062480935d1d746505b2dc058d216ec507f4f13448fdfb6a"},
+    "one_versioned_root": true,
+    "seven_file_allowlist": true,
+    "artifacts_outside_repository": true
+  },
+  "validation": {
+    "pytest": "349 passed, 2 expected warnings",
+    "focused_release_tests": "17 passed, 2 expected warnings",
+    "ruff": "PASS",
+    "formatting": "PASS: 40 files already formatted",
+    "whitespace": "PASS",
+    "public_inputs_history": "PASS: 10 fixtures; clean public root; no oversized blobs",
+    "markdown_links_fences_navigation": "PASS",
+    "issue_yaml": "PASS: 3 files",
+    "pdf": "PASS",
+    "distribution_and_installs": "PASS",
+    "entry_points_and_conversion_smoke": "PASS for wheel and sdist",
+    "privacy": "PASS",
+    "bug_001": "PASS"
+  },
+  "failures_preserved": [
+    "Initial Ruff UP012 and formatting failure; corrected; rerun PASS.",
+    "Initial sandbox DNS distribution failure; unchanged network-approved rerun PASS.",
+    "Pre-existing development CHANGELOG whitespace-only line; spaces removed; rerun PASS.",
+    "Ad hoc YAML/privacy audit command false failures; corrected commands PASS."
+  ],
+  "criteria_13_28": {
+    "13": "PASS", "14": "PASS", "15": "PASS", "16": "PASS", "17": "PASS",
+    "18": "PASS", "19": "PASS", "20": "PASS", "21": "PASS", "22": "PASS",
+    "23": "PASS", "24": "PASS", "25": "PASS", "26": "PENDING",
+    "27": "PENDING", "28": "PENDING"
+  },
+  "actions_not_performed": ["commit", "push", "tag", "visibility change", "GitHub Release", "upload", "PyPI", "Gate 2"]
+}

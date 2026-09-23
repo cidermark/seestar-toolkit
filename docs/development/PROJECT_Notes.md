@@ -1001,3 +1001,23 @@ including PDF-hash reconciliation, privacy/scope review and final quality gates.
 Stage 9.4a is ready for independent final review and closure commit authorization.
 Commit, post-commit validation/CI, formal completion, tag, publication and Stage
 9.4b remain pending.
+
+### Stage 9.4b — final release and publication
+
+Stage 9.4b is STARTED. Checkpoint A audit/design is PASS and defines 60 criteria
+across design, exact-tree Gate 1, publication, public Gate 2 and final closure.
+Criteria 1–12 pass; criteria 13–60 remain PENDING.
+
+The final tag must contain the release date deliberately declared by the release
+owner and pass full exact-commit validation before Gate 1 GO. Incidental UTC
+rollover during continuous publication is harmless; deliberate postponement to
+a different chosen release day requires updated outputs, full Gate 1 validation
+and a new GO. No release action or Gate 2 action occurred in A.
+
+#### Checkpoint B — proposed final release tree
+
+The proposed dated v1.1.0 tree is technically validated. Public documents,
+PDFs/manifests, release tooling and focused tests represent the declared
+`2026-09-23` state. Full validation and repeated candidate builds pass;
+generated artifacts remain outside Git. Criteria 13–25 pass, while 26–28 await
+the final commit/clean-tree review, exact-commit remote CI and independent GO.
