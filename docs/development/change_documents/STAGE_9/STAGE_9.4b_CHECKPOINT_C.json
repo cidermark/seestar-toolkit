@@ -1,0 +1,77 @@
+{
+  "stage": "9.4b",
+  "checkpoint": "C",
+  "phase": "private tag and final artifact verification",
+  "attempt": 1,
+  "result": "FAIL",
+  "stop_reason": "Committed Checkpoint B evidence recorded the checksum file as 101 bytes; actual earlier and final files are 100 bytes.",
+  "gate_1": {
+    "result": "GO",
+    "criteria_1_28": "PASS",
+    "approved_commit": "b954d97b92a11f389a6378d3f5ca462a6a455217",
+    "subject": "Release Seestar Toolkit v1.1.0",
+    "exact_commit_actions": "GREEN: four jobs (release-owner confirmation)"
+  },
+  "local_tag": {
+    "name": "v1.1.0",
+    "type": "annotated",
+    "object": "37c7d27d689a6e483251ac4c02a56ab908bd9b97",
+    "annotation": "Seestar Toolkit v1.1.0",
+    "target": "b954d97b92a11f389a6378d3f5ca462a6a455217"
+  },
+  "final_artifacts": {
+    "two_independent_invocations_byte_identical": true,
+    "wheel": {"filename": "seestar_toolkit-1.1.0-py3-none-any.whl", "bytes": 47807, "sha256": "ee34d766c6bc1e6291fe62bc73e0257ada22080aae41775f7e5ef20e9ce91617"},
+    "sdist": {"filename": "seestar_toolkit-1.1.0.tar.gz", "bytes": 34033, "sha256": "28f6a2fa9b9f4293f62812a1c7c5ab3894a61ef2eca6335972f733021f3476a5"},
+    "zip": {"filename": "seestar-toolkit-1.1.0-release.zip", "bytes": 243115, "sha256": "8953bd71ff12a7fc173d9aa28bff6882e1cb2f208f931baad3876226adabf361"},
+    "checksum": {"filename": "seestar-toolkit-1.1.0-release.zip.sha256", "bytes": 100, "sha256": "b8f70961f998cef51be25231c0257779517e8f81f6fc05a9b85dc0c4a9db0e00", "contents": "8953bd71ff12a7fc173d9aa28bff6882e1cb2f208f931baad3876226adabf361  seestar-toolkit-1.1.0-release.zip"}
+  },
+  "validation": {
+    "exact_inventory": "PASS",
+    "tagged_document_byte_comparison": "PASS",
+    "pdfs": "PASS in both committed builder validations",
+    "wheel_install": "PASS",
+    "sdist_install": "PASS",
+    "both_entry_points": "PASS: 1.1.0",
+    "both_conversion_smokes": "PASS",
+    "artifact_privacy": "PASS",
+    "pypi": "PASS: endpoint HTTP 404"
+  },
+  "remote": {
+    "tag_pushed": false,
+    "remote_tags": [],
+    "origin_main": "b954d97b92a11f389a6378d3f5ca462a6a455217",
+    "visibility": "PRIVATE (release-owner confirmation)"
+  },
+  "remediation": {
+    "status": "PASS: ready for independent review and remediation commit authorization",
+    "live_checkpoint_b_checksum_bytes": 100,
+    "historical_101_byte_claim_preserved": true,
+    "public_product_artifact_changes": false,
+    "local_tag_untouched": true,
+    "publication_resumed": false,
+    "gate_1_reestablished": false
+  },
+  "criteria_29_40": {
+    "29": "PASS",
+    "30": "PASS",
+    "31": "PASS",
+    "32": "FAIL",
+    "33": "PENDING",
+    "34": "PENDING",
+    "35": "PENDING",
+    "36": "PENDING",
+    "37": "PENDING",
+    "38": "PENDING",
+    "39": "PENDING",
+    "40": "PASS"
+  },
+  "actions_not_performed": [
+    "remote tag push",
+    "visibility change",
+    "GitHub Release",
+    "asset upload",
+    "PyPI publication",
+    "Gate 2"
+  ]
+}

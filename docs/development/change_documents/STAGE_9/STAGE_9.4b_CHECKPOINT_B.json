@@ -24,7 +24,7 @@
     "wheel": {"bytes": 47807, "sha256": "e7edceb7c81ae99c006fef783f0e04939727c4635d1f0928984faf11ed9d3265"},
     "sdist": {"bytes": 34036, "sha256": "19aefb4d8f815e7f441ef2eec11320f46df6081875e4a35652f2843bf951601d"},
     "zip": {"bytes": 243118, "sha256": "6793535544b5709ee50430be1d742e9eae278e9c644568d07d2d61c15b8cf368"},
-    "checksum": {"bytes": 101, "sha256": "0514ef8871656702062480935d1d746505b2dc058d216ec507f4f13448fdfb6a"},
+    "checksum": {"bytes": 100, "sha256": "0514ef8871656702062480935d1d746505b2dc058d216ec507f4f13448fdfb6a"},
     "one_versioned_root": true,
     "seven_file_allowlist": true,
     "artifacts_outside_repository": true
@@ -48,7 +48,8 @@
     "Initial Ruff UP012 and formatting failure; corrected; rerun PASS.",
     "Initial sandbox DNS distribution failure; unchanged network-approved rerun PASS.",
     "Pre-existing development CHANGELOG whitespace-only line; spaces removed; rerun PASS.",
-    "Ad hoc YAML/privacy audit command false failures; corrected commands PASS."
+    "Ad hoc YAML/privacy audit command false failures; corrected commands PASS.",
+    "Checkpoint B originally and incorrectly recorded its checksum file as 101 bytes; Checkpoint C proved it was 100 bytes and stopped before tag push."
   ],
   "criteria_13_28": {
     "13": "PASS", "14": "PASS", "15": "PASS", "16": "PASS", "17": "PASS",
