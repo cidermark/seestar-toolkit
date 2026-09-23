@@ -22,6 +22,9 @@ PATHS = [
     "tools/check_public_inputs.py",
     "tools/validate_distribution.py",
     "tools/validate_clean_install.py",
+    "tools/build_release_candidate.py",
+    "tools/validate_release_candidate.py",
+    "tests/unit/test_release_candidate.py",
 ]
 
 if __name__ == "__main__":

@@ -1,0 +1,120 @@
+{
+  "stage": "9.4a",
+  "checkpoint": "C",
+  "date": "2026-09-23",
+  "decision": {
+    "checkpoint_c": "PASS",
+    "closure_readiness": "READY FOR INDEPENDENT FINAL REVIEW",
+    "stage_status": "STARTED",
+    "criterion_44": "PASS",
+    "criteria_45_49": "PENDING"
+  },
+  "baseline": {
+    "commit": "0b0a6bf1f8b987a70a35097455aadf7108a934c9",
+    "subject": "ci: update public history root after privacy rewrite",
+    "public_history_root": "0cdc6c214e87b28925cf938ebf7dc8e75b9dddb2",
+    "branch": "main",
+    "upstream": "origin/main",
+    "remote_main": "0b0a6bf1f8b987a70a35097455aadf7108a934c9"
+  },
+  "history_reconciliation": {
+    "original_privacy_failure_preserved": true,
+    "ten_commit_rewrite_preserved": true,
+    "force_with_lease_preserved": true,
+    "ci_93a4299": "PRESERVED FAIL: stale c294ffd operational root",
+    "remediation_0b0a6bf": "PASS: four green jobs by accepted independent evidence",
+    "checkpoint_b_failures_preserved": true
+  },
+  "scope": {
+    "result": "PASS",
+    "staged_files": 0,
+    "production_source_changed": false,
+    "package_metadata_changed": false,
+    "ci_changed": false,
+    "user_docs_changed": false,
+    "fixtures_changed": false,
+    "generated_release_artifacts_in_scope": false,
+    "private_files_in_scope": false,
+    "unrelated_files_in_scope": false,
+    "ignored_historical_dist_artifacts": "Present under dist/stage9.1c; outside Git and closure scope"
+  },
+  "pdf_reconciliation": {
+    "result": "PASS",
+    "cause": "BUG-001 commit 58a57b9 changed both guide Markdown sources, regenerated both PDFs and updated both manifests",
+    "privacy_rewrite_changed_bytes": false,
+    "stage_9_3b_historical": {
+      "quick_start_pdf": "56f0a92641f86742e0e066b3d3727424396bef76705d27b29cc1f5f59656b033",
+      "user_guide_pdf": "8600d48d03ca8bcdf8bc4e3f2f3403143592a45fa3e769d7c3734ebec11ee70b"
+    },
+    "current_authoritative": {
+      "quick_start_markdown": "35252f89b8e31c8bbd560188c3a18ceb1d73295ec4fbb3162384ca00d76f4d83",
+      "quick_start_pdf": "32bd5b4231ae9067c2ee6891c1473aaf233f573a4566add4ec641b2b601f394f",
+      "user_guide_markdown": "fa4f1b3908d1b43b8e71321cf885eacdd6c855c0824536b153da074951525ffa",
+      "user_guide_pdf": "f9c716ca68d18958657b4fbec9ded7061f0bf3e6040383757ccfc291e31d56e3",
+      "working_equals_0b0a6bf": true,
+      "manifests": "PASS"
+    }
+  },
+  "candidate": {
+    "source_commit": "0b0a6bf1f8b987a70a35097455aadf7108a934c9",
+    "uncommitted_evidence_included": false,
+    "zip_sha256": "2abda7623b8381e1d2a335f7041adef1454383c0a2159c8f113ec26357f92ff4",
+    "checksum_sha256": "a9ec24b5b49124f2b6b903e19c5de0db03e90b723e106f748d47ec8bba31c9c9",
+    "checksum": "PASS",
+    "members": 7,
+    "exact_allowlist": "PASS",
+    "location": "<private-release-staging>",
+    "tracked": false,
+    "rebuilt_in_checkpoint_c": false,
+    "checkpoint_b_independent_validation_reused": true
+  },
+  "quality": {
+    "pytest": "PASS: 344 passed, 2 expected duplicate-name test-construction warnings, 10.58s",
+    "focused_release_tests": "PASS: 12 passed, 2 expected warnings, 0.16s",
+    "ruff": "PASS: All checks passed",
+    "formatting": "PASS: 40 files already formatted",
+    "git_diff_check": "PASS",
+    "rewritten_root_to_head_whitespace": "PASS",
+    "new_file_whitespace": "PASS",
+    "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+    "pdfs": "PASS: 27-page User Guide; 5-page Quick Start; manifests/content/fonts/links/navigation",
+    "markdown": "PASS: 88 files; balanced fences; 47 local links",
+    "issue_yaml": "PASS: 3 files",
+    "distribution": "PASS: wheel 39 files; sdist 46 files; separate clean installs; both entry points; runtime smoke"
+  },
+  "privacy": {
+    "result": "PASS",
+    "concrete_private_paths": false,
+    "dev_venv_documents": false,
+    "credentials": false,
+    "private_captures": false,
+    "private_maintainer_utilities": false,
+    "generated_candidate_in_git": false,
+    "validator_privacy_markers": "Intentional generic rejection rules"
+  },
+  "publication": {
+    "public_changelog": "1.1.0 - Unreleased",
+    "local_tags": [],
+    "remote_refs": {"refs/heads/main": "0b0a6bf1f8b987a70a35097455aadf7108a934c9"},
+    "remote_tags": [],
+    "github_cli_authenticated": false,
+    "visibility_or_release_query": "Not independently available; prior accepted private/no-Release evidence reused",
+    "commit": false,
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "visibility_changed": false,
+    "stage_9_4b_started": false
+  },
+  "criteria": [
+    {"range": "1-43", "status": "PASS"},
+    {"criterion": 44, "status": "PASS", "reason": "Exact proposed closure tree passed every technical criterion"},
+    {"criterion": 45, "status": "PENDING", "reason": "Independent final technical review has not yet accepted the exact tree"},
+    {"criterion": 46, "status": "PENDING", "reason": "Closure commit has not been authorized or created"},
+    {"criterion": 47, "status": "PENDING", "reason": "Post-commit validation and exact-commit Actions require the future commit"},
+    {"criterion": 48, "status": "PENDING", "reason": "Independent authorization of formal completion must follow criterion 47"},
+    {"criterion": 49, "status": "PENDING", "reason": "Stage 9.4a has not been formally declared COMPLETE"}
+  ],
+  "unexpected_findings": []
+}

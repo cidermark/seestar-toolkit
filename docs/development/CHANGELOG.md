@@ -153,23 +153,25 @@
   | 9.1c       | configure package metadata, versioning    | 6a6ddf7   | 2026-09-11 |
   |            | and builds                                |           |            |
   |------------|-------------------------------------------|-----------|------------|
-  | 9.1d       | add CI validation workflow                | bfb947f   | 2026-09-11 |
+  | 9.1d       | add CI validation workflow                | 7109ba7   | 2026-09-11 |
   |------------|-------------------------------------------|-----------|------------|
-  | 9.1d       | fix CI whitespace validation              | a3b0e99   | 2026-09-11 |
+  | 9.1d       | fix CI whitespace validation              | 4c40e54   | 2026-09-11 |
   |------------|-------------------------------------------|-----------|------------|
-  | 9.1d       | validate and close distribution CI        | 1771b9f   | 2026-09-11 |
+  | 9.1d       | validate and close distribution CI        | c3c14dc   | 2026-09-11 |
   |------------|-------------------------------------------|-----------|------------|
-  | 9.2a       | validate clean installs and Python        | 398b771   | 2026-09-13 |
+  | 9.2a       | validate clean installs and Python        | 1f7de39   | 2026-09-13 |
   |            | compatibility                             |           |            |
   |------------|-------------------------------------------|-----------|------------|
-  | 9.2b       | validate installed CLI and storage        | 519f0e3   | 2026-09-14 |
+  | 9.2b       | validate installed CLI and storage        | 62cab64   | 2026-09-14 |
   |            | workflows                                 |           |            |
   |------------|-------------------------------------------|-----------|------------|
-  | 9.3a       | complete user and public documentation    | 41c000f   | 2026-09-21 |
+  | 9.3a       | complete user and public documentation    | e45ca0d   | 2026-09-21 |
   |------------|-------------------------------------------|-----------|------------|
-  | 9.3b       | generate and validate documentation PDFs  | 560b1e0   | 2026-09-21 |
+  | 9.3b       | generate and validate documentation PDFs  | e78c3d0   | 2026-09-21 |
   |------------|-------------------------------------------|-----------|------------|
-  | BUG-001    | stop archive light TIFF generation        | 89e506b   | 2026-09-22 |
+  | BUG-001    | stop archive light TIFF generation        | 58a57b9   | 2026-09-22 |
+  |------------|-------------------------------------------|-----------|------------|
+  | docs       | record Stage 9.3b and BUG-001 completion  | 93a4299   | 2026-09-22 |
   -----------------------------------------------------------------------------------
                 
 

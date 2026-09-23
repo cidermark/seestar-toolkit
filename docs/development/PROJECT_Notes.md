@@ -632,9 +632,6 @@ Current environment:
 -   Editable install: `python -m pip install -e ".[dev]"`
 -   Project source remains in the iCloud-hosted Git repository.
 
-Detailed instructions are in `<private development-environment notes>` and
-`<private development-environment notes>`.
-
 ## Documentation Structure
 
 -   `ARCHITECTURE.md` --- architecture and module responsibilities.
@@ -867,12 +864,12 @@ capture policy is in [REAL_DATA_TESTING.md](REAL_DATA_TESTING.md).
 ## Stage 9.1d distribution validation — formally complete
 
 Distribution CI and package validators are implemented for candidate Python
-3.11–3.14 on macOS arm64. The current public history begins at `c294ffd`;
+3.11–3.14 on macOS arm64. The current public history begins at `0cdc6c2`;
 pre-public `master` remains separate and must not be merged or recreated.
 Tracked public-safe fixtures are guarded by reviewed byte hashes. Builds and
 runtime-only wheel/sdist smoke checks use isolated temporary environments.
 
-Stage 9.1d formally closed at `1771b9f` with green GitHub Actions and
+Stage 9.1d formally closed at `c3c14dc` with green GitHub Actions and
 329 tests on each candidate Python line. Its [report](change_documents/STAGE_9/STAGE_9.1d_REPORT.md)
 preserves Run 1 FAIL, whitespace remediation and Run 2 PASS. That evidence
 is unchanged by Stage 9.2a.
@@ -887,7 +884,7 @@ rebuilt final artifacts use separate fresh venvs for every candidate/artifact.
 Real public-safe FITS conversion, installed imports and runtime-only dependency
 separation are recorded in the [9.2a report](change_documents/STAGE_9/STAGE_9.2a_REPORT.md).
 
-Stage 9.2a is formally COMPLETE at `398b771`, as confirmed by Stage review
+Stage 9.2a is formally COMPLETE at `1f7de39`, as confirmed by Stage review
 in the Stage 9.2b starting context. v1.1.0 remains unreleased.
 
 ## Stage 9.2b — installed CLI, functional and storage validation
@@ -910,7 +907,7 @@ no Stage 9.2b commit exists or has been invented.
 
 ## Stage 9.3a — Markdown documentation audit
 
-Current baseline is `519f0e3`, the Stage 9.2b validation closure commit supplied
+Current baseline is `62cab64`, the Stage 9.2b validation closure commit supplied
 for this Stage. Earlier pre-commit status paragraphs and checkpoint failure
 evidence above remain historical records; no post-commit CI evidence is invented.
 
@@ -969,7 +966,7 @@ Unreleased, and no later stage has begun.
 
 ## Stage 9.3b — PDF generation and documentation validation
 
-Stage 9.3a closed at `41c000f`. Stage 9.3b Checkpoint A is PASS and defines the
+Stage 9.3a closed at `e45ca0d`. Stage 9.3b Checkpoint A is PASS and defines the
 repository PDF pipeline without implementing it. The two approved Markdown guide
 hashes remain unchanged. The proposed development-only wrapper uses Pandoc with
 an explicit XeLaTeX toolchain and embedded declared fonts, then independently
@@ -991,3 +988,16 @@ Both frozen guides and their approved PDFs are preserved. Independent human
 visual review of all 32 pages is PASS. The final technical evidence is recorded
 separately from independent closure review, user commit and post-commit gates.
 Stage 9.3b remains STARTED; no Stage 9.4 artifact has been assembled.
+
+## Stage 9.4a — release candidate and public repository readiness
+
+Checkpoint A is complete, including the controlled privacy-history remediation
+and final fresh-remote verification. Checkpoint B has assembled and validated a
+private, untracked v1.1.0 candidate from exact committed source `0b0a6bf`.
+Two independent builds are byte-identical; the seven-file ZIP, external checksum,
+nested distributions, clean installs, entry points and documentation PDFs pass.
+Checkpoint B passed independent review. Checkpoint C's exact-tree audit is PASS,
+including PDF-hash reconciliation, privacy/scope review and final quality gates.
+Stage 9.4a is ready for independent final review and closure commit authorization.
+Commit, post-commit validation/CI, formal completion, tag, publication and Stage
+9.4b remain pending.

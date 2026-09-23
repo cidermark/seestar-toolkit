@@ -1,0 +1,384 @@
+{
+  "stage": "9.4a",
+  "checkpoint": "A",
+  "date": "2026-09-22",
+  "decision": {
+    "audit_and_design": "PASS",
+    "release_public_repository_readiness": "FAIL",
+    "stage_status": "STARTED",
+    "reason": "Final fresh-remote verification proves the privacy-history remediation; Checkpoint B and later Stage 9.4a work remain pending."
+  },
+  "baseline": {
+    "head": "ff0ada13ddc1236fb8e416821ea5fca7352e18de",
+    "subject": "docs: record Stage 9.3b and BUG-001 completion",
+    "branch": "main",
+    "upstream": "origin/main",
+    "ahead": 0,
+    "behind": 0,
+    "expected_dirty_file": "docs/development/CHANGELOG.md",
+    "expected_dirty_purpose": "Pending carry-forward row for ff0ada1; preserved unchanged",
+    "package_version": "1.1.0",
+    "version_authority": "pyproject.toml [project].version",
+    "public_changelog": "1.1.0 - Unreleased",
+    "local_tags": []
+  },
+  "remote_state": {
+    "user_supplied": {
+      "visibility": "PRIVATE",
+      "v1_1_0_tag_or_release": "ABSENT",
+      "ff0ada1_actions": "GREEN"
+    },
+    "independent_query": "UNAVAILABLE",
+    "limitation": "GitHub CLI was unauthenticated and github.com name resolution was unavailable; authenticated remote checks remain required."
+  },
+  "release_candidate": {
+    "zip": "seestar-toolkit-1.1.0-release.zip",
+    "root": "seestar-toolkit-1.1.0/",
+    "members": [
+      "SEESTAR_TOOLKIT_QUICK_START.pdf",
+      "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
+      "README.md",
+      "CHANGELOG.md",
+      "LICENSE",
+      "seestar_toolkit-1.1.0-py3-none-any.whl",
+      "seestar_toolkit-1.1.0.tar.gz"
+    ],
+    "external_checksum": "seestar-toolkit-1.1.0-release.zip.sha256",
+    "assembled": false
+  },
+  "privacy_audit": {
+    "public_history_root": "c294ffd917634a5d381cccc3ce3fd62a6fba4e89",
+    "reachable_commits": 10,
+    "reviewed_fixtures": 10,
+    "public_input_check": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+    "largest_reachable_blob_bytes": 49775040,
+    "path_marker_occurrences": 42,
+    "affected_markdown_files": 16,
+    "affected_categories": [
+      "docs/development/DEV_VENV_COMMANDS.md",
+      "13 Stage 8 change documents",
+      "docs/development/change_documents/STAGE_9/STAGE_9.1a_AUDIT.md",
+      "docs/development/change_documents/STAGE_9/STAGE_9.1b_REPORT.md"
+    ],
+    "finding": "HISTORICAL FAIL; CURRENT POST-REMOTE PASS",
+    "history_effect": "Tip-only edits cannot remove the literals from reachable history.",
+    "credentials_found": false,
+    "tracked_private_buglist_or_utility_found": false,
+    "tracked_wheel_or_sdist_found": false,
+    "global_fit_fits_ignore": false,
+    "original_marker_report": {
+      "status": "PRESERVED FAIL",
+      "reported_matches": 42,
+      "files": 16,
+      "refinement": "Exact reconstruction found 38 actual username-bearing path occurrences; four cloud-checkout lines were double-counted by overlapping marker expressions."
+    },
+    "actual_username_path_occurrences": 38,
+    "commits_affected": 10,
+    "remediation_paths": 18,
+    "private_only_deleted_files": [
+      "docs/development/DEV_VENV_COMMANDS.md",
+      "docs/development/DEV_VENV_DIRECTIONS.md"
+    ],
+    "deleted_files_disposition": "Absent from final current tree and all history reachable from future public main; retained privately outside repository at an undisclosed location.",
+    "additional_privacy_category_found": false
+  },
+  "consistency": {
+    "bug_001": "PASS",
+    "public_documents": "PASS",
+    "package_support_claims": "PASS",
+    "product_defect": "NONE FOUND",
+    "release_blocker": "Public-history privacy conflict"
+  },
+  "validation": {
+    "head_branch_status": "PASS",
+    "package_and_build_audit": "PASS",
+    "tracked_tree_inventory": "PASS",
+    "reachable_history_inventory": "PASS with finding",
+    "fixture_manifest": "PASS",
+    "blob_size_policy": "PASS",
+    "bug_001_documentation_consistency": "PASS",
+    "git_diff_check_before_new_files": "PASS",
+    "pytest": "NOT RERUN: expensive prior exact-baseline evidence reused",
+    "distribution_build": "NOT RUN: Checkpoint B scope",
+    "pdf_regeneration": "NOT RUN: approved Stage 9.3b artifacts reused"
+  },
+  "criteria": [
+    {
+      "range": "1-7",
+      "status": "PASS"
+    },
+    {
+      "range": "8-21",
+      "status": "PENDING"
+    },
+    {
+      "criterion": 22,
+      "status": "FAIL"
+    },
+    {
+      "criterion": 23,
+      "status": "FAIL"
+    },
+    {
+      "criterion": 24,
+      "status": "PENDING"
+    },
+    {
+      "criterion": 25,
+      "status": "FAIL"
+    },
+    {
+      "range": "26-30",
+      "status": "PASS"
+    },
+    {
+      "criterion": 31,
+      "status": "PASS"
+    },
+    {
+      "range": "32-36",
+      "status": "PASS"
+    },
+    {
+      "criterion": 37,
+      "status": "FAIL"
+    },
+    {
+      "criterion": 38,
+      "status": "PASS"
+    },
+    {
+      "criterion": 39,
+      "status": "PENDING"
+    },
+    {
+      "criterion": 40,
+      "status": "PENDING"
+    },
+    {
+      "criterion": 41,
+      "status": "PASS"
+    },
+    {
+      "range": "42-49",
+      "status": "PENDING"
+    }
+  ],
+  "change_control": {
+    "existing_files_modified": [],
+    "created_files": [
+      "docs/development/change_documents/STAGE_9/STAGE_9.4a.md",
+      "docs/development/change_documents/STAGE_9/STAGE_9.4a_REPORT.md",
+      "docs/development/change_documents/STAGE_9/STAGE_9.4a_CHECKPOINT_A.json"
+    ],
+    "builder_implemented": false,
+    "release_candidate_created": false,
+    "commit": false,
+    "push": false,
+    "tag": false,
+    "publication": false,
+    "visibility_changed": false,
+    "stage_9_4b_started": false,
+    "history_rewrite_executed": "LOCAL MAIN ONLY",
+    "force_push": false,
+    "user_deleted_files_present_as_deletions": [
+      "docs/development/DEV_VENV_COMMANDS.md",
+      "docs/development/DEV_VENV_DIRECTIONS.md"
+    ],
+    "remote_history_replacement": "COMPLETED BEFORE THIS VERIFICATION",
+    "remediation_commit": "0b0a6bf1f8b987a70a35097455aadf7108a934c9",
+    "post_remote_verification_modified_remote": false
+  },
+  "privacy_remediation_design": {
+    "status": "DESIGNED_NOT_EXECUTED",
+    "mechanism": "Fresh single-branch clone; path-limited git-filter-repo removes both DEV_VENV paths and applies exact neutral literal replacements to retained blobs.",
+    "history_range": {
+      "old_root": "c294ffd917634a5d381cccc3ce3fd62a6fba4e89",
+      "old_tip": "ff0ada13ddc1236fb8e416821ea5fca7352e18de",
+      "commits": 10,
+      "all_descendant_shas_change": true
+    },
+    "categories": [
+      "username-bearing filesystem paths",
+      "private development-environment paths",
+      "cloud-synchronized checkout paths",
+      "private real-data/dataset roots",
+      "private maintainer-only document content and references"
+    ],
+    "neutral_replacements": [
+      "<private-test-data>",
+      "<development-environment>",
+      "<repository-root>",
+      "<private development-environment notes>"
+    ],
+    "backup": "Private offline bundle or mirror of all original refs plus separate private working-change copy; verify old main, master and stash before rewriting.",
+    "force_push": "Only after independent pre-push PASS; push main alone with explicit force-with-lease against verified old tip.",
+    "rollback": "Keep repository private and restore old main from private backup with force-with-lease against failed rewritten tip.",
+    "commit_reference_policy": {
+      "historical": "Retain contemporaneous old IDs with an explicit old-to-new map and supersession note.",
+      "operational": "Update public-root guards, CI fallback, live status documentation and development CHANGELOG to mapped public-lineage IDs.",
+      "pre_public": "Preserve pre-public/private-history IDs."
+    },
+    "pre_push_validation": [
+      "old/new commit map and allowlisted per-commit tree comparison",
+      "current, history, commit-message and reachable-object privacy scans",
+      "DEV_VENV path/content absence",
+      "public identity and ten reviewed fixtures preserved",
+      "no credentials, private captures or oversized blobs",
+      "git fsck and fresh-clone validation",
+      "full tests, Ruff, formatting, whitespace, distribution, entry-point, PDF and BUG-001 gates"
+    ],
+    "post_push_validation": [
+      "fresh clone equals approved rewritten SHA",
+      "repeat privacy, DEV_VENV, fixture, integrity and full quality gates",
+      "only main moved; repository remains private; no tag or Release",
+      "exact-SHA GitHub Actions pass for Python 3.11-3.14 on macOS arm64"
+    ]
+  },
+  "local_privacy_remediation": {
+    "status": "PASS",
+    "remote_status": "PENDING",
+    "tool": "git-filter-repo 2.47.0",
+    "old_to_new": {
+      "c294ffd917634a5d381cccc3ce3fd62a6fba4e89": "0cdc6c214e87b28925cf938ebf7dc8e75b9dddb2",
+      "bfb947f6263e58473899e09a8c12622050ffc126": "7109ba7ed4172420ff50929205232f63ea4fc455",
+      "a3b0e9915d8b7d87c43b1e9b202f96310720afcb": "4c40e5423a590848f886bc8179f47953989119e2",
+      "1771b9f31a9a96b35b228a1db9cac3d2c3499ab1": "c3c14dc31f06f41b81fe882f1d6dce2e98f47ce6",
+      "398b7712a2145d2017286f7bb4a73bbfecaf24ab": "1f7de39f725f274341389a151fd2953cdc9f2ece",
+      "519f0e393bc24615b9ffdf17471f78bba9a3be7a": "62cab642be0a29019178d8f6429f785b0fc8c283",
+      "41c000fb98fdd42ab6f3f9f486f531eafcb520e2": "e45ca0df71d69cbb4a70358e767004d65dd563a9",
+      "560b1e0548f9b5b2262bba2df3e49696c8a27b5b": "e78c3d0cdeefca39a7e123bac59e677ded6e294f",
+      "89e506b52b494ebf8c598e95c34a12a14b083e12": "58a57b92efff96da0f41b71e1f021d709a7be0f3",
+      "ff0ada13ddc1236fb8e416821ea5fca7352e18de": "93a4299ccc56f4f2d82c39afa9c735f9989608a3"
+    },
+    "new_root": "0cdc6c214e87b28925cf938ebf7dc8e75b9dddb2",
+    "new_tip": "93a4299ccc56f4f2d82c39afa9c735f9989608a3",
+    "origin_main": "ff0ada13ddc1236fb8e416821ea5fca7352e18de",
+    "relationship": {
+      "ahead": 10,
+      "behind": 10,
+      "expected_until_remote_authorization": true
+    },
+    "backup": {
+      "bundle_sha256": "902bae43f1175ca49a24990b4f065b8ca2121d83afbdd1c69faf2af6abfa24db",
+      "working_provenance_manifest_sha256": "b368a503da25bf957462d9298fd2187d2eb7743a7ed5a6392f4c33f09b4fc651",
+      "verified_refs": [
+        "main",
+        "master",
+        "origin/HEAD",
+        "origin/main",
+        "stash"
+      ],
+      "location_recorded": false
+    },
+    "per_commit_validation": "PASS: one-to-one mapping; order, subjects, authors, committers and dates preserved; exact 18-path transformation only",
+    "privacy_scan": "PASS: exact private literals, DEV_VENV names/content absent from all rewritten trees and commit messages",
+    "dev_venv_unreachable": "PASS",
+    "fixture_history": "PASS: 10 reviewed fixtures; new root; no oversized blob or forbidden tracked output",
+    "git_fsck": "PASS in rewrite candidate and fresh local clone",
+    "fresh_clone": "PASS",
+    "gates": {
+      "pytest": "PASS: 332 passed in 12.05s",
+      "ruff": "PASS: All checks passed",
+      "formatting": "PASS: 37 files already formatted",
+      "whitespace": "PASS",
+      "pdf_validation": "PASS: 27-page User Guide and 5-page Quick Start",
+      "pdf_manifests": "PASS",
+      "distribution": "PASS: wheel 39 members; sdist 46 members; both entry points 1.1.0",
+      "bug_001": "PASS through full regression suite and preserved documentation"
+    },
+    "initial_environment_only_failures": [
+      "Disposable clone default Python lacked pytest and Ruff",
+      "Git checkout did not preserve PDF/source filesystem mtimes"
+    ],
+    "remediation_of_environment_failures": "Reran with established Python validation environment and synchronized disposable PDF mtimes to source mtimes; no tracked bytes changed.",
+    "remote_modified": false,
+    "final_working_tree_validation": {
+      "pytest": "PASS: 332 passed in 11.65s",
+      "focused_archive": "PASS: 174 passed in 1.75s",
+      "ruff": "PASS",
+      "formatting": "PASS: 37 files already formatted",
+      "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+      "incremental_whitespace": "PASS: working diff and rewritten root-to-HEAD",
+      "markdown": "PASS: 88 files; balanced fences; 47 local file links; new evidence whitespace clean",
+      "issue_yaml": "PASS: 3 files",
+      "pdf_and_manifests": "PASS",
+      "distribution_initial": "FAIL: sandbox DNS could not resolve package index for isolated setuptools",
+      "distribution_final": "PASS: authorized network-enabled rerun; wheel 39, sdist 46, entry points and smoke tests",
+      "git_fsck": "PASS with 2 unreachable blobs and 1 unreachable commit; absent from rewritten main/fresh clone"
+    },
+    "proposed_force_with_lease": "git push --force-with-lease=refs/heads/main:ff0ada13ddc1236fb8e416821ea5fca7352e18de origin 93a4299ccc56f4f2d82c39afa9c735f9989608a3:refs/heads/main"
+  },
+  "post_remote_privacy_verification": {
+    "status": "PASS",
+    "fresh_clone": "PASS: new single-branch clone served by private origin",
+    "remote_tip": "0b0a6bf1f8b987a70a35097455aadf7108a934c9",
+    "remote_tip_subject": "ci: update public history root after privacy rewrite",
+    "parent": "93a4299ccc56f4f2d82c39afa9c735f9989608a3",
+    "root": "0cdc6c214e87b28925cf938ebf7dc8e75b9dddb2",
+    "lineage": "PASS: exact ten mapped replacements followed by 0b0a6bf remediation",
+    "superseded_commits": "PASS: all ten original public-lineage IDs unreachable from remote main",
+    "privacy_scan": "PASS: all 11 trees and commit messages exclude mapped private path and DEV_VENV markers/content",
+    "dev_venv": "PASS: both paths absent from current tree and reachable history",
+    "public_identity": "PASS: Mark Wymer retained in LICENSE and pyproject.toml",
+    "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+    "git_fsck": "PASS: no output",
+    "fresh_clone_status": "CLEAN",
+    "remote_refs": {
+      "heads": {
+        "main": "0b0a6bf1f8b987a70a35097455aadf7108a934c9"
+      },
+      "tags": [],
+      "unexpected": false
+    },
+    "visibility": {
+      "status": "PRIVATE",
+      "evidence": "User explicit confirmation",
+      "authenticated_api_check": "UNAVAILABLE"
+    },
+    "ci_chronology": [
+      {
+        "sha": "93a4299ccc56f4f2d82c39afa9c735f9989608a3",
+        "status": "FAIL",
+        "jobs": 4,
+        "step": "Public fixture and history checks",
+        "error": "fatal: Not a valid object name c294ffd",
+        "root_cause": "Committed guard referenced superseded pre-rewrite root c294ffd"
+      },
+      {
+        "sha": "0b0a6bf1f8b987a70a35097455aadf7108a934c9",
+        "status": "GREEN",
+        "jobs": 4,
+        "evidence": "User independent confirmation"
+      }
+    ],
+    "current_privacy_criteria": [
+      {
+        "criterion": 22,
+        "status": "PASS",
+        "evidence": "Fresh remote current-tree privacy scan passes."
+      },
+      {
+        "criterion": 23,
+        "status": "PASS",
+        "evidence": "All 11 reachable remote commits scanned; old ten commits unreachable."
+      },
+      {
+        "criterion": 24,
+        "status": "PASS",
+        "evidence": "No credential, secret, private config or unintended personal material found in targeted final scan."
+      },
+      {
+        "criterion": 25,
+        "status": "PASS",
+        "evidence": "Mapped personal filesystem paths absent from remote current/history state."
+      },
+      {
+        "criterion": 37,
+        "status": "PASS",
+        "evidence": "Privacy release blocker remediated remotely and exact remediation SHA CI is green."
+      }
+    ],
+    "later_criteria": "PENDING: Checkpoint B, release candidate, Checkpoint C and procedural closure gates unchanged"
+  }
+}

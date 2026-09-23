@@ -69,6 +69,15 @@ and content for private paths, FIT/FITS data, caches and other local material.
 Never commit generated artifacts. Use ignored `dist/`/temporary directories.
 Do not upload or publish builds as part of this step.
 
+Stage 9.4a Checkpoint B adds `tools/build_release_candidate.py` and
+`tools/validate_release_candidate.py`. The builder exports an explicitly named
+committed source state, builds twice, normalizes reproducibility metadata and
+allows exactly the seven approved release files into the outer ZIP. The
+validator independently checks extraction safety, exact source bytes, nested
+distributions, clean installs, documentation PDFs and the external checksum.
+Release candidates remain in private staging outside the repository and are not
+publication evidence.
+
 Stage 9.2a owns the final clean-install compatibility matrix; Stage 9.1d
 validation does not declare final supported Python or macOS versions. Stage 9.4b's GO and subsequent
 publication/closure gates are unchanged.
@@ -112,7 +121,7 @@ runs; it does not lint the orphan root's historical whitespace as a new diff.
 
 `check_public_inputs.py` verifies all ten fixtures against reviewed sizes and
 SHA-256 values in `tests/data/public_fixtures.json`, checks the sole public
-history root is `c294ffd`, rejects reachable blobs above 100 MiB, and rejects
+history root is `0cdc6c2`, rejects reachable blobs above 100 MiB, and rejects
 tracked generated outputs/private-data directories and LFS configuration.
 A fixture hash change requires a fresh privacy review; do not simply refresh
 the manifest to make CI pass. Historical private `master` is never fetched
@@ -135,7 +144,7 @@ conversion must pass. Build isolation may temporarily install setuptools;
 it is not a runtime requirement. All validation artifacts/venvs are removed
 at completion; no final release checksums are generated.
 
-Stage 9.1d formally closed at `1771b9f` after reviewed green Actions evidence.
+Stage 9.1d formally closed at `c3c14dc` after reviewed green Actions evidence.
 Its Run 1 FAIL, whitespace remediation and Run 2 PASS remain historical evidence. See the [Stage 9.1d report](change_documents/STAGE_9/STAGE_9.1d_REPORT.md)
 for local candidate results and all closure criteria. v1.1.0 remains unreleased.
 
@@ -146,7 +155,7 @@ The [Stage 9.2a report](change_documents/STAGE_9/STAGE_9.2a_REPORT.md) and
 [structured evidence](change_documents/STAGE_9/STAGE_9.2a_EVIDENCE.json) record
 interpreter provenance, initial and final wheel/sdist results, dependency sets,
 actual temporary site-packages paths and cleanup. Stage 9.2a is formally
-COMPLETE at `398b771`, as confirmed by Stage review in the Stage 9.2b starting
+COMPLETE at `1f7de39`, as confirmed by Stage review in the Stage 9.2b starting
 context. The [Stage 9.2b completion audit](change_documents/STAGE_9/STAGE_9.2b_REPORT.md)
 records passing technical checkpoints A–D, including recovered storage validation,
 local privacy/network observations and uninstall facts. Historical setup/harness
@@ -229,7 +238,7 @@ cleanup remains an explicitly accepted historical environmental limitation.
 
 ## Stage 9.3a — Markdown documentation audit
 
-Current baseline is `519f0e3`, the Stage 9.2b validation closure commit supplied
+Current baseline is `62cab64`, the Stage 9.2b validation closure commit supplied
 for this Stage. Earlier pre-commit status paragraphs and checkpoint failure
 evidence above remain historical records; no post-commit CI evidence is invented.
 

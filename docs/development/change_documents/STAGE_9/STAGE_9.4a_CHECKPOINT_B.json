@@ -1,0 +1,182 @@
+{
+  "stage": "9.4a",
+  "checkpoint": "B",
+  "date": "2026-09-23",
+  "decision": {
+    "technical_result": "PASS",
+    "independent_review": "PENDING",
+    "stage_status": "STARTED",
+    "checkpoint_c_started": false
+  },
+  "source": {
+    "commit": "0b0a6bf1f8b987a70a35097455aadf7108a934c9",
+    "subject": "ci: update public history root after privacy rewrite",
+    "public_history_root": "0cdc6c214e87b28925cf938ebf7dc8e75b9dddb2",
+    "method": "git archive of exact committed HEAD",
+    "uncommitted_evidence_excluded": true,
+    "static_inputs_verified_against_commit": true,
+    "public_changelog": "1.1.0 - Unreleased"
+  },
+  "candidate": {
+    "location": "<private-release-staging>",
+    "tracked": false,
+    "published": false,
+    "zip": {
+      "name": "seestar-toolkit-1.1.0-release.zip",
+      "bytes": 242979,
+      "sha256": "2abda7623b8381e1d2a335f7041adef1454383c0a2159c8f113ec26357f92ff4",
+      "root": "seestar-toolkit-1.1.0/",
+      "members": [
+        "SEESTAR_TOOLKIT_QUICK_START.pdf",
+        "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "seestar_toolkit-1.1.0-py3-none-any.whl",
+        "seestar_toolkit-1.1.0.tar.gz"
+      ],
+      "member_mode": "0644",
+      "fixed_order": true,
+      "fixed_timestamp": "source commit epoch",
+      "archive_comment": false,
+      "extra_fields": false
+    },
+    "checksum": {
+      "name": "seestar-toolkit-1.1.0-release.zip.sha256",
+      "bytes": 106,
+      "sha256": "a9ec24b5b49124f2b6b903e19c5de0db03e90b723e106f748d47ec8bba31c9c9",
+      "inside_zip": false,
+      "format": "ZIP_SHA256 + two spaces + ZIP basename + LF",
+      "verification": "PASS"
+    },
+    "wheel": {
+      "name": "seestar_toolkit-1.1.0-py3-none-any.whl",
+      "bytes": 47819,
+      "sha256": "7b3fa9b2a465933d4eae65cf2e34b53fcf7319181d5cb526d194e54fe6bacf57",
+      "allowed_members": 39,
+      "metadata": "PASS",
+      "clean_install": "PASS",
+      "entry_points": "PASS: console and python -m, version 1.1.0",
+      "conversion_smoke": "PASS"
+    },
+    "sdist": {
+      "name": "seestar_toolkit-1.1.0.tar.gz",
+      "bytes": 34045,
+      "sha256": "9798475650ba82b84f5490465d43ccb216ecb204e6e8d9e5ca8fa13f8babf251",
+      "allowed_files": 46,
+      "metadata": "PASS",
+      "clean_install": "PASS",
+      "entry_points": "PASS: console and python -m, version 1.1.0",
+      "conversion_smoke": "PASS"
+    }
+  },
+  "reproducibility": {
+    "independent_builds": 2,
+    "wheel": "BYTE-IDENTICAL",
+    "sdist": "BYTE-IDENTICAL AFTER NORMALIZATION",
+    "release_zip": "BYTE-IDENTICAL",
+    "checksum": "BYTE-IDENTICAL",
+    "result": "PASS"
+  },
+  "documentation": {
+    "quick_start_pdf": {
+      "pages": 5,
+      "sha256": "32bd5b4231ae9067c2ee6891c1473aaf233f573a4566add4ec641b2b601f394f",
+      "manifest": "PASS",
+      "candidate_identity": "PASS"
+    },
+    "user_guide_pdf": {
+      "pages": 27,
+      "sha256": "f9c716ca68d18958657b4fbec9ded7061f0bf3e6040383757ccfc291e31d56e3",
+      "manifest": "PASS",
+      "candidate_identity": "PASS"
+    },
+    "metadata_fonts_content_links_navigation": "PASS",
+    "markdown": "PASS: 88 files; balanced fences; 47 local links",
+    "issue_form_yaml": "PASS: 3 files"
+  },
+  "quality": {
+    "focused_release_tests": "PASS: 12 passed, 2 expected duplicate-name construction warnings",
+    "pytest": "PASS: 344 passed",
+    "ruff": "PASS: All checks passed",
+    "formatting": "PASS: 40 files already formatted",
+    "git_diff_check": "PASS",
+    "committed_root_to_head_whitespace": "PASS",
+    "changed_evidence_whitespace": "PASS",
+    "public_inputs": "PASS: 10 reviewed fixtures; clean public root; no oversized blobs",
+    "distribution": "PASS: wheel 39; sdist 46; clean installs and both entry points",
+    "bug_001": "PASS through regression suite and release README validation",
+    "privacy_release_content": "PASS",
+    "source_tree_unchanged_by_assembly": true
+  },
+  "failure_chronology": [
+    {
+      "attempt": "temporary validation environment setup",
+      "status": "ENVIRONMENT FAIL",
+      "reason": "Prior temporary interpreter no longer exposed pytest/Ruff; first fresh-venv install had sandbox DNS failure",
+      "remediation": "Created a fresh Python 3.13 environment and used an authorized network-enabled install of declared extras"
+    },
+    {
+      "attempt": "initial focused lint",
+      "status": "FAIL",
+      "reason": "Five E501 findings and three unused imports in newly authored release tooling",
+      "remediation": "Formatted code and removed unused imports; focused lint passed"
+    },
+    {
+      "attempt": "first assembly",
+      "status": "FAIL",
+      "reason": "Temporary build parent was missing before source tar creation",
+      "remediation": "Create build parent before git archive export"
+    },
+    {
+      "attempt": "second assembly",
+      "status": "FAIL",
+      "reason": "non-reproducible release artifact: sdist",
+      "remediation": "Normalize sdist gzip/tar epoch, ordering, ownership and modes without changing payload"
+    },
+    {
+      "attempt": "final two-build assembly and independent validation",
+      "status": "PASS"
+    },
+    {
+      "attempt": "informational broad historical Markdown whitespace probe",
+      "status": "NON-GATE FINDING",
+      "reason": "Known whitespace exists in unchanged historical documents",
+      "required_incremental_gates": "PASS; no unrelated historical reformatting"
+    }
+  ],
+  "tools": {
+    "python": "3.13.15",
+    "build": "1.6.1",
+    "isolated_setuptools": "84.0.0",
+    "ruff": "0.16.8",
+    "git": "2.50.1 Apple Git-155",
+    "pandoc": "3.11",
+    "xelatex": "XeTeX 3.141592653-2.6-0.999998, TeX Live 2026",
+    "poppler_pdfinfo": "26.09.0",
+    "zip_writer": "Python standard-library zipfile"
+  },
+  "criteria": [
+    {"range": "1-7", "status": "PASS"},
+    {"range": "8-21", "status": "PASS"},
+    {"range": "22-38", "status": "PASS"},
+    {"range": "39-42", "status": "PASS"},
+    {"range": "43-49", "status": "PENDING"}
+  ],
+  "change_control": {
+    "production_source_modified": false,
+    "package_metadata_modified": false,
+    "ci_modified": false,
+    "public_docs_modified": false,
+    "committed_pdfs_modified": false,
+    "fixtures_modified": false,
+    "commit": false,
+    "push": false,
+    "tag": false,
+    "release": false,
+    "pypi": false,
+    "visibility_changed": false,
+    "checkpoint_c_started": false,
+    "stage_9_4b_started": false
+  }
+}
