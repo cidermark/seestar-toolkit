@@ -1,0 +1,138 @@
+{
+  "stage": "9.4b",
+  "checkpoint": "D",
+  "phase": "Gate 2 public verification",
+  "result": "FAIL",
+  "stage_status": "STARTED",
+  "release": {
+    "repository_visibility": "PUBLIC",
+    "name": "Seestar Toolkit v1.1.0",
+    "tag": "v1.1.0",
+    "tag_object": "653e8a03bc4befd65036439d868e4563ba26cd20",
+    "commit": "bf3af815f15704eb75965a6831c06db3859a3ce9",
+    "draft": false,
+    "prerelease": false,
+    "latest": true,
+    "created_at": "2026-09-24T10:48:59Z",
+    "published_at": "2026-09-24T12:43:39Z",
+    "release_id": 395669312,
+    "actions_run_id": 35872684075,
+    "actions": "PASS: four Python 3.11-3.14 macOS arm64 jobs completed successfully at the exact release commit"
+  },
+  "public_assets": {
+    "uploaded_asset_count": 2,
+    "release_zip": {
+      "filename": "seestar-toolkit-1.1.0-release.zip",
+      "bytes": 243119,
+      "sha256": "b8cb2a2be2af8ec817462d0c3d861f474f388f07e67b419ffd73cabb5b757429"
+    },
+    "external_checksum": {
+      "filename": "seestar-toolkit-1.1.0-release.zip.sha256",
+      "bytes": 100,
+      "sha256": "c7a97dfb25e037ca89e970efb156e0104013e44201e6f672c5f795a403929add",
+      "verification": "PASS"
+    },
+    "wheel": {
+      "filename": "seestar_toolkit-1.1.0-py3-none-any.whl",
+      "bytes": 47807,
+      "sha256": "97fa0a37ba8803aa8c0d0468c8221170046bb9c5484b2bf5a9701af87e284a4d"
+    },
+    "sdist": {
+      "filename": "seestar_toolkit-1.1.0.tar.gz",
+      "bytes": 34036,
+      "sha256": "e0b9f6e803924e99d2cc1a67ba41693fb55fdfff8555b0ee02bb9faf255f9f33"
+    },
+    "inventory": [
+      "CHANGELOG.md",
+      "LICENSE",
+      "README.md",
+      "SEESTAR_TOOLKIT_QUICK_START.pdf",
+      "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
+      "seestar_toolkit-1.1.0-py3-none-any.whl",
+      "seestar_toolkit-1.1.0.tar.gz"
+    ]
+  },
+  "validation": {
+    "fresh_unauthenticated_clone": "PASS",
+    "public_tag_and_lineage": "PASS",
+    "release_asset_validator": "PASS against fresh public downloads and exact v1.1.0 source",
+    "clean_installs": "PASS for downloaded wheel and sdist; pip check clean",
+    "entry_points": "PASS: console and python -m report 1.1.0 for both distributions",
+    "conversion_smoke": "PASS for wheel and sdist",
+    "pytest": "349 passed, 2 expected warnings",
+    "focused_release_tests": "24 passed, 2 expected warnings",
+    "ruff": "PASS",
+    "formatting": "PASS: 40 files already formatted",
+    "whitespace": "PASS",
+    "public_inputs_history": "PASS: 10 fixtures; clean public root; no oversized blobs",
+    "markdown_links_fences": "PASS: 92 Markdown files",
+    "issue_yaml": "PASS: 3 files",
+    "repository_integrity": "PASS in fresh public clone",
+    "pdf_content": "PASS through public release candidate validation",
+    "pypi": "PASS: public JSON endpoint HTTP 404"
+  },
+  "failure": {
+    "criterion": 44,
+    "related_criteria": [
+      37,
+      39
+    ],
+    "finding": "The published curated Release body identifies the recommended release ZIP but neither states that v1.1.0 is not published to PyPI nor explains that GitHub's automatic source archives are source snapshots rather than the recommended release ZIP.",
+    "specification_requirement": "The normal Release body must cover no-PyPI distribution and distinguish GitHub-generated source snapshots from the recommended release ZIP.",
+    "product_code_affected": false,
+    "assets_affected": false,
+    "remediation_performed": false,
+    "reason_no_remediation": "Gate 2 audit was read-only and the release owner prohibited alteration of the GitHub Release or assets."
+  },
+  "criteria_41_55": {
+    "41": "PASS",
+    "42": "PASS",
+    "43": "PASS",
+    "44": "FAIL",
+    "45": "PASS",
+    "46": "PASS",
+    "47": "PASS",
+    "48": "PASS",
+    "49": "PASS",
+    "50": "PASS",
+    "51": "PASS",
+    "52": "PASS",
+    "53": "PASS",
+    "54": "PASS",
+    "55": "FAIL"
+  },
+  "publication_criteria_after_publication": {
+    "29": "PASS",
+    "30": "PASS",
+    "31": "PASS",
+    "32": "PASS after the separately preserved evidence remediation and final rebuild",
+    "33": "PASS",
+    "34": "PASS",
+    "35": "PASS",
+    "36": "PASS",
+    "37": "FAIL: curated body omissions",
+    "38": "PASS",
+    "39": "FAIL: curated body does not distinguish GitHub source snapshots",
+    "40": "PASS"
+  },
+  "final_closure": {
+    "56": "PASS",
+    "57": "PASS",
+    "58": "PENDING: private runbook finalization not independently evidenced in this audit",
+    "59": "PENDING",
+    "60": "PENDING"
+  },
+  "history_preserved": [
+    "Checkpoint C first attempt genuinely failed on the incorrect committed 101-byte checksum evidence.",
+    "The evidence-only remediation corrected the live value to 100 bytes without erasing the failure.",
+    "Publication subsequently used the corrected committed state at bf3af815f15704eb75965a6831c06db3859a3ce9."
+  ],
+  "actions_not_performed": [
+    "commit",
+    "tag movement or replacement",
+    "GitHub Release creation or modification",
+    "asset upload, replacement or deletion",
+    "PyPI publication",
+    "Stage 9 closure"
+  ]
+}

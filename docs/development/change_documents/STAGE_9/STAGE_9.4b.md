@@ -2,8 +2,10 @@
 
 ## Status and authority
 
-Stage 9.4b is **STARTED**. Checkpoint A is audit/design only and authorizes no
-release action. Stage 9.4a closed at
+Stage 9.4b is **COMPLETE**. Checkpoint F independently closed all 60 criteria
+after the published v1.1.0 release passed Gate 2 remediation revalidation and
+the release owner confirmed completion of the private operational runbook.
+Checkpoint A was audit/design only and authorized no release action. Stage 9.4a closed at
 `6784f8d3fc2af7814cdf9e7c328fa0eef2981b06`; its expected pending development
 CHANGELOG row is carried into this stage.
 
@@ -257,4 +259,7 @@ location or private-only content.
 59. Stage 9.4b and 9.4 independently closed.
 60. Stage 9 and v1.1.0 process independently closed.
 
-At Checkpoint A, criteria 1–12 PASS and criteria 13–60 remain PENDING.
+Checkpoint F records criteria 1–60 PASS. Stage 9.4b, Stage 9.4, Stage 9 and the
+v1.1.0 release process are formally COMPLETE. Checkpoint C's initial evidence
+failure, Checkpoint D's initial Gate 2 FAIL and their later successful
+remediations remain preserved in the report and structured checkpoint evidence.

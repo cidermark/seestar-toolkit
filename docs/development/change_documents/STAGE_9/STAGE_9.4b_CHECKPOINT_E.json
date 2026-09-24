@@ -1,0 +1,92 @@
+{
+  "stage": "9.4b",
+  "checkpoint": "E",
+  "phase": "Gate 2 Release-note remediation revalidation",
+  "result": "PASS",
+  "stage_status": "STARTED pending final closure criteria",
+  "previous_gate_2_result": {
+    "checkpoint": "D",
+    "result": "FAIL",
+    "preserved": true,
+    "failed_criteria": [
+      37,
+      39,
+      44,
+      55
+    ]
+  },
+  "live_release": {
+    "repository_visibility": "PUBLIC",
+    "release_id": 395669312,
+    "name": "Seestar Toolkit v1.1.0",
+    "tag": "v1.1.0",
+    "commit": "bf3af815f15704eb75965a6831c06db3859a3ce9",
+    "draft": false,
+    "prerelease": false,
+    "created_at": "2026-09-24T10:48:59Z",
+    "published_at": "2026-09-24T12:43:39Z",
+    "updated_at_after_note_remediation": "2026-09-24T13:33:00Z",
+    "inspection": "Unauthenticated public GitHub Release API"
+  },
+  "remediation_evidence": {
+    "no_pypi_statement_present": true,
+    "no_pypi_statement": "Seestar Toolkit v1.1.0 is not published to PyPI.",
+    "automatic_source_archives_identified": [
+      "Source code (zip)",
+      "Source code (tar.gz)"
+    ],
+    "source_snapshot_explanation_present": true,
+    "recommended_validated_package_identified": "seestar-toolkit-1.1.0-release.zip",
+    "requirements_satisfied": true
+  },
+  "asset_preservation": {
+    "uploaded_asset_count": 2,
+    "release_zip": {
+      "bytes": 243119,
+      "sha256": "b8cb2a2be2af8ec817462d0c3d861f474f388f07e67b419ffd73cabb5b757429",
+      "updated_at": "2026-09-24T12:37:09Z",
+      "unchanged_from_checkpoint_d": true
+    },
+    "external_checksum": {
+      "bytes": 100,
+      "sha256": "c7a97dfb25e037ca89e970efb156e0104013e44201e6f672c5f795a403929add",
+      "updated_at": "2026-09-24T12:37:09Z",
+      "unchanged_from_checkpoint_d": true
+    }
+  },
+  "reassessed_criteria": {
+    "37": "PASS",
+    "39": "PASS",
+    "44": "PASS",
+    "55": "PASS"
+  },
+  "gate_2": {
+    "criteria_41_55": "PASS",
+    "result": "PASS"
+  },
+  "final_closure": {
+    "56": "PASS",
+    "57": "PASS",
+    "58": "PENDING: private release runbook completion is not independently established by available evidence",
+    "58_required_owner_evidence": "The release owner must confirm that the private runbook has been finalized from the proven release operation and includes the prerequisites/date rule, final edits, Gate 1 evidence and GO, exact tag/build/provenance, push/visibility/Release/upload sequence, Gate 2 results and stop procedures required by the specification.",
+    "59": "PENDING: criterion 58 and independent formal Stage 9.4b/9.4 closure remain outstanding",
+    "60": "PENDING: criterion 59 and independent formal Stage 9/v1.1.0 process closure remain outstanding"
+  },
+  "validation_scope": [
+    "Live public Release body and metadata",
+    "Live asset inventory, sizes, digests and update timestamps",
+    "JSON parsing",
+    "Markdown fences and local links",
+    "Changed-document whitespace",
+    "git diff --check"
+  ],
+  "actions_not_performed": [
+    "commit",
+    "push",
+    "tag movement or replacement",
+    "GitHub Release creation or modification",
+    "asset upload, replacement or deletion",
+    "PyPI publication",
+    "formal Stage 9 closure"
+  ]
+}

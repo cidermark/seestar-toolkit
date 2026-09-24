@@ -228,3 +228,193 @@ This evidence-only remediation does not convert the Checkpoint C FAIL into a
 PASS and does not resume publication. Criteria 32 and 33 remain FAIL/PENDING
 until a corrected evidence commit is independently validated and Gate 1 is
 explicitly re-established. Criteria 34–39 remain PENDING.
+
+## Checkpoint D — Gate 2 public verification
+
+**FAIL — public artifacts pass, but the curated Release notes omit one required
+source-archive distinction. Stage 9.4b remains STARTED.**
+
+The evidence-only Checkpoint C correction was independently accepted and
+committed. Publication then used commit
+`bf3af815f15704eb75965a6831c06db3859a3ce9`, subject
+`Stage 9.4b: correct release evidence`. The original Checkpoint C FAIL above
+remains genuine and unchanged.
+
+### Public identity and server state
+
+An unauthenticated fresh HTTPS clone and GitHub's public API prove that the
+repository is PUBLIC, public `main` is exactly `bf3af815`, and annotated tag
+`v1.1.0` has tag-object SHA `653e8a03bc4befd65036439d868e4563ba26cd20`,
+exact annotation `Seestar Toolkit v1.1.0`, and dereferenced target `bf3af815`.
+Only branch `main` and tag `v1.1.0` are present.
+
+Normal Release ID `395669312` is named `Seestar Toolkit v1.1.0`, is neither a
+draft nor a prerelease, is Latest, and uses tag `v1.1.0`. It was created at
+`2026-09-24T10:48:59Z` and published at `2026-09-24T12:43:39Z`. The tag target,
+not the Release API's mutable `target_commitish` label, proves the exact Release
+commit is `bf3af815`.
+
+Actions run `35872684075` is tied to exact SHA `bf3af815`; all four macOS arm64
+jobs for Python 3.11, 3.12, 3.13 and 3.14 completed successfully. The public
+PyPI JSON endpoint for Seestar Toolkit 1.1.0 returns HTTP 404.
+
+### Public downloads and installed validation
+
+Fresh public downloads contained exactly the two intended uploaded assets.
+GitHub additionally presents its two automatic source-code archives.
+
+| Item | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Release ZIP | 243,119 | `b8cb2a2be2af8ec817462d0c3d861f474f388f07e67b419ffd73cabb5b757429` |
+| External checksum | 100 | `c7a97dfb25e037ca89e970efb156e0104013e44201e6f672c5f795a403929add` |
+| Embedded wheel | 47,807 | `97fa0a37ba8803aa8c0d0468c8221170046bb9c5484b2bf5a9701af87e284a4d` |
+| Embedded normalized sdist | 34,036 | `e0b9f6e803924e99d2cc1a67ba41693fb55fdfff8555b0ee02bb9faf255f9f33` |
+
+The checksum validates the downloaded ZIP. Independent extraction found one
+versioned root and exactly the seven approved files: CHANGELOG, LICENSE, README,
+both PDFs, the wheel and the sdist. The committed release validator passed
+against those downloaded bytes and exact source ref `v1.1.0`. It proved source
+file byte identity; wheel/sdist allowlists of 39/46 members; metadata, licence,
+entry point and privacy rules; both clean Python 3.13 installs; clean `pip
+check`; both console and module entry points reporting 1.1.0; both installed
+float32 FITS-to-TIFF conversion smokes; and PDF content, navigation, fonts and
+metadata/privacy. The validator reports source commit `bf3af815` and the same
+four artifact hashes above.
+
+### Repository and documentation validation
+
+- Full pytest: **349 passed, 2 expected duplicate-archive warnings**.
+- Focused release/distribution tests: **24 passed, 2 expected warnings**.
+- Ruff PASS; configured formatting PASS (`40 files already formatted`).
+- `git diff --check`, direct evidence-file whitespace and fresh-clone repository
+  integrity PASS.
+- Public-input/history guard PASS: 10 fixtures, clean public root, expected
+  rewritten root and no oversized blobs.
+- Fresh public-clone Markdown fence/local-link validation PASS across 92 files;
+  all three Issue-form YAML files parse and have their required structure.
+- Public README, dated CHANGELOG, LICENSE, guides, PDFs, support boundaries and
+  privacy wording PASS. No private utility, private capture, release build or
+  unsupported capability is exposed.
+
+An attempted repository `--all` PDF validation reported a source/PDF
+nanosecond-mtime mismatch after checkout. Git does not preserve committed file
+mtimes, so this generation-workspace invariant cannot be reconstructed from a
+fresh clone. The Gate 2 release-artifact validator's candidate mode is the
+applicable public-byte check and passed both PDFs against the exact tagged
+sources. No PDF byte, manifest or content discrepancy was found.
+
+Read-only operational failures are preserved: an initial asset-download command
+used the API host with browser download paths and received HTTP 404; using the
+exact API-provided public URLs succeeded. The first clean-install validator run
+was blocked by sandbox DNS; the unchanged network-enabled rerun passed. Initial
+ad hoc focused-test/PDF commands named a nonexistent test file and used invalid
+PDF-validator arguments; corrected commands produced the results above. These
+were command/environment failures, not product or public-asset defects.
+
+### Gate 2 failure
+
+The curated Release body identifies
+`seestar-toolkit-1.1.0-release.zip` as the supported package and the external
+checksum as its verifier, but it does **not** state that v1.1.0 is not published
+to PyPI, and it does **not** state that GitHub's automatic source archives are
+source snapshots rather than the recommended release ZIP. The authoritative
+specification requires both points in the curated body. Consequently publication
+criterion 37 and Gate 2 criterion 44 FAIL. Criterion 39 is also not satisfied in
+the published notes, although GitHub's interface separately labels the automatic
+archives as source code. No product code or uploaded artifact is affected.
+
+The audit made no Release or asset change, as required. Because any failed Gate
+2 requirement is Gate 2 FAIL, criterion 55 is FAIL. Criteria 41–43 and 45–54
+PASS. Criterion 56 PASS because the complete failure/remediation chronology is
+preserved. Criterion 57 PASS with the public provenance above. Criterion 58 is
+PENDING because private-runbook finalization was not independently evidenced in
+this audit. Criteria 59–60 remain PENDING. Stage 9.4b, Stage 9.4, Stage 9 and
+the v1.1.0 release process cannot yet formally close.
+
+## Checkpoint E — Gate 2 Release-note remediation revalidation
+
+**PASS — Gate 2 criteria 41–55 now pass. Final closure criteria remain
+pending.**
+
+Checkpoint D's original Gate 2 FAIL remains preserved above. The release owner
+subsequently edited only the existing GitHub Release description. An
+unauthenticated public API inspection of Release ID `395669312` found both
+required additions in the live body:
+
+- `Seestar Toolkit v1.1.0 is not published to PyPI.`
+- GitHub's automatic **Source code (zip)** and **Source code (tar.gz)** files
+  are identified as GitHub-generated source snapshots, are explicitly described
+  as not being the recommended package, and users are directed to the validated
+  `seestar-toolkit-1.1.0-release.zip` instead.
+
+This wording satisfies the authoritative no-PyPI and generated-source-archive
+requirements. The Release remains named `Seestar Toolkit v1.1.0`, uses tag
+`v1.1.0`, and remains neither draft nor prerelease. Its original publication
+timestamp is `2026-09-24T12:43:39Z`; the API reports the post-edit Release
+update timestamp as `2026-09-24T13:33:00Z`.
+
+The two uploaded assets remain unchanged from Checkpoint D. The ZIP is 243,119
+bytes with SHA-256
+`b8cb2a2be2af8ec817462d0c3d861f474f388f07e67b419ffd73cabb5b757429`;
+the checksum file is 100 bytes with SHA-256
+`c7a97dfb25e037ca89e970efb156e0104013e44201e6f672c5f795a403929add`.
+Both retain API update timestamp `2026-09-24T12:37:09Z`, before the Release-note
+edit. No tag, asset, repository release file, GitHub Release identity or PyPI
+state was changed by this evidence pass.
+
+Criteria 37, 39 and 44 now PASS against the remediated live description. With
+the previously proven criteria 41–54 all passing, independent revalidation now
+records criterion 55 PASS and overall Gate 2 PASS.
+
+Criterion 56 remains PASS because both the initial FAIL and subsequent
+remediation are preserved. Criterion 57 remains PASS. Criterion 58 remains
+PENDING: the available repository and public evidence do not independently
+establish that the private release runbook was finalized. To close it, the
+release owner must confirm that the private runbook has been updated from the
+actual proven operation and contains the prerequisites/date rule, final edits,
+Gate 1 evidence and GO, exact tag/build/provenance, push/visibility/Release/upload
+sequence, Gate 2 results and stop procedures required by the specification.
+
+Criteria 59 and 60 remain PENDING because criterion 58 and the independent
+formal closure declarations have not occurred. Therefore Stage 9.4b, Stage 9.4,
+Stage 9 and the v1.1.0 release process cannot yet formally close, despite Gate 2
+now passing.
+
+## Checkpoint F — final closure audit
+
+**PASS — all 60 criteria pass. Stage 9.4b, Stage 9.4, Stage 9 and the
+v1.1.0 release process are COMPLETE.**
+
+The release owner confirms that private `SEESTAR_TOOLKIT_RELEASE_PROCESS.md` is
+present and readable in the private companion directory, has been reviewed, and
+is suitable as the operational release runbook reconstructed from the actual
+v1.1.0 operation. The confirmed coverage includes prerequisites and date policy;
+final-state preparation; Gate 1 evidence and GO; release commit and exact-commit
+CI; annotated tag and reproducible tagged-source builds; artifact inventory,
+hashes and provenance; private tag push and final review; visibility transition;
+Release and asset publication; Gate 2 public downloads, checksum, clean installs
+and conversion smoke; stop/remediation rules; public-tag immutability; generated
+source archives; no-PyPI policy; closure/bookkeeping; the reusable checklist;
+and the proven v1.1.0 identity and Gate 2 FAIL-to-remediation-to-PASS chronology.
+
+This explicit release-owner confirmation is the required evidence for criterion
+58, which now PASSes. The private runbook was not opened, copied, summarized
+beyond the owner's supplied coverage, or added to the public repository.
+
+All preceding criteria remain valid. Checkpoint D remains the genuine initial
+Gate 2 FAIL; Checkpoint E remains the subsequent remediation PASS. Criteria 56
+and 57 remain PASS, and criterion 58 now PASSes. Independent final review finds
+no remaining failed or pending prerequisite, so criterion 59 PASSes and formally
+closes Stage 9.4b and Stage 9.4. Criterion 60 PASSes and formally closes Stage 9
+and the v1.1.0 release process.
+
+The exact release identity remains commit
+`bf3af815f15704eb75965a6831c06db3859a3ce9`, annotated tag `v1.1.0`, tag object
+`653e8a03bc4befd65036439d868e4563ba26cd20`, annotation
+`Seestar Toolkit v1.1.0`, and dereferenced target `bf3af815`. Local `main` and
+`origin/main` remain equal. The public Release and its two uploaded asset bytes
+remain unchanged after the accepted description-only remediation.
+
+Final accounting is criteria 1–12 PASS, 13–28 PASS, 29–40 PASS, 41–55 PASS and
+56–60 PASS. No product or public release file changed. No tag, Release, asset or
+PyPI operation occurred during closure.

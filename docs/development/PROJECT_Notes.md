@@ -998,26 +998,20 @@ Two independent builds are byte-identical; the seven-file ZIP, external checksum
 nested distributions, clean installs, entry points and documentation PDFs pass.
 Checkpoint B passed independent review. Checkpoint C's exact-tree audit is PASS,
 including PDF-hash reconciliation, privacy/scope review and final quality gates.
-Stage 9.4a is ready for independent final review and closure commit authorization.
-Commit, post-commit validation/CI, formal completion, tag, publication and Stage
-9.4b remain pending.
+Stage 9.4a subsequently passed independent review, closure commit validation and
+exact-commit CI before Stage 9.4b publication work began.
 
 ### Stage 9.4b — final release and publication
 
-Stage 9.4b is STARTED. Checkpoint A audit/design is PASS and defines 60 criteria
-across design, exact-tree Gate 1, publication, public Gate 2 and final closure.
-Criteria 1–12 pass; criteria 13–60 remain PENDING.
+Stage 9.4b and Stage 9 are COMPLETE. The dated v1.1.0 release passed exact-tree
+Gate 1, reproducible tagged-source artifact validation and publication. Public
+Gate 2 initially failed because the GitHub Release description omitted the
+no-PyPI statement and generated-source-snapshot distinction. That genuine FAIL
+is preserved; a description-only remediation was independently revalidated and
+Gate 2 then passed. The tag and release assets were not replaced.
 
-The final tag must contain the release date deliberately declared by the release
-owner and pass full exact-commit validation before Gate 1 GO. Incidental UTC
-rollover during continuous publication is harmless; deliberate postponement to
-a different chosen release day requires updated outputs, full Gate 1 validation
-and a new GO. No release action or Gate 2 action occurred in A.
-
-#### Checkpoint B — proposed final release tree
-
-The proposed dated v1.1.0 tree is technically validated. Public documents,
-PDFs/manifests, release tooling and focused tests represent the declared
-`2026-09-23` state. Full validation and repeated candidate builds pass;
-generated artifacts remain outside Git. Criteria 13–25 pass, while 26–28 await
-the final commit/clean-tree review, exact-commit remote CI and independent GO.
+The release owner confirmed completion and review of the private operational
+runbook reconstructed from the actual release. Final closure criteria 56–60 and
+all Stage 9.4b criteria 1–60 pass. Stage 9.4, Stage 9 and the v1.1.0 release
+process are formally complete. Public release identity is annotated tag
+`v1.1.0` at `bf3af815`; the project was not published to PyPI.
