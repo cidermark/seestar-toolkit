@@ -615,7 +615,9 @@ def test_original_collision_is_ineligible_for_tiff(tmp_path: Path) -> None:
     planned_file = plan.observations[0].stack
     assert planned_file is not None
     planned_file.fits_destination.parent.mkdir(parents=True)
-    planned_file.fits_destination.write_bytes(b"different archived FITS")
+    _write_stack(planned_file.fits_destination)
+    with fits.open(planned_file.fits_destination, mode="update") as hdus:
+        hdus[0].data[0, 0, 0] += 1
 
     result = archive_seestar_session(root, archive_root=archive_root)
 
@@ -825,3 +827,294 @@ def test_source_policies_are_passed_through_to_execution(tmp_path: Path) -> None
     assert second.execution.collision_policy is CollisionPolicy.ERROR
     assert second.execution.files[0].outcome is ArchiveFileOutcome.COLLISION
     assert second.tiffs == ()
+
+
+def _set_device(root: Path, telescope: str | None) -> None:
+    for path in root.rglob("*.fit"):
+        with fits.open(path, mode="update") as hdus:
+            if telescope is None:
+                hdus[0].header.pop("TELESCOP", None)
+            else:
+                hdus[0].header["TELESCOP"] = telescope
+
+
+def _tree_fingerprint(root: Path):
+    return {
+        path.relative_to(root): (
+            path.stat().st_mtime_ns,
+            hashlib.sha256(path.read_bytes()).digest(),
+        )
+        for path in root.rglob("*")
+        if path.is_file()
+    }
+
+
+@pytest.mark.parametrize(
+    "devices",
+    [
+        ("S50_99643794", "S50_b90071df"),
+        ("S50_b90071df", "S50_99643794"),
+    ],
+)
+@pytest.mark.parametrize(
+    "hierarchy",
+    [
+        "{target}/{location}/{session_end_date}",
+        "{location}/{session_end_date}/{target}",
+    ],
+)
+def test_sequential_devices_with_shared_names_and_reruns(
+    tmp_path: Path,
+    devices: tuple[str, str],
+    hierarchy: str,
+) -> None:
+    archive_root = tmp_path / "archive"
+    sources = []
+    for n, device in enumerate(devices):
+        root, _, _ = _source_tree(tmp_path / str(n), light_count=15)
+        _set_device(root, device)
+        sources.append(root)
+    original = [_tree_fingerprint(root) for root in sources]
+    kwargs = dict(archive_root=archive_root, hierarchy_template=hierarchy)
+    first = archive_seestar_session(sources[0], **kwargs)
+    before = _tree_fingerprint(archive_root)
+    dry = orchestration.prepare_seestar_archive(sources[1], **kwargs)
+    assert _tree_fingerprint(archive_root) == before
+    second = archive_seestar_session(sources[1], **kwargs)
+    assert dry.plan == second.plan
+    for n, result in enumerate((first, second), start=1):
+        assert result.status is SeestarArchiveStatus.COMPLETE
+        observation = result.plan.observations[0]
+        assert observation.observation_name == f"observation_{n:02}"
+        assert len(observation.lights) == 15
+        assert all(item.outcome is ArchiveFileOutcome.COPIED for item in result.execution.files)
+        for item in result.execution.files:
+            assert item.source_path.read_bytes() == item.destination_path.read_bytes()
+            assert fits.getheader(item.destination_path)["TELESCOP"] == devices[n - 1]
+        assert observation.stack.fits_destination.parent == observation.seestar_stacked_directory
+        assert observation.stack.tiff_destination.is_file()
+        assert observation.stack.tiff_destination.parent == observation.seestar_stacked_directory
+    assert (
+        first.plan.observations[0].hierarchy_directory
+        == second.plan.observations[0].hierarchy_directory
+    )
+    index = second.indexes[0].index_path
+    content = index.read_bytes()
+    for n, root in enumerate(sources, start=1):
+        repeated = archive_seestar_session(root, **kwargs)
+        assert repeated.plan.observations[0].observation_name == f"observation_{n:02}"
+        assert all(
+            item.outcome is ArchiveFileOutcome.SKIPPED_IDENTICAL
+            for item in repeated.execution.files
+        )
+        assert index.read_bytes() == content
+    assert len(list(archive_root.rglob("observation_*"))) == 2
+    for device in devices:
+        assert content.count(f"- Telescope: {device}".encode()) == 1
+    assert content.count(b"- Light subs: 15") == 2
+    index.unlink()
+    regenerated = indexing.generate_archive_indexes(second.plan, second.execution)
+    assert regenerated[0].outcome is ArchiveIndexOutcome.CREATED
+    assert index.read_bytes() == content
+    assert [_tree_fingerprint(root) for root in sources] == original
+
+
+@pytest.mark.parametrize(
+    ("archived", "incoming"),
+    [
+        ("S50_99643794", "S50_99643794"),
+        (" s50_99643794 ", "S50_99643794"),
+        ("Seestar S50", "S50_99643794"),
+        (None, "S50_99643794"),
+        ("S50_99643794", None),
+        ("S50_99643794", "Seestar S50"),
+        ("other", "S50_99643794"),
+        (None, "Seestar S50"),
+    ],
+)
+def test_sequential_noncontradictory_device_evidence_reuses_filename_match(
+    tmp_path: Path,
+    archived: str | None,
+    incoming: str | None,
+) -> None:
+    root, _, _ = _source_tree(tmp_path / "first")
+    other, _, _ = _source_tree(tmp_path / "second")
+    _set_device(root, archived)
+    _set_device(other, incoming)
+    archive_root = tmp_path / "archive"
+    archive_seestar_session(root, archive_root=archive_root)
+    prepared = orchestration.prepare_seestar_archive(other, archive_root=archive_root)
+    assert prepared.plan.observations[0].observation_name == "observation_01"
+
+
+@pytest.mark.parametrize("problem", ["generic-first", "mixed", "corrupt"])
+def test_sequential_reconciliation_checks_all_archived_fits(tmp_path: Path, problem: str) -> None:
+    root, _, _ = _source_tree(tmp_path / "first")
+    other, _, _ = _source_tree(tmp_path / "second")
+    _set_device(root, "S50_99643794")
+    _set_device(other, "S50_b90071df" if problem == "generic-first" else "S50_99643794")
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root)
+    directory = first.plan.observations[0].lights_directory
+    extra = directory / "A_extra.fit"
+    if problem == "corrupt":
+        extra.write_bytes(b"not FITS")
+    else:
+        _write_raw(extra)
+        with fits.open(extra, mode="update") as hdus:
+            hdus[0].header["TELESCOP"] = (
+                "Seestar S50" if problem == "generic-first" else "S50_b90071df"
+            )
+    before = _tree_fingerprint(archive_root)
+    prepared = orchestration.prepare_seestar_archive(other, archive_root=archive_root)
+    assert prepared.plan.observations[0].observation_name == "observation_02"
+    assert _tree_fingerprint(archive_root) == before
+
+
+@pytest.mark.parametrize("dimension", ["target", "location", "night"])
+def test_sequential_reconciliation_stays_within_hierarchy_scope(
+    tmp_path: Path, dimension: str
+) -> None:
+    root, _, _ = _source_tree(tmp_path / "first")
+    other, _, _ = _source_tree(tmp_path / "second")
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root)
+    kwargs = {}
+    if dimension == "location":
+        kwargs["explicit_location"] = "Another site"
+    else:
+        for path in other.rglob("*.fit"):
+            with fits.open(path, mode="update") as hdus:
+                if dimension == "target":
+                    hdus[0].header["OBJECT"] = "Other target"
+                else:
+                    time = datetime.fromisoformat(hdus[0].header["DATE-OBS"])
+                    hdus[0].header["DATE-OBS"] = (time + timedelta(days=1)).isoformat()
+    second = orchestration.prepare_seestar_archive(other, archive_root=archive_root, **kwargs)
+    assert second.plan.observations[0].observation_name == "observation_01"
+    assert (
+        second.plan.observations[0].hierarchy_directory
+        != first.plan.observations[0].hierarchy_directory
+    )
+
+
+@pytest.mark.parametrize("archived_device", ["Seestar S50", "S50_b90071df"])
+def test_reconciliation_reserves_selections_across_incoming_observations(
+    tmp_path: Path,
+    archived_device: str,
+) -> None:
+    archive_root = tmp_path / "archive"
+    history, _, _ = _source_tree(tmp_path / "history")
+    _set_device(history, archived_device)
+    archive_seestar_session(history, archive_root=archive_root)
+    observations = []
+    for n, device in enumerate(("S50_99643794", "S50_b90071df"), start=1):
+        root, _, _ = _source_tree(tmp_path / str(n))
+        _set_device(root, device)
+        plan = _planned(root, archive_root)
+        observations.append(
+            orchestration._rename_planned_observation(plan.observations[0], f"observation_{n:02}")
+        )
+    combined = replace(plan, observations=tuple(observations))
+    reconciled = orchestration._reconcile_incremental_observations(combined)
+    names = [observation.observation_name for observation in reconciled.observations]
+    assert names == (
+        ["observation_01", "observation_02"]
+        if archived_device == "Seestar S50"
+        else ["observation_02", "observation_01"]
+    )
+    assert (
+        len(
+            {
+                item.fits_destination
+                for observation in reconciled.observations
+                for item in (*observation.lights, observation.stack)
+            }
+        )
+        == 4
+    )
+
+
+def test_reconciliation_collects_incoming_identity_after_generic_metadata(tmp_path: Path) -> None:
+    history, _, _ = _source_tree(tmp_path / "history")
+    _set_device(history, "S50_99643794")
+    incoming, lights, _ = _source_tree(tmp_path / "incoming", light_count=2)
+    _set_device(incoming, "S50_b90071df")
+    with fits.open(lights[0], mode="update") as hdus:
+        hdus[0].header["TELESCOP"] = "Seestar S50"
+    archive_root = tmp_path / "archive"
+    archive_seestar_session(history, archive_root=archive_root)
+    prepared = orchestration.prepare_seestar_archive(incoming, archive_root=archive_root)
+    assert prepared.plan.observations[0].metadata.telescope == "Seestar S50"
+    assert prepared.plan.observations[0].observation_name == "observation_02"
+
+
+def test_unreadable_archived_metadata_does_not_authorise_filename_reuse(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root, _, _ = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+    archive_seestar_session(root, archive_root=archive_root)
+    monkeypatch.setattr(
+        orchestration, "inspect_fits", Mock(side_effect=PermissionError("unreadable"))
+    )
+    prepared = orchestration.prepare_seestar_archive(root, archive_root=archive_root)
+    assert prepared.plan.observations[0].observation_name == "observation_02"
+
+
+@pytest.mark.parametrize("reject_saved", [False, True])
+def test_interactive_location_preserves_sequential_device_reconciliation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    reject_saved: bool,
+) -> None:
+    archive_root = tmp_path / "archive"
+    first, _, _ = _source_tree(tmp_path / "A", light_count=15)
+    second, _, _ = _source_tree(tmp_path / "B", light_count=15)
+    _set_device(first, "S50_99643794")
+    _set_device(second, "S50_b90071df")
+    config = ArchiveConfig(
+        saved_locations=(SavedLocation("Other site", 51.4, -0.7, 100),) if reject_saved else ()
+    )
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: config)
+    monkeypatch.setattr(cli.sys.stdin, "isatty", lambda: True)
+    assert cli.main(["archive", str(first), str(archive_root), "--location", "Bracknell"]) == 0
+    capsys.readouterr()
+    args = ["archive", str(second), str(archive_root)]
+    before = _tree_fingerprint(archive_root)
+    assert cli.main([*args, "--location", "Bracknell", "--dry-run"]) == 0
+    explicit = capsys.readouterr().out
+
+    def interactive(*options, expected_status=0):
+        answers = ["n", "Bracknell"] if reject_saved else ["Bracknell"]
+        prompt = Mock(side_effect=answers)
+        monkeypatch.setattr("builtins.input", prompt)
+        assert cli.main([*args, *options]) == expected_status
+        assert prompt.call_count == len(answers)
+        return capsys.readouterr().out
+
+    dry = interactive("--dry-run")
+    assert dry == explicit
+    assert "Plan observation_02:" in dry
+    assert _tree_fingerprint(archive_root) == before
+    output = interactive()
+    assert "16 copied" in output
+    assert "0 original failures" in output
+    hierarchy = archive_root / "Target/Bracknell/20260903"
+    for number, device, source in ((1, "S50_99643794", first), (2, "S50_b90071df", second)):
+        observation = hierarchy / f"observation_{number:02}"
+        files = tuple(observation.rglob("*.fit"))
+        assert len(files) == 16
+        assert {fits.getheader(path)["TELESCOP"] for path in files} == {device}
+        originals = {path.name: path.read_bytes() for path in source.rglob("*.fit")}
+        assert {path.name: path.read_bytes() for path in files} == originals
+        assert len(tuple(observation.rglob("*.tiff"))) == 1
+    before_repeat = _tree_fingerprint(archive_root)
+    # Existing stack TIFFs are preserved and reported as partial on reruns.
+    repeated = interactive(expected_status=1)
+    assert "16 skipped identical" in repeated
+    assert "0 original failures" in repeated
+    assert not (hierarchy / "observation_03").exists()
+    assert _tree_fingerprint(archive_root) == before_repeat

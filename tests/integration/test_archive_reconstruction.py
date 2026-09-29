@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import shutil
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import numpy as np
@@ -19,13 +19,17 @@ from seestar_toolkit.archive import (
 DATA_DIR = Path(__file__).parents[1] / "data" / "seestar"
 
 
-def _write_frame(path: Path, captured_at: datetime, *, stack: bool) -> None:
+def _write_frame(
+    path: Path, captured_at: datetime, *, stack: bool, telescope: str | None = None
+) -> None:
     header = fits.Header()
     header["DATE-OBS"] = captured_at.isoformat()
     header["OBJECT"] = "IC 434"
     header["EXPTIME"] = 10.0
     header["FILTER"] = "LP"
     header["EQMODE"] = 0
+    if telescope is not None:
+        header["TELESCOP"] = telescope
     if stack:
         data = np.zeros((3, 8, 10), dtype=np.uint16)
     else:
@@ -101,3 +105,36 @@ def test_generated_fits_utc_time_is_not_compared_with_local_filename_time(
 
     assert observation.first_light_at == captured_at
     assert "FITS and filename timestamps differ" not in " ".join(observation.problems)
+
+
+def test_generated_dual_device_fits_reconstruct_separately(tmp_path: Path) -> None:
+    root = tmp_path / "My Works"
+    product = root / "IC 434"
+    sub = root / "IC 434_sub"
+    product.mkdir(parents=True)
+    sub.mkdir()
+    captured_at = datetime(2026, 1, 3, 22)
+    expected = {}
+    for index, telescope in enumerate(("S50_00000001", "S50_00000002")):
+        lights = [sub / f"Light_device{index}_{n}.fit" for n in range(2)]
+        for n, light in enumerate(lights):
+            _write_frame(
+                light, captured_at + timedelta(seconds=n * 11), stack=False, telescope=telescope
+            )
+        stack = product / f"Stacked_2_device{index}.fit"
+        _write_frame(stack, captured_at + timedelta(seconds=22), stack=True, telescope=telescope)
+        expected[stack] = lights
+    before = {path: _fingerprint(path) for path in root.rglob("*.fit")}
+    result = reconstruct_seestar_observations(discover_seestar_inputs(root))
+    assert len(result.observations) == 2
+    for observation in result.observations:
+        assert observation.status is ObservationStatus.COMPLETE
+        assert observation.stack is not None
+        assert [light.source_path for light in observation.lights] == expected[
+            observation.stack.source_path
+        ]
+        assert all(
+            light.fits_inspection.telescope == observation.stack.fits_inspection.telescope
+            for light in observation.lights
+        )
+    assert {path: _fingerprint(path) for path in before} == before

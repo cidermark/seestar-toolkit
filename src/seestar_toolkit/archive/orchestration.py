@@ -7,7 +7,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from seestar_toolkit.conversion import convert_fits_to_tiff
-from seestar_toolkit.fits import FitsError
+from seestar_toolkit.fits import FitsError, inspect_fits
 from seestar_toolkit.tiff import TiffError
 
 from .discovery import discover_seestar_inputs
@@ -27,7 +27,11 @@ from .orchestration_models import (
 )
 from .planning import plan_seestar_archive
 from .planning_models import ArchivePlan, PlannedFile, SavedLocation
-from .reconstruction import reconstruct_seestar_observations
+from .reconstruction import (
+    _recognised_telescope_identity,
+    _telescope_identity,
+    reconstruct_seestar_observations,
+)
 
 _TIFF_ELIGIBLE_OUTCOMES = frozenset(
     {
@@ -87,47 +91,101 @@ def prepare_seestar_archive(
 
 
 def _reconcile_incremental_observations(plan: ArchivePlan) -> ArchivePlan:
-    """Keep rerun destinations but allocate new observations after archived history."""
-    used_by_hierarchy: dict[Path, set[int]] = {}
+    """Reuse compatible filename matches, reserving each selection once per plan."""
+    existing_by_hierarchy: dict[Path, dict[int, Path]] = {}
+    reserved_by_hierarchy: dict[Path, set[int]] = {}
+    identity_cache: dict[Path, frozenset[str] | None] = {}
     reconciled = []
     for observation in plan.observations:
         hierarchy = observation.hierarchy_directory
-        used = used_by_hierarchy.setdefault(hierarchy, _existing_observation_numbers(hierarchy))
+        if hierarchy not in existing_by_hierarchy:
+            existing_by_hierarchy[hierarchy] = _existing_observation_directories(hierarchy)
+        existing = existing_by_hierarchy[hierarchy]
+        reserved = reserved_by_hierarchy.setdefault(hierarchy, set())
         current_number = int(observation.observation_name.removeprefix("observation_"))
-        current_has_matching_file = any(
-            item.fits_destination.exists()
+        incoming_ids = {
+            identity
             for item in (
-                *observation.lights,
-                *((observation.stack,) if observation.stack else ()),
+                *observation.reconstructed.lights,
+                *((observation.reconstructed.stack,) if observation.reconstructed.stack else ()),
             )
-        )
-        if current_number not in used or current_has_matching_file:
-            selected = current_number
+            if (identity := _telescope_identity(item)) is not None
+        }
+        relative_files = [Path("lights") / item.source_path.name for item in observation.lights]
+        if observation.stack is not None:
+            relative_files.append(Path("seestar_stacked") / observation.stack.source_path.name)
+
+        # Prefer the original number when several compatible filename matches exist.
+        selected = None
+        for number in sorted(existing, key=lambda n: (n != current_number, n)):
+            directory = existing[number]
+            if number in reserved or not any(
+                (directory / path).is_file() for path in relative_files
+            ):
+                continue
+            if directory not in identity_cache:
+                identity_cache[directory] = _archived_device_identities(directory)
+            archived_ids = identity_cache[directory]
+            # None means unreadable, not successfully inspected missing TELESCOP.
+            if archived_ids is not None and len(archived_ids | incoming_ids) <= 1:
+                selected = number
+                break
+        if selected is None:
+            selected = max((*existing, *reserved), default=0) + 1
+            name = f"observation_{selected:0{max(2, len(str(selected)))}d}"
         else:
-            selected = max(used, default=0) + 1
-        used.add(selected)
-        name = f"observation_{selected:0{max(2, len(str(selected)))}d}"
+            name = existing[selected].name
+        reserved.add(selected)
         reconciled.append(_rename_planned_observation(observation, name))
     return replace(plan, observations=tuple(reconciled))
 
 
-def _existing_observation_numbers(hierarchy: Path) -> set[int]:
+def _existing_observation_directories(hierarchy: Path) -> dict[int, Path]:
     if not hierarchy.is_dir():
-        return set()
-    numbers = set()
-    for path in hierarchy.iterdir():
+        return {}
+    directories = {}
+    for path in sorted(hierarchy.iterdir()):
         match = _OBSERVATION_DIRECTORY.fullmatch(path.name)
         if not match or not path.is_dir() or path.is_symlink():
             continue
-        has_archived_fits = any(
-            child.is_file() and child.suffix.casefold() in {".fit", ".fits"}
-            for directory in (path / "lights", path / "seestar_stacked")
-            if directory.is_dir() and not directory.is_symlink()
-            for child in directory.iterdir()
-        )
+        try:
+            has_archived_fits = any(
+                child.is_file() and child.suffix.casefold() in {".fit", ".fits"}
+                for directory in (path / "lights", path / "seestar_stacked")
+                if directory.is_dir() and not directory.is_symlink()
+                for child in directory.iterdir()
+            )
+        except OSError:
+            # Reserve inaccessible history rather than treating its number as free.
+            has_archived_fits = True
         if has_archived_fits:
-            numbers.add(int(match.group("number")))
-    return numbers
+            directories[int(match.group("number"))] = path
+    return directories
+
+
+def _archived_device_identities(directory: Path) -> frozenset[str] | None:
+    """Read all relevant FITS; an inspection failure makes this history unsafe to reuse."""
+    identities = set()
+    try:
+        for name in ("lights", "seestar_stacked"):
+            frame_directory = directory / name
+            if frame_directory.is_symlink():
+                return None
+            if not frame_directory.is_dir():
+                continue
+            for path in sorted(frame_directory.iterdir()):
+                if path.suffix.casefold() not in {".fit", ".fits"}:
+                    continue
+                if path.is_symlink():
+                    return None
+                if not path.is_file():
+                    continue
+                identity = _recognised_telescope_identity(inspect_fits(path).telescope)
+                if identity is not None:
+                    identities.add(identity)
+    except (FitsError, OSError):
+        return None
+    return frozenset(identities)
 
 
 def _rename_planned_observation(observation, name: str):

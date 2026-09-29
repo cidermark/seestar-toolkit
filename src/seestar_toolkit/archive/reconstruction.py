@@ -24,6 +24,7 @@ from .reconstruction_models import (
 
 _FILENAME_TIMESTAMP = re.compile(r"(?P<date>\d{8})-(?P<time>\d{6})(?:_|$)")
 _STACK_COUNT = re.compile(r"^stacked_(?P<count>\d+)_", re.IGNORECASE)
+_SEESTAR_DEVICE_ID = re.compile(r"s50_[0-9a-f]{8}")
 _MAX_STACK_ASSOCIATION_GAP = timedelta(hours=12)
 _MIN_LIGHTS_ONLY_CADENCE_LIMIT = timedelta(seconds=60)
 
@@ -79,6 +80,8 @@ def reconstruct_seestar_observations(
 
         compatible = [light for light in pending_lights if _association_is_compatible(light, frame)]
         if compatible:
+            # An unidentified stack must not bridge contradictory light identities.
+            compatible = _telescope_groups(compatible)[0]
             observations.append(_stack_observation(compatible, frame))
             compatible_paths = {light.item.source_path for light in compatible}
             pending_lights = [
@@ -162,6 +165,7 @@ def _metadata_is_compatible(first: SeestarDiscoveryItem, second: SeestarDiscover
         and math.isclose(first_key[1], second_key[1], rel_tol=0.0, abs_tol=1e-6)
         and first_key[2] == second_key[2]
         and _capture_mode_is_compatible(first, second)
+        and _telescope_is_compatible(first, second)
     )
 
 
@@ -186,6 +190,47 @@ def _capture_mode_is_compatible(first: SeestarDiscoveryItem, second: SeestarDisc
     first_mode = first.fits_inspection.eq_mode if first.fits_inspection else None
     second_mode = second.fits_inspection.eq_mode if second.fits_inspection else None
     return first_mode is None or second_mode is None or first_mode == second_mode
+
+
+def _telescope_identity(item: SeestarDiscoveryItem) -> str | None:
+    """Recognise only the evidenced S50 serial form, not generic model names."""
+    telescope = item.fits_inspection.telescope if item.fits_inspection else None
+    return _recognised_telescope_identity(telescope)
+
+
+def _recognised_telescope_identity(telescope: str | None) -> str | None:
+    """Normalise the narrow BUG-002 device convention for both archive stages."""
+    if telescope is None:
+        return None
+    identity = telescope.strip().casefold()
+    return identity if _SEESTAR_DEVICE_ID.fullmatch(identity) else None
+
+
+def _telescope_is_compatible(first: SeestarDiscoveryItem, second: SeestarDiscoveryItem) -> bool:
+    first_id = _telescope_identity(first)
+    second_id = _telescope_identity(second)
+    return first_id is None or second_id is None or first_id == second_id
+
+
+def _telescope_groups(lights: list[_FrameEvidence]) -> list[list[_FrameEvidence]]:
+    """Split ordered lights only on contradictory known device identities.
+
+    Unknown identities join the first compatible group. Retain each group's
+    known identity so an unknown frame cannot bridge two distinct devices.
+    """
+    groups: list[list[_FrameEvidence]] = []
+    identities: list[str | None] = []
+    for light in lights:
+        identity = _telescope_identity(light.item)
+        for index, known in enumerate(identities):
+            if identity is None or known is None or identity == known:
+                groups[index].append(light)
+                identities[index] = known or identity
+                break
+        else:
+            groups.append([light])
+            identities.append(identity)
+    return groups
 
 
 def _stack_observation(
@@ -253,8 +298,11 @@ def _lights_only_observations(
         ].append(light)
 
     observations = [
-        _lights_only_group(sorted(group, key=lambda frame: frame.timestamp.selected_at))
+        _lights_only_group(device_group)
         for _, group in sorted(compatible_groups.items(), key=lambda entry: entry[0])
+        for device_group in _telescope_groups(
+            sorted(group, key=lambda frame: frame.timestamp.selected_at)
+        )
     ]
     observations.extend(_unresolved_light_observation(light) for light in unresolved)
     return observations

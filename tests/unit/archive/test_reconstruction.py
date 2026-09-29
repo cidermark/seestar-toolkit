@@ -35,6 +35,7 @@ def _item(
     directory_target: str | None = "IC 434",
     problem: str | None = None,
     total_exposure: float | None = None,
+    telescope: str | None = "S50_12345678",
 ) -> SeestarDiscoveryItem:
     source_directory = ROOT / (
         "IC 434" if classification is DiscoveryClassification.SEESTAR_STACK_FITS else "IC 434_sub"
@@ -50,7 +51,7 @@ def _item(
         gain=80.0,
         bayer_pattern="GRBG",
         object_name=target,
-        telescope="S50_12345678",
+        telescope=telescope,
         instrument="Seestar S50",
         filter_name=filter_name,
         captured_at=captured_at,
@@ -676,3 +677,175 @@ def test_reconstruction_does_not_mutate_source_file(tmp_path: Path) -> None:
     assert final_stat.st_size == stat.st_size
     assert final_stat.st_mtime_ns == stat.st_mtime_ns
     assert hashlib.sha256(source.read_bytes()).digest() == digest
+
+
+@pytest.mark.parametrize("with_stacks", [False, True])
+def test_overlapping_device_streams_remain_separate(with_stacks: bool) -> None:
+    streams = []
+    stacks = []
+    for index, telescope in enumerate(("S50_b90071df", "S50_99643794")):
+        streams.append(
+            tuple(
+                _item(
+                    DiscoveryClassification.LIGHT_FITS,
+                    f"Light_{index}_{n}.fit",
+                    BASE_TIME + timedelta(seconds=n * 11),
+                    telescope=telescope,
+                )
+                for n in range(2)
+            )
+        )
+        stacks.append(
+            _item(
+                DiscoveryClassification.SEESTAR_STACK_FITS,
+                f"Stacked_2_{index}.fit",
+                BASE_TIME + timedelta(seconds=22),
+                telescope=telescope,
+            )
+        )
+    items = (*streams[0], *streams[1], *(stacks if with_stacks else ()))
+    result = reconstruct_seestar_observations(_inventory(*reversed(items)))
+    assert len(result.observations) == 2
+    for index, observation in enumerate(result.observations):
+        assert observation.lights == streams[index]
+        assert observation.stack == (stacks[index] if with_stacks else None)
+        assert observation.status is (
+            ObservationStatus.COMPLETE if with_stacks else ObservationStatus.LIGHTS_ONLY
+        )
+    assert reconstruct_seestar_observations(_inventory(*items)) == result
+
+
+@pytest.mark.parametrize("with_stack", [False, True])
+@pytest.mark.parametrize(
+    ("first", "second"),
+    [
+        ("S50_b90071df", "S50_b90071df"),
+        (" S50_B90071DF  ", "s50_b90071df"),
+        ("Seestar S50", "Seestar S50"),
+        (None, None),
+        ("Seestar S50", None),
+        (None, "Seestar S50"),
+        ("S50_b90071df", "Seestar S50"),
+        ("Seestar S50", "S50_b90071df"),
+        ("S50_b90071df", None),
+        (None, "S50_b90071df"),
+        ("Other telescope", "S50_b90071df"),
+        ("S50_1234567", "S50_b90071df"),
+        ("S50_123456789", "S50_b90071df"),
+        ("S50_zzzzzzzz", "S50_b90071df"),
+        ("prefix S50_12345678", "S50_b90071df"),
+        ("", "S50_b90071df"),
+    ],
+)
+def test_noncontradictory_telescope_metadata_preserves_grouping(
+    first: str | None,
+    second: str | None,
+    with_stack: bool,
+) -> None:
+    light = _item(DiscoveryClassification.LIGHT_FITS, "Light_a.fit", BASE_TIME, telescope=first)
+    later = _item(
+        DiscoveryClassification.SEESTAR_STACK_FITS
+        if with_stack
+        else DiscoveryClassification.LIGHT_FITS,
+        "Stacked_1_b.fit" if with_stack else "Light_b.fit",
+        BASE_TIME + timedelta(seconds=11),
+        telescope=second,
+    )
+    result = reconstruct_seestar_observations(_inventory(later, light))
+    assert len(result.observations) == 1
+    observation = result.observations[0]
+    assert observation.lights == ((light,) if with_stack else (light, later))
+    assert observation.stack == (later if with_stack else None)
+    assert observation.status is (
+        ObservationStatus.COMPLETE if with_stack else ObservationStatus.LIGHTS_ONLY
+    )
+
+
+def test_different_device_light_and_stack_do_not_associate() -> None:
+    light = _item(
+        DiscoveryClassification.LIGHT_FITS, "Light.fit", BASE_TIME, telescope="S50_b90071df"
+    )
+    stack = _item(
+        DiscoveryClassification.SEESTAR_STACK_FITS,
+        "Stacked_1.fit",
+        BASE_TIME + timedelta(seconds=11),
+        telescope="S50_99643794",
+    )
+    result = reconstruct_seestar_observations(_inventory(light, stack))
+    assert len(result.observations) == 2
+    assert result.observations[0].lights == (light,)
+    assert result.observations[0].status is ObservationStatus.LIGHTS_ONLY
+    assert result.observations[1].stack == stack
+    assert result.observations[1].lights == ()
+    assert result.observations[1].status is ObservationStatus.STACK_ONLY
+
+
+@pytest.mark.parametrize("unknown", [None, "Seestar S50"])
+@pytest.mark.parametrize("unknown_position", [0, 1, 2])
+@pytest.mark.parametrize("with_stack", [False, True])
+def test_unknown_identity_cannot_bridge_contradictory_devices(
+    unknown: str | None,
+    unknown_position: int,
+    with_stack: bool,
+) -> None:
+    identities = ["S50_b90071df", "S50_99643794"]
+    identities.insert(unknown_position, unknown)
+    lights = tuple(
+        _item(
+            DiscoveryClassification.LIGHT_FITS,
+            f"Light_{n}.fit",
+            BASE_TIME + timedelta(seconds=n * 11),
+            telescope=telescope,
+        )
+        for n, telescope in enumerate(identities)
+    )
+    stacks = (
+        (
+            _item(
+                DiscoveryClassification.SEESTAR_STACK_FITS,
+                "Stacked_2.fit",
+                BASE_TIME + timedelta(seconds=33),
+                telescope=unknown,
+            ),
+        )
+        if with_stack
+        else ()
+    )
+    result = reconstruct_seestar_observations(_inventory(*lights, *stacks))
+    assert len(result.observations) == 2
+    assert sum(len(observation.lights) for observation in result.observations) == 3
+    for observation in result.observations:
+        known = {light.fits_inspection.telescope for light in observation.lights} - {unknown}
+        assert len(known) == 1
+
+
+@pytest.mark.parametrize("with_stack", [False, True])
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("target", "NGC 7000"),
+        ("exposure", 20.0),
+        ("filter_name", "IRCUT"),
+        ("eq_mode", 1),
+    ],
+)
+def test_unknown_telescope_preserves_other_incompatibilities(
+    with_stack: bool,
+    field: str,
+    value: object,
+) -> None:
+    light = _item(
+        DiscoveryClassification.LIGHT_FITS, "Light_a.fit", BASE_TIME, telescope="Seestar S50"
+    )
+    later = _item(
+        DiscoveryClassification.SEESTAR_STACK_FITS
+        if with_stack
+        else DiscoveryClassification.LIGHT_FITS,
+        "Stacked_1.fit" if with_stack else "Light_b.fit",
+        BASE_TIME + timedelta(seconds=11),
+        telescope=None,
+        **{field: value},
+    )
+    result = reconstruct_seestar_observations(_inventory(light, later))
+    assert len(result.observations) == 2
+    assert result.observations[0].lights == (light,)

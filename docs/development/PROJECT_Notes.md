@@ -1015,3 +1015,78 @@ runbook reconstructed from the actual release. Final closure criteria 56–60 an
 all Stage 9.4b criteria 1–60 pass. Stage 9.4, Stage 9 and the v1.1.0 release
 process are formally complete. Public release identity is annotated tag
 `v1.1.0` at `bf3af815`; the project was not published to PyPI.
+
+
+## BUG-002 — telescope-aware Observation reconstruction
+
+Implementation is prepared for real-world validation; BUG-002 is not complete.
+Reconstruction now rejects positive contradictory device-identity evidence for
+both light-to-stack association and lights-only grouping. Recognition is limited
+to the observed Seestar S50 convention: `S50_` plus exactly eight hexadecimal
+characters, ignoring case and surrounding whitespace. Arbitrary populated
+`TELESCOP` strings are not assumed to identify a physical device.
+
+Modern Seestar FITS may provide these device-specific identifiers. Historical
+captures may instead use the generic model value `Seestar S50`; generic,
+missing and unrecognised values preserve previous compatibility behaviour
+unless other metadata or positive contradictory device evidence separates the
+frames. Telescope-aware separation is only possible where metadata supplies
+sufficient device-specific evidence. Unknown frames join the first compatible
+group in deterministic chronological processing and cannot bridge two known
+devices; an unidentified stack closes only the first compatible device group.
+This does not establish the physical origin of unidentified frames.
+
+The initial reconstruction change is in `archive/reconstruction.py`. Regression
+coverage includes overlapping dual-device streams, same-device normalisation,
+historical/missing metadata, contradictory identities separated by unknown
+frames, and existing metadata incompatibilities. A small synthetic FITS
+integration test exercises inspection, discovery and reconstruction without
+private captures or additional binary fixtures. Archive hierarchy, metadata
+models, standalone conversion and TIFF generation remain unchanged.
+
+Validation against the original dual-Seestar capture dataset remains pending.
+No BUG-002 completion or implementation commit is recorded here.
+
+
+### BUG-002 sequential archive reconciliation
+
+Sequential imports exposed a second path: one overlapping basename was enough
+to reuse a provisional Observation directory without inspecting archived device
+metadata. Reconstruction within a single source dataset cannot detect this.
+`archive/orchestration.py` now inspects all relevant archived FITS for filename
+match candidates, collects all incoming device identities, and rejects
+contradictory evidence. Recognition is shared with the retained reconstruction
+fix; generic/missing/unrecognised TELESCOP remains noncontradictory.
+
+Compatible existing observations are searched before appending a number, so
+reruns find their established destination. A filename match remains necessary;
+same-device evidence alone does not merge separate runs. Each selection is
+reserved within the current plan. Unreadable or already mixed observations are
+not reused; no repair is attempted. These captures retain the same observing
+night with separate numbered Observations and unchanged original basenames.
+
+Synthetic regression coverage includes 15 shared light names, shared stack
+names and TIFF placement, both import orders and hierarchy orderings, reruns,
+index regeneration, generic-first evidence, unreadable/mixed history, scope
+boundaries and multiple incoming reservations. The original collision test now
+uses valid, different FITS content: corrupt content instead exercises the new
+conservative allocation rule. The original reconstruction tests are retained.
+
+BUG-002 remains OPEN. Full pytest, Ruff, configured formatting, whitespace,
+public fixture/history checks and isolated build/runtime validation are required.
+Real-world validation against the original two physical Seestar datasets is
+still required before closure. No implementation commit or CHANGELOG update is
+made as part of this work.
+
+
+### BUG-002 interactive-location reconciliation bypass
+
+Real-data diagnostics confirmed that incoming and archived device identities
+were correctly recognised, but manual location entry replaced the reconciled
+plan with a fresh standalone plan. `_replan_with_manual_location()` now applies
+the existing incremental reconciliation to that replacement plan. Reconstruction,
+identity recognition and the filesystem-independent planner remain unchanged.
+CLI regressions cover unresolved location entry and rejection of a saved location,
+shared filenames, dry-run equivalence with explicit `--location`, separate device
+membership and repeat imports reusing observation_02. BUG-002 remains OPEN pending
+final acceptance with the user's original two physical Seestar datasets.

@@ -273,6 +273,25 @@ must precede its stack by no more than 12 hours. Missing core evidence,
 conflicts or a wider gap prevent association and leave the light visible for
 conservative fallback or unresolved reporting.
 
+BUG-002 adds telescope compatibility to light-to-stack association and
+lights-only grouping. Modern Seestar FITS may supply a device-specific
+`TELESCOP` identifier; the narrowly recognised form is `S50_` followed by
+exactly eight hexadecimal characters, normalised for case and surrounding
+whitespace. Two recognised, different identities cannot share an observation.
+Historical captures may instead contain a generic value such as `Seestar S50`.
+Generic, missing or unrecognised values provide no device identity and introduce
+no incompatibility by themselves; existing target, exposure, filter, capture-mode
+and timing rules continue to apply. Separation can therefore only be enforced
+when metadata supplies sufficient device-specific evidence.
+
+Unidentified frames cannot bridge contradictory known identities. Within an
+otherwise compatible, chronologically ordered group, an unidentified light joins
+the first compatible device group; that group retains any known identity. An
+unidentified stack closes the first such group and leaves contradictory lights
+available for later stacks or lights-only fallback. This is deterministic
+compatibility handling, not evidence of which physical device produced an
+unidentified frame. Archive paths and metadata models are unchanged.
+
 Lights without a usable stack require a later safe fallback based on temporal,
 cadence and compatible metadata evidence. Ambiguous non-interactive grouping
 must be reported rather than guessed.
@@ -459,12 +478,38 @@ and makes an otherwise successful archive partial without rolling back FITS or
 TIFF output.
 
 Archive preparation reconciles planned observation numbers with already
-established numbered directories for incremental invocations. Matching
-archived filenames retain their existing observation number so reruns and
-collisions remain stable; a new source set for the same concrete
-target/location/session is assigned after existing observation directories
-that contain archived FITS. This is a read-only adjustment before execution
-and does not change the standalone Stage 7.1d planner contract.
+established numbered directories for incremental invocations. BUG-002 makes
+this reconciliation telescope-aware within each concrete target/location/night.
+A filename match (including its light/stack subdirectory) can reuse an existing
+observation only when inspection of all relevant archived FITS succeeds and
+its recognised device identities do not contradict the incoming observation's
+recognised identities. Both stages use the same narrow `S50_` plus eight hex
+characters rule. All incoming frames contribute evidence; a generic first value
+cannot hide a recognised identity later in the observation. Generic, missing or
+unrecognised TELESCOP alone creates no incompatibility, and the same device
+identity alone never establishes a rerun without a filename match.
+
+Reconciliation searches existing observations, preferring the provisional
+number then ascending numbers among compatible filename matches. This lets
+repeat imports find a previously allocated `observation_02`. Each selection is
+reserved once per plan. With no compatible match, numbering appends after the
+highest established or reserved number. Existing paths are retained on reuse;
+new paths use the established rename mechanism. Two devices observing the same
+target/location/night remain in one session with separate observations, so
+identical basenames do not collide across those directories.
+
+An existing observation with unreadable FITS or multiple recognised device
+identities is not reused through filename matching, even for an unidentified
+incoming capture. Successfully inspected missing TELESCOP is distinct from
+failed inspection. Such history remains untouched; BUG-002 does not repair
+already mixed observations. Index regeneration derives separate entries from
+correctly separated directories but cannot repair historic contamination, and
+unreadable archived FITS may still cause an independently reported index failure.
+This read-only adjustment precedes execution, also applies to dry-run, and
+preserves the filesystem-free standalone planner contract. Manual/interactive
+location replanning in the CLI must apply this same reconciliation to the
+replacement plan before either dry-run reporting or execution. Metadata inspection
+is cached within preparation; concurrent archive writers remain unsupported.
 
 ## 6. Processing Workspace
 

@@ -28,6 +28,7 @@ from seestar_toolkit.archive import (
     planned_index_paths,
     prepare_seestar_archive,
 )
+from seestar_toolkit.archive.orchestration import _reconcile_incremental_observations
 from seestar_toolkit.batch import convert_fits_directory
 from seestar_toolkit.conversion import convert_fits_to_tiff
 from seestar_toolkit.fits import FitsError
@@ -287,7 +288,7 @@ def _replan_with_manual_location(prepared: PreparedSeestarArchive) -> PreparedSe
     return PreparedSeestarArchive(
         discovery=prepared.discovery,
         reconstruction=prepared.reconstruction,
-        plan=plan,
+        plan=_reconcile_incremental_observations(plan),
     )
 
 
