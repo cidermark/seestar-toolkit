@@ -1090,3 +1090,25 @@ CLI regressions cover unresolved location entry and rejection of a saved locatio
 shared filenames, dry-run equivalence with explicit `--location`, separate device
 membership and repeat imports reusing observation_02. BUG-002 remains OPEN pending
 final acceptance with the user's original two physical Seestar datasets.
+
+## ENH-001 — START: Checkpoint 1 foundation and archive preferences
+
+ENH-001 is STARTED and unreleased. Implementation branch:
+`enh/ENH-001-config-management`; actual base:
+`78488712aef7650258bddb3f31ea2dda2fa0e28d`, also the main baseline at start.
+There was no source/configuration drift from the `3c75002` audit. The supplied
+specification was the only initial untracked addition and remains unchanged.
+
+Checkpoint 1 provides document-aware scalar inspection, provenance, targeted
+repair, no-op handling and safe persistence, plus the corresponding CLI verbs.
+TOMLKit is a runtime dependency because standard-library TOML parsing cannot
+preserve comments/unknown entries for editing. Existing archive policy and
+legacy-location semantics are retained. Git actions remain user-controlled;
+implementation commit ID is PENDING, not invented.
+
+The [checkpoint report](change_documents/ENH_001/ENH-001_CHECKPOINT_1_REPORT.md)
+records acceptance coverage, validation and changed files. Checkpoint 2 owns
+location mutation, prompts, GPS extraction/all-match inspection and strict
+location-edit validation. Checkpoint 3 owns final user-guide/PDF/checksum
+updates, version/artifact decisions and enhancement closure. No ENH-002 or
+observing-night change is included.

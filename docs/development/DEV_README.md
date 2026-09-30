@@ -98,3 +98,32 @@ reports their planned paths but does not create index or temporary files.
 pytest
 ruff check .
 ```
+
+## Unreleased ENH-001 Checkpoint 1 commands
+
+The development branch adds explicit archive-preference management; these
+commands are not part of the published v1.1.0 release:
+
+```bash
+seestar-toolkit config show
+seestar-toolkit config show --saved
+seestar-toolkit config show --defaults
+seestar-toolkit config set archive.source_action copy
+seestar-toolkit config unset archive.source_action
+seestar-toolkit config show --config /existing/config.toml
+```
+
+The supported preferences are `archive.hierarchy`, `archive.source_action`
+(`copy`/`move`) and `archive.collision_policy`
+(`skip-identical`/`error`/`overwrite`). An explicit configuration path must exist;
+only a successful set can create the missing default file. Ordinary show labels
+one effective value per setting as saved/default and includes saved locations.
+Saved inspection includes unknown entries. Defaults inspection never reads the
+saved file and cannot be combined with `--config`. Readable invalid known values
+are inspectable with diagnostics and can be repaired by a targeted edit if the
+whole proposed document then validates. No-op operations do not rewrite files.
+
+Exit codes: 0 success/no-op, 1 invalid configuration or failed operation, 2
+argument/usage error. Legacy location conflicts are warnings and do not block
+scalar edits. Location mutation and FITS extraction are not available in this
+checkpoint. Archive-location prompt responses are never automatically saved.

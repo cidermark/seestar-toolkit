@@ -230,3 +230,12 @@ Stage markers:
 
 Detailed implementation instructions belong in individual stage change
 documents rather than in this changelog.
+
+## Pending development work — ENH-001 Checkpoint 1
+
+Unreleased configuration foundation and archive-preference management passed
+Checkpoint 1 validation on `enh/ENH-001-config-management`; ENH-001 remains STARTED.
+Implementation commit: **PENDING
+(user-controlled; uncommitted)**. See
+[Checkpoint 1 report](change_documents/ENH_001/ENH-001_CHECKPOINT_1_REPORT.md).
+No historical commit rows or release version have been changed.

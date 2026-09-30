@@ -607,3 +607,37 @@ which overrides the safe built-in COPY, `skip-identical`, and
 `{target}/{location}/{session_end_date}` defaults. Saved GPS locations use the
 existing `SavedLocation` model. No network geocoder or configuration writer is
 present. The existing `convert-batch` command remains flat and non-recursive.
+
+### ENH-001 Checkpoint 1 — unreleased configuration preferences
+
+The released v1.1.0 configuration interface remains the baseline described
+above. The unreleased ENH-001 foundation adds explicit `config show`,
+`show --saved`, `show --defaults`, `set archive.SETTING VALUE` and
+`unset archive.SETTING` commands. Only hierarchy, source_action and
+collision_policy are managed at this checkpoint. Location editing and FITS
+extraction are not implemented here. Archive prompt answers remain temporary.
+
+`archive/config_document.py` separates raw, comment-preserving TOMLKit documents
+from runtime `ArchiveConfig`. Inspection reports one effective scalar with
+saved/default provenance and saved locations. Raw inspection also retains unknown
+entries and readable invalid values; invalid known values produce diagnostics
+and a failing status rather than fabricated defaults. Built-in-only inspection
+never reads a saved file. The CLI owns presentation and argument parsing; shared
+operations do not print or prompt.
+
+Scalar edits validate the complete proposed document, including hierarchy, but
+retain legacy zero-radius, overlapping and duplicate-name locations with
+inspection warnings. Runtime archive loading retains its existing policy/type
+checks and still validates the effective hierarchy after CLI overrides. Strict
+location editing and geographic edge-case work remain Checkpoint 2 scope.
+
+Writes resolve symbolic links, preserve the link and existing target mode, and
+use a sibling temporary file with atomic target replacement. New configuration
+files are owner-only (0600). No-op operations preserve bytes and modification
+time. File content, identity, modification metadata, permissions and link target
+changes are checked before preparation/replacement; this is retry protection,
+not locking. Broken links, malformed TOML and unreadable files fail clearly.
+The absent default may be created by a successful set; an explicit path must
+already exist. Existing-schema invalid values can be repaired individually only
+when the complete proposed result validates. Unknown entries and unaffected
+locations/comments are retained; edited whitespace need not remain identical.

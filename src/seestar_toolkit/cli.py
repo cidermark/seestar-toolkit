@@ -53,6 +53,39 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers = parser.add_subparsers(dest="command")
 
+    config_parser = subparsers.add_parser(
+        "config",
+        help="Inspect and manage saved archive preferences (unreleased ENH-001).",
+        description="Inspect or explicitly save archive preferences. Exit: 0 success/no-op, "
+        "1 invalid configuration or failed operation, 2 invalid arguments.",
+    )
+    verbs = config_parser.add_subparsers(dest="config_command", required=True)
+    show = verbs.add_parser("show", help="Show effective settings and saved locations.")
+    modes = show.add_mutually_exclusive_group()
+    modes.add_argument(
+        "--saved", action="store_true", help="Show only saved entries, including unknown keys."
+    )
+    modes.add_argument(
+        "--defaults",
+        action="store_true",
+        help="Show defaults without reading configuration; cannot combine with --config.",
+    )
+    preferences = ("archive.hierarchy", "archive.source_action", "archive.collision_policy")
+    set_parser = verbs.add_parser(
+        "set",
+        help="Validate and save one archive preference.",
+        description="Set hierarchy (each of {target}/{location}/{session_end_date} once), "
+        "source_action (copy/move), or collision_policy (skip-identical/error/overwrite).",
+    )
+    set_parser.add_argument("setting", choices=preferences)
+    set_parser.add_argument("value")
+    unset = verbs.add_parser("unset", help="Remove a saved preference so its default applies.")
+    unset.add_argument("setting", choices=preferences)
+    for command in (show, set_parser, unset):
+        command.add_argument(
+            "--config", type=Path, metavar="PATH", help="Use only this existing configuration file."
+        )
+
     convert_parser = subparsers.add_parser(
         "convert",
         help="Convert one FIT/FITS image to one TIFF.",
@@ -142,6 +175,10 @@ def configure_logging(verbose: bool) -> None:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == "config":
+        if args.config_command == "show" and args.defaults and args.config is not None:
+            parser.error("--defaults cannot be combined with --config")
+        return _run_config(args)
     configure_logging(args.verbose)
 
     if args.command is None:
@@ -186,6 +223,66 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     parser.error(f"Unknown command: {args.command}")
     return 2
+
+
+def _run_config(args: argparse.Namespace) -> int:
+    # Import document editing only for configuration commands; other commands stay independent.
+    from seestar_toolkit.archive.config_document import (
+        BUILTIN_SETTINGS,
+        inspect_config_document,
+        persist_config_edit,
+        prepare_archive_edit,
+        read_config_document,
+    )
+
+    if args.config_command == "show" and args.defaults:
+        for name, value in BUILTIN_SETTINGS.items():
+            print(f"{name} = {value} [default]")
+        print("Locations: no built-in observing sites; saved configuration not read")
+        return 0
+    try:
+        document = read_config_document(args.config)
+        print(f"Configuration: {document.path} ({'exists' if document.exists else 'missing'})")
+        if document.target != document.path:
+            print(f"Resolved destination: {document.target}")
+        if args.config_command == "show":
+            inspection = inspect_config_document(document)
+            if args.saved:
+                print(document.raw.as_string() or "No saved entries")
+            else:
+                for setting in inspection.settings:
+                    label = f"{setting.source}; INVALID" if setting.error else setting.source
+                    print(f"{setting.name} = {setting.value} [{label}]")
+                print("Saved locations:")
+                for location in inspection.locations:
+                    print(f"  {location}")
+                if not inspection.locations:
+                    print("  none")
+            for warning in inspection.warnings:
+                print(f"Warning: {warning}", file=sys.stderr)
+            for error in inspection.errors:
+                print(f"Error: {error}", file=sys.stderr)
+            return 1 if inspection.errors else 0
+        edit = prepare_archive_edit(
+            document, args.setting, args.value if args.config_command == "set" else None
+        )
+        persist_config_edit(edit)
+        if edit.changed:
+            print(
+                f"Saved {edit.setting}: {edit.previous.value} [{edit.previous.source}] -> "
+                f"{edit.proposed.value} [{edit.proposed.source}]"
+            )
+        else:
+            print(
+                f"No change needed: {edit.setting} "
+                f"({'no saved entry' if edit.previous.source == 'default' else 'already saved'})"
+            )
+        for warning in edit.warnings:
+            print(f"Warning: {warning}", file=sys.stderr)
+        return 0
+    except ArchiveConfigError as error:
+        print(f"Error: {error}", file=sys.stderr)
+        return 1
 
 
 def _run_archive(args: argparse.Namespace) -> int:
