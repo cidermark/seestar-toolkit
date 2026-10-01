@@ -242,3 +242,14 @@ Implementation commit: **PENDING
 (user-controlled; uncommitted)**. See
 [Checkpoint 1 report](change_documents/ENH_001/ENH-001_CHECKPOINT_1_REPORT.md).
 No historical commit rows or release version have been changed.
+
+## Pending development work — ENH-001b location management
+
+ENH-001b (Checkpoint 2) implements saved-location creation, partial/combined edits,
+rename/removal, Update config / Skip authorisation and strict FITS site extraction
+with all-match reporting. It reuses completed ENH-001a persistence and retains
+legacy archive matching. Base: `53fe9fb`; implementation commit: **PENDING
+(user-controlled; uncommitted)**. See the
+[ENH-001b report](change_documents/ENH_001/ENH-001_CHECKPOINT_2_REPORT.md).
+ENH-001 remains STARTED and unreleased; ENH-001c documentation/closure is outstanding.
+Historical records and package version are unchanged.

@@ -272,6 +272,7 @@ def _haversine_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
         math.sin(latitude_delta / 2) ** 2
         + math.cos(latitude_1) * math.cos(latitude_2) * math.sin(longitude_delta / 2) ** 2
     )
+    a = min(1.0, max(0.0, a))
     return _EARTH_RADIUS_M * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 

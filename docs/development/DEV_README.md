@@ -127,3 +127,42 @@ Exit codes: 0 success/no-op, 1 invalid configuration or failed operation, 2
 argument/usage error. Legacy location conflicts are warnings and do not block
 scalar edits. Location mutation and FITS extraction are not available in this
 checkpoint. Archive-location prompt responses are never automatically saved.
+
+## Unreleased ENH-001b location commands
+
+ENH-001b adds location management to the development branch; the historical
+ENH-001a checkpoint above describes the earlier scope. These commands are not
+part of published v1.1.0:
+
+```bash
+seestar-toolkit config show --extract capture.fit
+seestar-toolkit config set --location "Example Site" --latitude 0 --longitude 0
+seestar-toolkit config set --location "Example Site" --extract capture.fit --radius-m 100
+seestar-toolkit config set --location "Example Site" --latitude 1 --update
+seestar-toolkit config set --location "Example Site" --rename "New Site" --radius-m 50 --update
+seestar-toolkit config unset --location "New Site"
+```
+
+Each verb accepts `--config /existing/config.toml`. Extraction uses only site
+headers, never image arrays or target RA/DEC. `show --extract` lists every matching
+saved location with coordinates, radius and distance; conflicting legacy locations
+are warnings. `--extract`, `--saved` and `--defaults` inspection modes are exclusive.
+
+New locations require both coordinates and default to a 100 m radius. Existing
+entries retain unspecified fields. FITS extraction replaces both coordinates and
+cannot be mixed with manual coordinates. Names use trimmed/case-folded lookup;
+ambiguous legacy names require manual disambiguation. Renames affect only saved
+configuration. New/edited entries must have positive radii, unique logical/cleaned
+names and non-touching, non-overlapping circles. Unrelated legacy conflicts may
+remain, but the complete proposed document must pass existing-schema validation.
+
+Existing edits display old/proposed entries and ask Update config / Skip; Skip is
+the default. `--update` authorises an existing-entry replacement without a prompt
+and is required for unattended replacement. It never bypasses validation or
+creates a missing target. Combined edits use one prompt and one write. Unchanged
+edits and absent removals are successful no-ops; removal needs no extra question.
+Exit status remains 0 for success/skip/no-op, 1 for configuration/extraction/write
+or unattended-authorisation errors, and 2 for argument errors.
+
+ENH-001c will update final user guides and PDF/checksum artifacts. ENH-001 remains
+STARTED; package version and release metadata are unchanged.

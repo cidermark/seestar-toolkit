@@ -1112,3 +1112,22 @@ location mutation, prompts, GPS extraction/all-match inspection and strict
 location-edit validation. Checkpoint 3 owns final user-guide/PDF/checksum
 updates, version/artifact decisions and enhancement closure. No ENH-002 or
 observing-night change is included.
+
+## ENH-001b — START: location management
+
+ENH-001b (specification Checkpoint 2) starts from clean HEAD `53fe9fb` on
+`enh/ENH-001-config-management`, with the local origin tracking reference at the
+same commit. ENH-001a implementation `99c3272` is the persistence foundation;
+`53fe9fb` records its completion. No baseline drift was found. Git mutations remain
+user-controlled; the ENH-001b implementation commit is PENDING review.
+
+The scope adds strict header-only FITS site extraction, all-match inspection,
+manual/FITS creation, partial updates, rename/removal and interactive/unattended
+update authorisation. Strict rules apply to new/edited entries while unrelated
+legacy conflicts and archive matching remain compatible. No automatic archive
+prompt persistence, archive reorganisation, observing-night changes or ENH-002
+work is included. No dependency, packaging or version change is required.
+
+The [ENH-001b report](change_documents/ENH_001/ENH-001_CHECKPOINT_2_REPORT.md)
+records acceptance coverage, validation and changed files. ENH-001 remains STARTED.
+ENH-001c owns final user guides, PDFs/checksums, final acceptance and formal closure.

@@ -42,14 +42,13 @@ def test_show_provenance_saved_and_defaults(config_path, capsys):
         ["config"],
         ["config", "show", "--saved", "--defaults"],
         ["config", "show", "--defaults", "--config", "x"],
-        ["config", "show", "--extract", "x"],
         ["config", "set", "--location", "x"],
         ["config", "set", "archive.source_action", "copy", "--update"],
         ["config", "set", "archive.source_root", "x"],
         ["config", "unset", "archive.source_action", "--saved"],
     ],
 )
-def test_invalid_and_deferred_arguments_are_usage_errors(config_path, args):
+def test_invalid_arguments_are_usage_errors(config_path, args):
     with pytest.raises(SystemExit) as error:
         cli.main(args)
     assert error.value.code == 2

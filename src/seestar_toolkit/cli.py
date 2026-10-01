@@ -55,7 +55,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     config_parser = subparsers.add_parser(
         "config",
-        help="Inspect and manage saved archive preferences (unreleased ENH-001).",
+        help="Inspect and manage archive preferences and locations (unreleased ENH-001).",
         description="Inspect or explicitly save archive preferences. Exit: 0 success/no-op, "
         "1 invalid configuration or failed operation, 2 invalid arguments.",
     )
@@ -70,17 +70,53 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Show defaults without reading configuration; cannot combine with --config.",
     )
+    modes.add_argument(
+        "--extract",
+        type=Path,
+        metavar="FILE",
+        help="Read FITS site headers and report all matching saved locations without writing.",
+    )
     preferences = ("archive.hierarchy", "archive.source_action", "archive.collision_policy")
     set_parser = verbs.add_parser(
         "set",
-        help="Validate and save one archive preference.",
+        help="Validate and save an archive preference or location.",
         description="Set hierarchy (each of {target}/{location}/{session_end_date} once), "
-        "source_action (copy/move), or collision_policy (skip-identical/error/overwrite).",
+        "source_action (copy/move), or collision_policy (skip-identical/error/overwrite). "
+        "Locations require coordinates on creation (radius defaults to 100 m); existing "
+        "entries retain unspecified fields. Existing changes ask Update config / Skip "
+        "unless --update is supplied; unattended replacement requires --update.",
     )
-    set_parser.add_argument("setting", choices=preferences)
-    set_parser.add_argument("value")
+    set_parser.add_argument("setting", choices=preferences, nargs="?")
+    set_parser.add_argument("value", nargs="?")
+    set_parser.add_argument("--location", metavar="NAME", help="Create or edit a saved location.")
+    set_parser.add_argument("--latitude", type=float, help="Site latitude in degrees [-90, 90].")
+    set_parser.add_argument(
+        "--longitude", type=float, help="Site longitude in degrees [-180, 180]."
+    )
+    set_parser.add_argument("--radius-m", type=float, help="Strictly positive matching radius.")
+    set_parser.add_argument(
+        "--extract",
+        type=Path,
+        metavar="FILE",
+        help="Replace both coordinates from SITELAT/SITELONG FITS headers.",
+    )
+    set_parser.add_argument(
+        "--rename",
+        metavar="NEW_NAME",
+        help="Rename an existing saved entry; archive directories are unchanged.",
+    )
+    set_parser.add_argument(
+        "--update",
+        action="store_true",
+        help="Authorise an existing location update without a prompt.",
+    )
     unset = verbs.add_parser("unset", help="Remove a saved preference so its default applies.")
-    unset.add_argument("setting", choices=preferences)
+    unset.add_argument("setting", choices=preferences, nargs="?")
+    unset.add_argument(
+        "--location",
+        metavar="NAME",
+        help="Remove a unique saved location without another confirmation.",
+    )
     for command in (show, set_parser, unset):
         command.add_argument(
             "--config", type=Path, metavar="PATH", help="Use only this existing configuration file."
@@ -176,8 +212,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command == "config":
-        if args.config_command == "show" and args.defaults and args.config is not None:
-            parser.error("--defaults cannot be combined with --config")
+        _validate_config_arguments(parser, args)
         return _run_config(args)
     configure_logging(args.verbose)
 
@@ -225,6 +260,37 @@ def main(argv: Sequence[str] | None = None) -> int:
     return 2
 
 
+def _validate_config_arguments(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
+    if args.config_command == "show":
+        if args.defaults and args.config is not None:
+            parser.error("--defaults cannot be combined with --config")
+        return
+    if args.location is not None:
+        if args.setting is not None or getattr(args, "value", None) is not None:
+            parser.error("Scalar and location forms cannot be mixed")
+        if args.config_command == "set":
+            if all(
+                getattr(args, field) is None
+                for field in ("latitude", "longitude", "radius_m", "rename", "extract")
+            ):
+                parser.error("Location set requires at least one change field")
+            if args.extract is not None and (
+                args.latitude is not None or args.longitude is not None
+            ):
+                parser.error("--extract cannot be combined with manual coordinates")
+    else:
+        if args.setting is None:
+            parser.error("Specify an archive preference or --location NAME")
+        if args.config_command == "set":
+            if args.value is None:
+                parser.error("Setting an archive preference requires a value")
+            if args.update or any(
+                getattr(args, field) is not None
+                for field in ("latitude", "longitude", "radius_m", "rename", "extract")
+            ):
+                parser.error("Location flags require --location NAME")
+
+
 def _run_config(args: argparse.Namespace) -> int:
     # Import document editing only for configuration commands; other commands stay independent.
     from seestar_toolkit.archive.config_document import (
@@ -247,6 +313,8 @@ def _run_config(args: argparse.Namespace) -> int:
             print(f"Resolved destination: {document.target}")
         if args.config_command == "show":
             inspection = inspect_config_document(document)
+            if args.extract is not None:
+                return _show_config_matches(document, args.extract, inspection)
             if args.saved:
                 print(document.raw.as_string() or "No saved entries")
             else:
@@ -263,6 +331,8 @@ def _run_config(args: argparse.Namespace) -> int:
             for error in inspection.errors:
                 print(f"Error: {error}", file=sys.stderr)
             return 1 if inspection.errors else 0
+        if args.location is not None:
+            return _run_location_config(args, document)
         edit = prepare_archive_edit(
             document, args.setting, args.value if args.config_command == "set" else None
         )
@@ -280,9 +350,90 @@ def _run_config(args: argparse.Namespace) -> int:
         for warning in edit.warnings:
             print(f"Warning: {warning}", file=sys.stderr)
         return 0
-    except ArchiveConfigError as error:
+    except (ArchiveConfigError, FitsError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1
+
+
+def _show_config_matches(document, path: Path, inspection) -> int:
+    from seestar_toolkit.archive.config_locations import matching_locations
+    from seestar_toolkit.fits.site_coordinates import extract_site_coordinates
+
+    for warning in inspection.warnings:
+        print(f"Warning: {warning}", file=sys.stderr)
+    if inspection.errors:
+        for error in inspection.errors:
+            print(f"Error: {error}", file=sys.stderr)
+        return 1
+    point = extract_site_coordinates(path)
+    matches = matching_locations(document, point.latitude, point.longitude)
+    print(f"FITS: {path}; latitude={point.latitude}, longitude={point.longitude}")
+    if not inspection.locations:
+        print("No saved locations")
+    elif not matches:
+        print("No matching saved locations")
+    else:
+        print(f"Multiple matches ({len(matches)})" if len(matches) > 1 else "One matching location")
+        for match in matches:
+            location = match.location
+            print(
+                f"  {location.name}: latitude={location.latitude}, "
+                f"longitude={location.longitude}, radius_m={location.radius_m:g}, "
+                f"distance_m={match.distance_m:g}"
+            )
+    return 0
+
+
+def _run_location_config(args: argparse.Namespace, document) -> int:
+    from seestar_toolkit.archive.config_document import persist_config_edit
+    from seestar_toolkit.archive.config_locations import (
+        prepare_location_edit,
+        prepare_location_removal,
+    )
+    from seestar_toolkit.fits.site_coordinates import extract_site_coordinates
+
+    if args.config_command == "unset":
+        edit = prepare_location_removal(document, args.location)
+    else:
+        latitude, longitude = args.latitude, args.longitude
+        if args.extract is not None:
+            point = extract_site_coordinates(args.extract)
+            latitude, longitude = point.latitude, point.longitude
+        edit = prepare_location_edit(
+            document,
+            args.location,
+            latitude=latitude,
+            longitude=longitude,
+            radius_m=args.radius_m,
+            rename=args.rename,
+            update=args.update,
+        )
+    for warning in edit.warnings:
+        print(f"Warning: {warning}", file=sys.stderr)
+    if not edit.changed:
+        print(f"No change needed: {edit.setting}")
+        return 0
+    print(f"Old: {edit.previous.value}")
+    print(f"Proposed: {edit.proposed.value}")
+    if args.config_command == "set" and edit.previous.value is not None and not args.update:
+        if not sys.stdin.isatty():
+            raise ArchiveConfigError(
+                "Existing location replacement requires --update without a terminal"
+            )
+        while True:
+            try:
+                answer = input("Update config / Skip [Skip]: ").strip().casefold()
+            except EOFError:
+                answer = "skip"
+            if answer in {"", "s", "skip"}:
+                print("Skipped; configuration unchanged")
+                return 0
+            if answer in {"u", "update", "update config"}:
+                break
+            print("Choose Update config or Skip")
+    persist_config_edit(edit)
+    print(f"Saved {edit.setting}" if edit.proposed.value is not None else f"Removed {edit.setting}")
+    return 0
 
 
 def _run_archive(args: argparse.Namespace) -> int:
