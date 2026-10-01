@@ -129,7 +129,12 @@ def _template_tokens(template: str) -> tuple[str, ...]:
         raise ArchivePlanningConfigurationError("Hierarchy template contains an unsafe component")
     tokens: list[str] = []
     for component in components:
-        parsed = tuple(string.Formatter().parse(component))
+        try:
+            parsed = tuple(string.Formatter().parse(component))
+        except ValueError as error:
+            raise ArchivePlanningConfigurationError(
+                "Hierarchy template contains malformed braces"
+            ) from error
         if len(parsed) != 1 or parsed[0][0] or parsed[0][1] is None or parsed[0][2:4] != ("", None):
             raise ArchivePlanningConfigurationError(
                 "Each hierarchy component must be one supported token"

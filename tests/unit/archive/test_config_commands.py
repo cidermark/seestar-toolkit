@@ -85,9 +85,74 @@ def test_explicit_path_only_and_invalid_inspection(config_path, tmp_path, capsys
     assert (other.read_bytes(), other.stat().st_mtime_ns) == before
 
 
-def test_invalid_saved_hierarchy_can_still_be_overridden(config_path, tmp_path):
+@pytest.mark.parametrize(
+    "hierarchy",
+    [
+        "{target/{location}/{session_end_date}",
+        "{target}}/{location}/{session_end_date}",
+    ],
+)
+def test_malformed_saved_hierarchy_can_be_inspected_and_repaired(config_path, capsys, hierarchy):
     config_path.parent.mkdir(parents=True)
-    config_path.write_text('[archive]\nhierarchy="invalid"\n')
+    config_path.write_text(f'[archive]\nhierarchy="{hierarchy}"\n')
+
+    assert cli.main(["config", "show"]) == 1
+    output = capsys.readouterr()
+    assert "archive.hierarchy" in output.out and "INVALID" in output.out
+    assert "malformed braces" in output.err
+    assert "Traceback" not in output.out + output.err
+
+    assert cli.main(["config", "show", "--saved"]) == 1
+    output = capsys.readouterr()
+    assert hierarchy in output.out
+    assert "malformed braces" in output.err
+    assert "Traceback" not in output.out + output.err
+
+    valid = "{location}/{target}/{session_end_date}"
+    assert cli.main(["config", "set", "archive.hierarchy", valid]) == 0
+    capsys.readouterr()
+    assert f'hierarchy="{valid}"' in config_path.read_text()
+
+    config_path.write_text(f'[archive]\nhierarchy="{hierarchy}"\n')
+    assert cli.main(["config", "unset", "archive.hierarchy"]) == 0
+    capsys.readouterr()
+    assert "hierarchy" not in config_path.read_text()
+    assert cli.main(["config", "show"]) == 0
+    assert "archive.hierarchy = {target}/{location}/{session_end_date} [default]" in (
+        capsys.readouterr().out
+    )
+
+
+@pytest.mark.parametrize(
+    "hierarchy",
+    [
+        "{target/{location}/{session_end_date}",
+        "{target}}/{location}/{session_end_date}",
+    ],
+)
+def test_malformed_hierarchy_cannot_be_saved(config_path, capsys, hierarchy):
+    config_path.parent.mkdir(parents=True)
+    config_path.write_text('# unchanged\n[archive]\nsource_action="move"\n')
+    before = config_path.read_bytes(), config_path.stat().st_mtime_ns
+
+    assert cli.main(["config", "set", "archive.hierarchy", hierarchy]) == 1
+    output = capsys.readouterr()
+    assert "malformed braces" in output.err
+    assert "Traceback" not in output.out + output.err
+    assert (config_path.read_bytes(), config_path.stat().st_mtime_ns) == before
+
+
+@pytest.mark.parametrize(
+    "hierarchy",
+    [
+        "invalid",
+        "{target/{location}/{session_end_date}",
+        "{target}}/{location}/{session_end_date}",
+    ],
+)
+def test_invalid_saved_hierarchy_can_still_be_overridden(config_path, tmp_path, hierarchy):
+    config_path.parent.mkdir(parents=True)
+    config_path.write_text(f'[archive]\nhierarchy="{hierarchy}"\n')
     source = tmp_path / "source"
     source.mkdir()
     assert (

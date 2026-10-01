@@ -256,3 +256,14 @@ legacy archive matching. Base: `53fe9fb`; implementation commit: **PENDING
 [ENH-001b report](change_documents/ENH_001/ENH-001_CHECKPOINT_2_REPORT.md).
 ENH-001 remains STARTED and unreleased; ENH-001c documentation/closure is outstanding.
 Historical records and package version are unchanged.
+
+## Pending development work — ENH-001c hierarchy validation fix
+
+ENH-001c confirms and fixes unmatched hierarchy braces escaping the established
+configuration/planning error path. Inspection and targeted set/unset repair stay
+usable, invalid values remain unsaved, and valid explicit archive hierarchy
+overrides retain precedence. Base: `9899524`; implementation commit: **PENDING
+(user-controlled; uncommitted)**. See the
+[ENH-001c hierarchy fix report](change_documents/ENH_001/ENH-001_HIERARCHY_FIX_REPORT.md).
+ENH-001c and ENH-001 remain STARTED; approved manual and PDF closure work is not
+part of this fix. Historical records and package version are unchanged.
