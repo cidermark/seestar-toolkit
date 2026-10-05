@@ -132,3 +132,22 @@ dependency behaviour.
   **PENDING EXTERNAL VALIDATION**; no local multi-version or CI claim is made.
 - Reviewed integration into `main`, clean-tree/remote verification and final
   acceptance record. ENH-001 must not be declared complete before those gates.
+
+## Final integration and closure — 2026-10-05
+
+- User review of both generated PDFs: accepted.
+- Documentation and PDF validation commit: b630c24.
+- Pull request: https://github.com/cidermark/seestar-toolkit/pull/1
+- Integrated into main using merge commit: 4595540.
+- Pull-request CI: PASS for Python 3.11, 3.12, 3.13 and 3.14.
+- Post-integration main CI: PASS for the same four versions on macOS arm64.
+- GitHub Actions: Distribution validation, run #17, Success.
+- Local main synchronised with origin/main at 4595540; working tree clean.
+- All C01–C27 acceptance requirements satisfied using the recorded
+  checkpoint evidence and final integration results.
+
+ENH-001c — COMPLETE.
+ENH-001 — COMPLETE.
+
+This closes development of the enhancement. It does not create a new
+package release.

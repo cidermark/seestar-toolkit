@@ -198,6 +198,9 @@
   |------------|-------------------------------------------|-----------|------------|
   | ENH-001c   | update configuration documentation and    | b630c24   | 2026-10-05 |
   |            | validate development PDFs                 |           |            |
+  |------------|-------------------------------------------|-----------|------------|
+  | ENH-001    | integrate and close configuration         | 4595540   | 2026-10-05 |
+  |            | management enhancement                    |           |            |
   -----------------------------------------------------------------------------------
 
 
@@ -244,6 +247,8 @@ Detailed implementation instructions belong in individual stage change
 documents rather than in this changelog.
 
 ## Pending development work — ENH-001 Checkpoint 1
+
+### Historical status before integration.
 
 Unreleased configuration foundation and archive-preference management passed
 Checkpoint 1 validation on `enh/ENH-001-config-management`; ENH-001 remains STARTED.

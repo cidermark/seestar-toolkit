@@ -20,7 +20,10 @@ v1.1.0 (Development)
 -   [x] Stage 6 --- Command-line polish and batch processing --- **Complete**
 -   [x] Stage 7 --- Archive organisation and file management --- **Complete**
 -   [x] Stage 8 --- Testing with real Seestar datasets --- **Complete**
--   [ ] Stage 9 --- Packaging, documentation and release
+-   [x] Stage 9 --- Packaging, documentation and release --- **Complete**
+-   [x] BUG-001 --- archive light-TIFF side effect --- **Complete**
+-   [x] BUG-002 --- telescope-aware Observation reconstruction --- **Complete**
+-   [x] ENH-001 --- Configuration Management --- **Complete**
 
 > Stage 2 now includes reader-level recognition of RGB FITS images.
 > Stage 4 provides handling for already-RGB FITS beyond basic reader-level
@@ -1146,5 +1149,28 @@ retains reproducible PDF, manifest, font, geometry, content, bookmark and link
 validation. The generated PDFs/checksums and the final C01–C27 local acceptance
 evidence are recorded in the
 [Checkpoint 3 report](change_documents/ENH_001/ENH-001_CHECKPOINT_3_REPORT.md).
-ENH-001 remains STARTED. User PDF review, user-controlled commits/push, pull-request
-Python 3.11–3.14 CI and post-integration verification remain pending.
+
+### Historical status before integration
+
+At this checkpoint, ENH-001 remained STARTED. User PDF review,
+user-controlled commits/push, pull-request Python 3.11–3.14 CI and
+post-integration verification were still pending.
+
+## ENH-001 — COMPLETE: final integration and closure
+
+ENH-001 completed on 2026-10-05 and integrated into main through PR #1,
+merge commit `4595540`. All C01–C27 acceptance requirements passed,
+both PDFs were accepted, and pull-request and post-integration CI
+passed for Python 3.11–3.14 on macOS arm64.
+
+Local main was synchronised with origin/main at `4595540`, with a clean
+working tree before the closure records were added.
+
+ENH-001c — COMPLETE.
+ENH-001 — COMPLETE.
+
+This closes development of the enhancement. It does not create a new
+package release.
+
+Final evidence:
+[Checkpoint 3 report](change_documents/ENH_001/ENH-001_CHECKPOINT_3_REPORT.md).
