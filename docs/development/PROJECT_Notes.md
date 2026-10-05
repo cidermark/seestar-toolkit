@@ -1174,3 +1174,28 @@ package release.
 
 Final evidence:
 [Checkpoint 3 report](change_documents/ENH_001/ENH-001_CHECKPOINT_3_REPORT.md).
+
+## ENH-001 : Pending follow-ups
+
+### Configuration confirmation prompt clarity
+
+Status: PLANNED — implementation not started.
+Identified: 2026-10-05, following ENH-001 closure.
+
+The prompt `Update config / Skip [Skip]:` does not make the
+Enter-key behaviour sufficiently clear.
+
+Agreed replacement:
+
+Save this change? Type 'y' to save, or press Enter to skip:
+
+Requirements:
+- Accept `y` and `Y` to save.
+- Pressing Enter continues to skip without changing the configuration.
+- Retain existing update/u and skip/s answers, ignoring case.
+- Preserve the existing unattended --update behaviour.
+- Update affected tests and documentation.
+- Regenerate documentation PDFs and checksums if the manuals change.
+
+Assign an ENH identifier and a dedicated branch when this work
+is formally scheduled. ENH-001 remains COMPLETE.
