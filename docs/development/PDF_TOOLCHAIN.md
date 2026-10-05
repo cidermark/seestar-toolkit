@@ -40,6 +40,10 @@ requires byte-identical PDFs, validates candidates, installs each PDF atomically
 synchronises its mtime to its Markdown source, writes its two-entry SHA-256
 manifest, and then runs final validation.
 
+The current frozen sources are the unreleased ENH-001 development editions,
+labelled `Development — ENH-001 (unreleased)` and dated 2026-10-01. This does not
+change the published v1.1.0 release or assign a later release version.
+
 The validator is read-only. To create temporary visual-review images outside the
 repository:
 
@@ -85,6 +89,7 @@ fresh checkouts with different filesystem timestamps.
 
 Optional ImageMagick 7.1.2-31 `montage` creates contact sheets when available;
 `pdftoppm` alone supplies all required 150-dpi page images. It was installed as a
-Homebrew TeX Live dependency. The accepted review set contains 27 User Guide and
-five Quick Start pages. Temporary review images are removed after acceptance;
-rerendering for a later review is optional and does not replace the PDFs.
+Homebrew TeX Live dependency. The ENH-001 development review set contains 35 User
+Guide and six Quick Start pages. Temporary review images are removed after
+acceptance; rerendering for a later review is optional and does not replace the
+PDFs.

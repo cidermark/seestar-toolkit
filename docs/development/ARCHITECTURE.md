@@ -607,3 +607,71 @@ which overrides the safe built-in COPY, `skip-identical`, and
 `{target}/{location}/{session_end_date}` defaults. Saved GPS locations use the
 existing `SavedLocation` model. No network geocoder or configuration writer is
 present. The existing `convert-batch` command remains flat and non-recursive.
+
+### ENH-001 Checkpoint 1 — unreleased configuration preferences
+
+The released v1.1.0 configuration interface remains the baseline described
+above. The unreleased ENH-001 foundation adds explicit `config show`,
+`show --saved`, `show --defaults`, `set archive.SETTING VALUE` and
+`unset archive.SETTING` commands. Only hierarchy, source_action and
+collision_policy are managed at this checkpoint. Location editing and FITS
+extraction are not implemented here. Archive prompt answers remain temporary.
+
+`archive/config_document.py` separates raw, comment-preserving TOMLKit documents
+from runtime `ArchiveConfig`. Inspection reports one effective scalar with
+saved/default provenance and saved locations. Raw inspection also retains unknown
+entries and readable invalid values; invalid known values produce diagnostics
+and a failing status rather than fabricated defaults. Built-in-only inspection
+never reads a saved file. The CLI owns presentation and argument parsing; shared
+operations do not print or prompt.
+
+Scalar edits validate the complete proposed document, including hierarchy, but
+retain legacy zero-radius, overlapping and duplicate-name locations with
+inspection warnings. Runtime archive loading retains its existing policy/type
+checks and still validates the effective hierarchy after CLI overrides. Strict
+location editing and geographic edge-case work remain Checkpoint 2 scope.
+
+Writes resolve symbolic links, preserve the link and existing target mode, and
+use a sibling temporary file with atomic target replacement. New configuration
+files are owner-only (0600). No-op operations preserve bytes and modification
+time. File content, identity, modification metadata, permissions and link target
+changes are checked before preparation/replacement; this is retry protection,
+not locking. Broken links, malformed TOML and unreadable files fail clearly.
+The absent default may be created by a successful set; an explicit path must
+already exist. Existing-schema invalid values can be repaired individually only
+when the complete proposed result validates. Unknown entries and unaffected
+locations/comments are retained; edited whitespace need not remain identical.
+
+### ENH-001b — unreleased location management
+
+ENH-001b extends the ENH-001a foundation with saved-location creation, partial
+updates, combined rename/coordinate/radius edits, removal and FITS GPS inspection.
+`archive/config_locations.py` prepares validated document edits and returns all
+containing locations in the archive's distance/name order. It does not prompt,
+print, reorganise archives or write files. The CLI owns the Update config / Skip
+question; unattended existing-entry replacement requires `--update`. No-op edits
+and absent removals do not prompt or rewrite. Writes reuse ENH-001a's prepared
+edit and atomic persistence, including change detection after a prompt.
+
+New or edited locations require finite, in-range coordinates, a positive radius,
+a unique trimmed/case-folded identity and no cleaned-directory name collision or
+touching/overlapping circle with another entry. New radius defaults to 100 m;
+existing fields, spelling and unknown entries remain unless explicitly changed.
+Ambiguous legacy names require manual disambiguation. Complete proposed-document
+validation permits targeted repair but blocks unrelated existing-schema errors.
+Unrelated legacy duplicates, overlaps and zero radii remain allowed with warnings.
+Removal retains standalone comments, potentially relocating them; the removed
+entry's fields and their inline comments are removed together.
+
+`fits/site_coordinates.py` reads all HDU headers and duplicate SITELAT/SITELONG
+cards without accessing image/table arrays. Numeric repeats must agree exactly;
+incomplete, invalid and conflicting evidence fails. Headers without either site
+card contribute no evidence. RA/DEC are never substitutes. This strict reader is
+separate from existing archive FITS inspection and multi-file GPS reconciliation.
+
+All-match inspection uses the same Haversine distance and inclusive `1e-9` metre
+boundary as archive selection. Its intermediate is clamped to [0, 1] to handle
+antipodal rounding. Archive nearest/name tie-breaking and legacy matching remain
+unchanged. Extraction and matching are read-only. Rename affects configuration
+only; archive directories and indexes remain unchanged. ENH-001c owns final user
+guides, PDF/checksum work and closure; these commands are not in published v1.1.0.

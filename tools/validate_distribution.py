@@ -124,8 +124,17 @@ assert "site-packages" in module.parts
 assert seestar_toolkit.__version__ == md.version("seestar-toolkit") == "1.1.0"
 for name in ("pytest", "ruff", "build", "reportlab", "weasyprint", "fpdf"):
     assert importlib.util.find_spec(name) is None, name
-for name in ("astropy", "numpy", "cv2", "tifffile"):
+for name in ("astropy", "numpy", "cv2", "tifffile", "tomlkit"):
     assert importlib.util.find_spec(name) is not None, name
+from seestar_toolkit.archive.config_document import (
+    read_config_document, prepare_archive_edit, persist_config_edit,
+)
+configuration = Path("config.toml")
+configuration.write_text('# installed round-trip\\n[archive]\\nsource_action="copy" # keep\\n')
+document = read_config_document(configuration)
+persist_config_edit(prepare_archive_edit(document, "archive.source_action", "move"))
+assert '# keep' in configuration.read_text()
+assert read_config_document(configuration).raw["archive"]["source_action"] == "move"
 image = np.arange(3 * 7 * 5, dtype=np.float32).reshape(3, 7, 5) / 128
 fits.writeto("smoke.fit", image)
 convert_fits_to_tiff("smoke.fit", "smoke.tiff")

@@ -14,6 +14,21 @@ function RawInline(element)
   return element
 end
 
+function Table(element)
+  local widths
+  if #element.colspecs == 2 then
+    widths = {0.36, 0.64}
+  elseif #element.colspecs == 3 then
+    widths = {0.26, 0.32, 0.42}
+  else
+    return element
+  end
+  for index, spec in ipairs(element.colspecs) do
+    element.colspecs[index] = {spec[1], widths[index]}
+  end
+  return element
+end
+
 function Pandoc(document)
   local first = document.blocks[1]
   if not first or first.tag ~= "Header" or first.level ~= 1 then

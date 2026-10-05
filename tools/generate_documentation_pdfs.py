@@ -17,7 +17,10 @@ ROOT = Path(__file__).resolve().parents[1]
 USER_DOCS = ROOT / "docs" / "user"
 HEADER = ROOT / "tools" / "documentation_pdf_header.tex"
 FILTER = ROOT / "tools" / "documentation_pdf_filter.lua"
-RELEASE_DATE = "2026-09-23"
+DOCUMENT_LABEL = "Development — ENH-001 (unreleased)"
+DOCUMENT_DATE = "2026-10-01"
+DOCUMENT_SUBJECT = f"Seestar Toolkit {DOCUMENT_LABEL} documentation"
+DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-001, unreleased, documentation"
 
 
 @dataclass(frozen=True)
@@ -34,17 +37,22 @@ DOCUMENTS = (
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.md",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.sha256",
-        "6da3bb935401535a7145cfda3ecdc1ed0da4bf23bd0f534f4883f8dc800faa25",
+        "f67f19899b9950b96c7f453adc2907a0a89cb507508cb2b117a5ae63bcec6a64",
         "Seestar Toolkit User Guide",
     ),
     Document(
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.md",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.sha256",
-        "6eff27daf2e0424dda33727fa0be65c08bd6ab2f7b5fdedf3ca9f27831def8f6",
+        "52d55a0d3af428196dadcb407c50420684722cb1ad001494c4b079c675254296",
         "Seestar Toolkit Quick Start",
     ),
 )
+
+
+def package_author() -> str:
+    with (ROOT / "pyproject.toml").open("rb") as stream:
+        return tomllib.load(stream)["project"]["authors"][0]["name"]
 
 
 def sha256(path: Path) -> str:
@@ -53,12 +61,6 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
-
-
-def package_metadata() -> tuple[str, str]:
-    with (ROOT / "pyproject.toml").open("rb") as stream:
-        project = tomllib.load(stream)["project"]
-    return project["version"], project["authors"][0]["name"]
 
 
 def require_tools() -> None:
@@ -78,16 +80,19 @@ def require_tools() -> None:
             )
 
 
-def validate_source(document: Document, version: str) -> None:
+def validate_source(document: Document) -> None:
     actual_hash = sha256(document.source)
     if actual_hash != document.expected_hash:
         raise SystemExit(f"frozen source hash mismatch for {document.source}: {actual_hash}")
     text = document.source.read_text(encoding="utf-8")
-    if not text.startswith(f"# {document.title}\n\n**Version {version} --- {RELEASE_DATE}**\n"):
-        raise SystemExit(f"title/version mismatch in {document.source}")
+    expected_header = (
+        f"# {document.title}\n\n**{DOCUMENT_LABEL}**\n\n**Document updated:** {DOCUMENT_DATE}\n"
+    )
+    if not text.startswith(expected_header):
+        raise SystemExit(f"title/development metadata mismatch in {document.source}")
 
 
-def build(document: Document, output: Path, version: str, author: str) -> None:
+def build(document: Document, output: Path, author: str) -> None:
     epoch = str(document.source.stat().st_mtime_ns // 1_000_000_000)
     environment = os.environ.copy()
     environment.update(
@@ -113,9 +118,9 @@ def build(document: Document, output: Path, version: str, author: str) -> None:
         "--metadata",
         f"author={author}",
         "--metadata",
-        f"subject=Seestar Toolkit {version} documentation",
+        f"subject={DOCUMENT_SUBJECT}",
         "--metadata",
-        f"keywords=Seestar Toolkit, {version}, documentation",
+        f"keywords={DOCUMENT_KEYWORDS}",
         "--variable",
         "papersize=a4",
         "--variable",
@@ -193,16 +198,16 @@ def install_artifact(document: Document, candidate: Path) -> None:
         staged_manifest.unlink(missing_ok=True)
 
 
-def generate(document: Document, version: str, author: str) -> None:
-    validate_source(document, version)
+def generate(document: Document, author: str) -> None:
+    validate_source(document)
     with (
         tempfile.TemporaryDirectory(prefix="seestar-pdf-build-") as first_dir,
         tempfile.TemporaryDirectory(prefix="seestar-pdf-build-") as second_dir,
     ):
         first = Path(first_dir) / document.pdf.name
         second = Path(second_dir) / document.pdf.name
-        build(document, first, version, author)
-        build(document, second, version, author)
+        build(document, first, author)
+        build(document, second, author)
         first_hash = sha256(first)
         second_hash = sha256(second)
         print(f"{document.pdf.name} build 1 SHA-256: {first_hash}")
@@ -222,9 +227,9 @@ def main() -> int:
     if not args.all:
         parser.error("--all is required")
     require_tools()
-    version, author = package_metadata()
+    author = package_author()
     for document in DOCUMENTS:
-        generate(document, version, author)
+        generate(document, author)
     subprocess.run(
         [
             sys.executable,

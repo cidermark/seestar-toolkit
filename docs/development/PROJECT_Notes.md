@@ -1090,3 +1090,61 @@ CLI regressions cover unresolved location entry and rejection of a saved locatio
 shared filenames, dry-run equivalence with explicit `--location`, separate device
 membership and repeat imports reusing observation_02. BUG-002 remains OPEN pending
 final acceptance with the user's original two physical Seestar datasets.
+
+## ENH-001 — START: Checkpoint 1 foundation and archive preferences
+
+ENH-001 is STARTED and unreleased. Implementation branch:
+`enh/ENH-001-config-management`; actual base:
+`78488712aef7650258bddb3f31ea2dda2fa0e28d`, also the main baseline at start.
+There was no source/configuration drift from the `3c75002` audit. The supplied
+specification was the only initial untracked addition and remains unchanged.
+
+Checkpoint 1 provides document-aware scalar inspection, provenance, targeted
+repair, no-op handling and safe persistence, plus the corresponding CLI verbs.
+TOMLKit is a runtime dependency because standard-library TOML parsing cannot
+preserve comments/unknown entries for editing. Existing archive policy and
+legacy-location semantics are retained. Git actions remain user-controlled;
+implementation commit ID is PENDING, not invented.
+
+The [checkpoint report](change_documents/ENH_001/ENH-001_CHECKPOINT_1_REPORT.md)
+records acceptance coverage, validation and changed files. Checkpoint 2 owns
+location mutation, prompts, GPS extraction/all-match inspection and strict
+location-edit validation. Checkpoint 3 owns final user-guide/PDF/checksum
+updates, version/artifact decisions and enhancement closure. No ENH-002 or
+observing-night change is included.
+
+## ENH-001b — START: location management
+
+ENH-001b (specification Checkpoint 2) starts from clean HEAD `53fe9fb` on
+`enh/ENH-001-config-management`, with the local origin tracking reference at the
+same commit. ENH-001a implementation `99c3272` is the persistence foundation;
+`53fe9fb` records its completion. No baseline drift was found. Git mutations remain
+user-controlled; the ENH-001b implementation commit is PENDING review.
+
+The scope adds strict header-only FITS site extraction, all-match inspection,
+manual/FITS creation, partial updates, rename/removal and interactive/unattended
+update authorisation. Strict rules apply to new/edited entries while unrelated
+legacy conflicts and archive matching remain compatible. No automatic archive
+prompt persistence, archive reorganisation, observing-night changes or ENH-002
+work is included. No dependency, packaging or version change is required.
+
+The [ENH-001b report](change_documents/ENH_001/ENH-001_CHECKPOINT_2_REPORT.md)
+records acceptance coverage, validation and changed files. ENH-001 remains STARTED.
+ENH-001c owns final user guides, PDFs/checksums, final acceptance and formal closure.
+
+## ENH-001 Checkpoint 3 — START: documentation artifacts and closure validation
+
+Checkpoint 3 starts from `cc5a0df` on `enh/ENH-001-config-management`; hierarchy
+brace handling is fixed by `2425ccf`. The approved unreleased User Guide and
+Quick Start remain the authoritative Markdown sources. Their frozen ENH-001
+development metadata is `Development — ENH-001 (unreleased)`, dated 2026-10-01;
+no package or release version has changed.
+
+The documentation pipeline now validates the approved source hashes and
+development metadata, wraps constrained tables, checks all table cells, and
+retains reproducible PDF, manifest, font, geometry, content, bookmark and link
+validation. The generated PDFs/checksums and the final C01–C27 local acceptance
+evidence are recorded in the
+[Checkpoint 3 report](change_documents/ENH_001/ENH-001_CHECKPOINT_3_REPORT.md).
+ENH-001 remains STARTED. User PDF review, user-controlled commits/push, pull-request
+Python 3.11–3.14 CI and post-integration verification remain pending.

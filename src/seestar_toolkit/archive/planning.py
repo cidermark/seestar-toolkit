@@ -129,7 +129,12 @@ def _template_tokens(template: str) -> tuple[str, ...]:
         raise ArchivePlanningConfigurationError("Hierarchy template contains an unsafe component")
     tokens: list[str] = []
     for component in components:
-        parsed = tuple(string.Formatter().parse(component))
+        try:
+            parsed = tuple(string.Formatter().parse(component))
+        except ValueError as error:
+            raise ArchivePlanningConfigurationError(
+                "Hierarchy template contains malformed braces"
+            ) from error
         if len(parsed) != 1 or parsed[0][0] or parsed[0][1] is None or parsed[0][2:4] != ("", None):
             raise ArchivePlanningConfigurationError(
                 "Each hierarchy component must be one supported token"
@@ -272,6 +277,7 @@ def _haversine_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
         math.sin(latitude_delta / 2) ** 2
         + math.cos(latitude_1) * math.cos(latitude_2) * math.sin(longitude_delta / 2) ** 2
     )
+    a = min(1.0, max(0.0, a))
     return _EARTH_RADIUS_M * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 

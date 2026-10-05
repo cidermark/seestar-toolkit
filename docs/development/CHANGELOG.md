@@ -183,6 +183,21 @@
   |------------|-------------------------------------------|-----------|------------|
   | BUG-002    | telescope-aware reconstruction and        | 11a60b5   | 2026-09-29 |
   |            | incremental archive reconciliation        |           |            |
+  |------------|-------------------------------------------|-----------|------------|
+  | docs       | record Stage 9 closure and BUG-002        | 3c75002   | 2026-09-29 |
+  |            | completion                                |           |            |
+  |------------|-------------------------------------------|-----------|------------|
+  | ENH-001a   | Implement ENH-001 configuration           | 99c3272   | 2026-09-30 |
+  |            | foundation and archive preferences        |           |            |
+  |------------|-------------------------------------------|-----------|------------|
+  | ENH-001b   | manage saved locations and extract FITS   | c8ac83d   | 2026-10-01 |
+  |            | GPS                                       |           |            |
+  |------------|-------------------------------------------|-----------|------------|
+  | ENH-001c   | handle malformed hierarchy braces and     | 2425ccf   | 2026-10-01 |
+  |            | preserve configuration repair             |           |            |
+  |------------|-------------------------------------------|-----------|------------|
+  | ENH-001c   | update configuration documentation and    | b630c24   | 2026-10-05 |
+  |            | validate development PDFs                 |           |            |
   -----------------------------------------------------------------------------------
 
 
@@ -227,3 +242,44 @@ Stage markers:
 
 Detailed implementation instructions belong in individual stage change
 documents rather than in this changelog.
+
+## Pending development work — ENH-001 Checkpoint 1
+
+Unreleased configuration foundation and archive-preference management passed
+Checkpoint 1 validation on `enh/ENH-001-config-management`; ENH-001 remains STARTED.
+Implementation commit: **PENDING
+(user-controlled; uncommitted)**. See
+[Checkpoint 1 report](change_documents/ENH_001/ENH-001_CHECKPOINT_1_REPORT.md).
+No historical commit rows or release version have been changed.
+
+## Pending development work — ENH-001b location management
+
+ENH-001b (Checkpoint 2) implements saved-location creation, partial/combined edits,
+rename/removal, Update config / Skip authorisation and strict FITS site extraction
+with all-match reporting. It reuses completed ENH-001a persistence and retains
+legacy archive matching. Base: `53fe9fb`; implementation commit: **PENDING
+(user-controlled; uncommitted)**. See the
+[ENH-001b report](change_documents/ENH_001/ENH-001_CHECKPOINT_2_REPORT.md).
+ENH-001 remains STARTED and unreleased; ENH-001c documentation/closure is outstanding.
+Historical records and package version are unchanged.
+
+## Pending development work — ENH-001c hierarchy validation fix
+
+ENH-001c confirms and fixes unmatched hierarchy braces escaping the established
+configuration/planning error path. Inspection and targeted set/unset repair stay
+usable, invalid values remain unsaved, and valid explicit archive hierarchy
+overrides retain precedence. Base: `9899524`; implementation commit: **PENDING
+(user-controlled; uncommitted)**. See the
+[ENH-001c hierarchy fix report](change_documents/ENH_001/ENH-001_HIERARCHY_FIX_REPORT.md).
+ENH-001c and ENH-001 remain STARTED; approved manual and PDF closure work is not
+part of this fix. Historical records and package version are unchanged.
+
+## Pending development work — ENH-001 Checkpoint 3
+
+Checkpoint 3 refreshes the approved unreleased User Guide and Quick Start PDFs,
+their manifests and frozen development metadata, and records final local C01–C27
+acceptance evidence. Base: `cc5a0df`; documentation/artifact commit: **PENDING
+(user-controlled; uncommitted)**. See the
+[Checkpoint 3 report](change_documents/ENH_001/ENH-001_CHECKPOINT_3_REPORT.md).
+ENH-001 remains STARTED pending user PDF review, commits/push, pull-request CI and
+post-integration verification. Published v1.1.0 metadata remains unchanged.

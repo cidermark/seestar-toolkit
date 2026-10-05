@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import stat
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
@@ -38,23 +39,43 @@ def load_archive_config(path: str | Path | None = None) -> ArchiveConfig:
     compatibility.
     """
     explicit = path is not None
-    config_path = Path(path) if explicit else default_archive_config_path()
-    if not config_path.exists():
-        if explicit:
-            raise ArchiveConfigError(f"Archive configuration file does not exist: {config_path}")
+    selected = Path(path) if explicit else default_archive_config_path()
+    config_path, exists = resolve_config_path(selected, explicit=explicit)
+    if not exists:
         return ArchiveConfig()
-    if not config_path.is_file():
-        raise ArchiveConfigError(f"Archive configuration path is not a file: {config_path}")
     try:
         with config_path.open("rb") as config_file:
             data = tomllib.load(config_file)
-    except (OSError, tomllib.TOMLDecodeError) as error:
+    except (OSError, UnicodeError, tomllib.TOMLDecodeError) as error:
         raise ArchiveConfigError(
             f"Unable to load archive configuration {config_path}: {error}"
         ) from error
     if not isinstance(data, dict):
         raise ArchiveConfigError("Archive configuration root must be a TOML table")
     return _parse_config(data)
+
+
+def resolve_config_path(path: Path, *, explicit: bool) -> tuple[Path, bool]:
+    """Resolve links without treating a broken link as a missing default file."""
+    try:
+        selected = path.absolute()
+        for part in (*selected.parents, selected):
+            if part.is_symlink():
+                part.resolve(strict=True)
+        target = selected.resolve(strict=False)
+        try:
+            info = target.stat()
+        except FileNotFoundError:
+            if explicit:
+                raise ArchiveConfigError(
+                    f"Archive configuration file does not exist: {path}"
+                ) from None
+            return target, False
+        if not stat.S_ISREG(info.st_mode):
+            raise ArchiveConfigError(f"Archive configuration path is not a file: {path}")
+        return target, True
+    except (OSError, RuntimeError) as error:
+        raise ArchiveConfigError(f"Unable to resolve configuration {path}: {error}") from error
 
 
 def _parse_config(data: dict[str, Any]) -> ArchiveConfig:

@@ -1,6 +1,14 @@
 # Seestar Toolkit Quick Start
 
-**Version 1.1.0 --- 2026-09-23**
+**Development — ENH-001 (unreleased)**
+
+**Document updated:** 2026-10-01
+
+This development edition adds configuration management to the released v1.1.0
+workflows. The new `config` commands require an installation containing ENH-001;
+they are not included in the published v1.1.0 wheel. The released installation
+instructions and support boundaries remain as described below. No new release
+number has been assigned.
 
 This Quick Start gets you from installation to a **safe first archive** and,
 optionally, a FITS-to-TIFF conversion.
@@ -82,6 +90,12 @@ You create this environment once. In later Terminal sessions, simply activate
 it again; you do **not** need to reinstall the Toolkit each time.
 
 ## 3. Install Seestar Toolkit
+
+These steps install the **published v1.1.0 release**, not ENH-001. The new
+configuration commands require an installation containing the development
+changes; confirm `seestar-toolkit config --help` is available in the environment
+you intend to use. The package version may still report `1.1.0`, so that number
+alone does not identify an ENH-001 build.
 
 Download the v1.1.0 release package from the project's GitHub Releases page.
 
@@ -226,50 +240,96 @@ The full User Guide explains observing-night dates, observation reconstruction,
 custom hierarchy order, collisions, re-running an archive and the additional
 risks of `--source-action move`.
 
-## 8. Let the Toolkit resolve a saved location
+## 8. Save preferences and observing locations
 
-Using `--location "Home"` is simple for a first run, but you do not have to
-supply a location every time.
+**ENH-001 development build required.** The published v1.1.0 release only reads
+manually created configuration and does not provide these `config` commands.
 
-The default configuration file is:
+Saved preferences and locations use:
 
-``` text
+```text
 ~/.config/seestar-toolkit/config.toml
 ```
 
-For example:
+Inspect the values that would normally apply:
 
-``` toml
-[[locations]]
-name = "Home"
-latitude = 51.0000
-longitude = -1.0000
-radius_m = 100.0
+```bash
+seestar-toolkit config show
 ```
 
-The coordinates above are illustrative only.
+Each preference appears once, labelled **saved** or **default**. Saved locations
+are included. `config show --saved` shows saved entries only;
+`config show --defaults` shows built-in defaults without reading the saved file.
+Inspection does not create or change configuration.
 
-When supported captures contain usable coordinates, the Toolkit can compare
-them locally with saved locations. It does not use an online geocoder.
+To save a preference explicitly:
 
-Use a dry run to confirm the resolved location. For example:
-
-``` text
-M 42/Home/20260915/...
+```bash
+seestar-toolkit config set archive.source_action copy
 ```
 
-is resolved, while:
+The first valid save can create the absent default file. Command-line overrides
+still win for an individual archive run. To remove this saved preference and
+return to the built-in default:
 
-``` text
-M 42/unknown/20260915/...
+```bash
+seestar-toolkit config unset archive.source_action
 ```
 
-means the location was not resolved to a saved or supplied label.
+### Inspect a capture, then save its site
 
-An explicit `--location "Home"` takes precedence over automatic matching.
+First read a suitable capture's site coordinates and compare them with any
+saved locations:
 
-Configuration is **read-only in v1.1.0**. The Toolkit does not add or update
-saved locations itself.
+```bash
+seestar-toolkit config show --extract "/path/to/capture.fit"
+```
+
+This saves nothing. It shows every matching site's name, coordinates, radius
+and distance, or reports that no saved site matches.
+
+To save those coordinates as `Home`:
+
+```bash
+seestar-toolkit config set --location "Home" --extract "/path/to/capture.fit"
+```
+
+A **new** location defaults to a **100 m radius**. Add `--radius-m 150`, for
+example, to choose another radius. All new or edited matching areas must be
+distinct: touching or overlapping circles are rejected.
+
+If `Home` already exists, the command proposes an update and retains its saved
+radius unless you explicitly supply another. It shows the old/proposed values
+and asks **Update config / Skip**; pressing Enter without an answer skips. For an intended
+unattended replacement, add `--update`. This requires an existing entry and
+does not bypass validation.
+
+These examples are alternatives, not commands to run as a single script.
+Replace the paths and location name with your own. See the
+[User Guide's configuration chapter](SEESTAR_TOOLKIT_USER_GUIDE.md#managing-configuration)
+for manual coordinates, partial edits, rename, removal and repair rules.
+
+### Check automatic archive matching
+
+An explicit `archive --location "Home"` overrides automatic matching. To check
+your saved site's matching, omit that override during a dry run:
+
+```bash
+seestar-toolkit archive --dry-run --source-action copy \
+  --collision-policy skip-identical --non-interactive \
+  "/path/to/My Works" "/absolute/path/to/archive"
+```
+
+Inspect the proposed paths. `M 42/Home/20260915/...` uses the saved site;
+`M 42/unknown/20260915/...` means the location was not resolved. Do not proceed
+with copying until the plan is correct. Matching is local, with no online lookup.
+
+Archive-prompt answers are temporary; use explicit `config set` to save a site.
+Renaming/removing a saved site does not rename or remove an existing archive.
+
+If a saved hierarchy is invalid, you can replace it with `config set` or remove
+it with `config unset`. See [the User Guide](SEESTAR_TOOLKIT_USER_GUIDE.md#a-saved-hierarchy-contains-an-unmatched-brace)
+for the repair steps and the separate handling of a broken configuration-file format.
 
 ## 9. Convert a FITS image to TIFF
 
@@ -320,6 +380,15 @@ seestar-toolkit convert --help
 seestar-toolkit convert-batch --help
 ```
 
+In an ENH-001 installation, also use:
+
+```bash
+seestar-toolkit config --help
+seestar-toolkit config show --help
+seestar-toolkit config set --help
+seestar-toolkit config unset --help
+```
+
 Check the installed version:
 
 ``` bash
@@ -360,7 +429,8 @@ source ~/.venvs/seestar-toolkit/bin/activate
 
 ## Next: the full User Guide
 
-This Quick Start deliberately leaves out many details.
+This development Quick Start deliberately leaves out many details. Final
+ENH-001 validation remains pending.
 
 Read the [Seestar Toolkit User Guide](SEESTAR_TOOLKIT_USER_GUIDE.md) before using `move`, changing collision
 policies, customising the archive hierarchy, troubleshooting partial operations,
