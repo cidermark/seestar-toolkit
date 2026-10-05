@@ -1131,3 +1131,20 @@ work is included. No dependency, packaging or version change is required.
 The [ENH-001b report](change_documents/ENH_001/ENH-001_CHECKPOINT_2_REPORT.md)
 records acceptance coverage, validation and changed files. ENH-001 remains STARTED.
 ENH-001c owns final user guides, PDFs/checksums, final acceptance and formal closure.
+
+## ENH-001 Checkpoint 3 — START: documentation artifacts and closure validation
+
+Checkpoint 3 starts from `cc5a0df` on `enh/ENH-001-config-management`; hierarchy
+brace handling is fixed by `2425ccf`. The approved unreleased User Guide and
+Quick Start remain the authoritative Markdown sources. Their frozen ENH-001
+development metadata is `Development — ENH-001 (unreleased)`, dated 2026-10-01;
+no package or release version has changed.
+
+The documentation pipeline now validates the approved source hashes and
+development metadata, wraps constrained tables, checks all table cells, and
+retains reproducible PDF, manifest, font, geometry, content, bookmark and link
+validation. The generated PDFs/checksums and the final C01–C27 local acceptance
+evidence are recorded in the
+[Checkpoint 3 report](change_documents/ENH_001/ENH-001_CHECKPOINT_3_REPORT.md).
+ENH-001 remains STARTED. User PDF review, user-controlled commits/push, pull-request
+Python 3.11–3.14 CI and post-integration verification remain pending.

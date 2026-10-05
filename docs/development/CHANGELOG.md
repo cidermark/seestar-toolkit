@@ -270,3 +270,13 @@ overrides retain precedence. Base: `9899524`; implementation commit: **PENDING
 [ENH-001c hierarchy fix report](change_documents/ENH_001/ENH-001_HIERARCHY_FIX_REPORT.md).
 ENH-001c and ENH-001 remain STARTED; approved manual and PDF closure work is not
 part of this fix. Historical records and package version are unchanged.
+
+## Pending development work — ENH-001 Checkpoint 3
+
+Checkpoint 3 refreshes the approved unreleased User Guide and Quick Start PDFs,
+their manifests and frozen development metadata, and records final local C01–C27
+acceptance evidence. Base: `cc5a0df`; documentation/artifact commit: **PENDING
+(user-controlled; uncommitted)**. See the
+[Checkpoint 3 report](change_documents/ENH_001/ENH-001_CHECKPOINT_3_REPORT.md).
+ENH-001 remains STARTED pending user PDF review, commits/push, pull-request CI and
+post-integration verification. Published v1.1.0 metadata remains unchanged.

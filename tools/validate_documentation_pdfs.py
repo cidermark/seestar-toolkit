@@ -19,12 +19,16 @@ ROOT = Path(__file__).resolve().parents[1]
 USER_DOCS = ROOT / "docs" / "user"
 EXPECTED_HASHES = {
     "SEESTAR_TOOLKIT_USER_GUIDE.md": (
-        "6da3bb935401535a7145cfda3ecdc1ed0da4bf23bd0f534f4883f8dc800faa25"
+        "f67f19899b9950b96c7f453adc2907a0a89cb507508cb2b117a5ae63bcec6a64"
     ),
     "SEESTAR_TOOLKIT_QUICK_START.md": (
-        "6eff27daf2e0424dda33727fa0be65c08bd6ab2f7b5fdedf3ca9f27831def8f6"
+        "52d55a0d3af428196dadcb407c50420684722cb1ad001494c4b079c675254296"
     ),
 }
+DOCUMENT_LABEL = "Development — ENH-001 (unreleased)"
+DOCUMENT_DATE = "2026-10-01"
+DOCUMENT_SUBJECT = f"Seestar Toolkit {DOCUMENT_LABEL} documentation"
+DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-001, unreleased, documentation"
 
 
 @dataclass(frozen=True)
@@ -60,6 +64,8 @@ def visible(markdown: str) -> str:
 def normalize(value: str) -> str:
     value = unicodedata.normalize("NFKC", value)
     value = value.replace("---", "—")
+    value = value.replace("↪", "")
+    value = re.sub(r"-\s*\n\s*-", "--", value)
     # PDF extraction preserves discretionary end-of-line hyphenation. Joining
     # only a word-character + hyphen + physical newline + word-character keeps
     # intentional in-line hyphens while normalizing that presentation detail.
@@ -67,6 +73,10 @@ def normalize(value: str) -> str:
     translations = str.maketrans({"’": "'", "‘": "'", "“": '"', "”": '"', "–": "-", "—": "-"})
     value = value.translate(translations).lower()
     return " ".join(value.split())
+
+
+def normalize_prose(value: str) -> str:
+    return re.sub(r"(?<=\w)-(?=\w)", "", normalize(value))
 
 
 def markdown_inventory(source: Path) -> tuple[list[str], list[str], list[str]]:
@@ -116,6 +126,22 @@ def markdown_inventory(source: Path) -> tuple[list[str], list[str], list[str]]:
     if in_code:
         raise AssertionError(f"unclosed code fence in {source}")
     return headings, code_blocks, prose_blocks
+
+
+def markdown_table_cells(source: Path) -> list[str]:
+    cells = []
+    in_code = False
+    for line in source.read_text(encoding="utf-8").splitlines():
+        if line.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code or not line.startswith("|"):
+            continue
+        raw_cells = [value.strip() for value in line.strip().strip("|").split("|")]
+        if all(re.fullmatch(r":?-{3,}:?", value) for value in raw_cells):
+            continue
+        cells.extend(value for value in map(visible, raw_cells) if value)
+    return cells
 
 
 def assert_in_order(items: list[str], haystack: str, label: str) -> None:
@@ -205,17 +231,27 @@ def validate_document(document: Document) -> dict[str, object]:
     if b"%%EOF" not in document.pdf.read_bytes()[-2048:]:
         raise AssertionError(f"missing PDF EOF marker: {document.pdf}")
 
-    with (ROOT / "pyproject.toml").open("rb") as stream:
-        project = tomllib.load(stream)["project"]
-    version = project["version"]
     title = document.source.read_text(encoding="utf-8").splitlines()[0][2:]
+    with (ROOT / "pyproject.toml").open("rb") as stream:
+        author = tomllib.load(stream)["project"]["authors"][0]["name"]
     info = parse_info(document.pdf)
     if info.get("Title") != title:
         raise AssertionError(f"PDF title mismatch: {info.get('Title')!r}")
-    if info.get("Author") != project["authors"][0]["name"]:
+    if info.get("Author") != author:
         raise AssertionError(f"PDF author mismatch: {info.get('Author')!r}")
-    if version not in info.get("Subject", "") or version not in info.get("Keywords", ""):
-        raise AssertionError(f"PDF version metadata mismatch: {document.pdf}")
+    if info.get("Subject") != DOCUMENT_SUBJECT:
+        raise AssertionError(f"PDF subject mismatch: {info.get('Subject')!r}")
+    if info.get("Keywords") != DOCUMENT_KEYWORDS:
+        raise AssertionError(f"PDF keywords mismatch: {info.get('Keywords')!r}")
+    source_header = document.source.read_text(encoding="utf-8").splitlines()[:5]
+    if source_header != [
+        f"# {title}",
+        "",
+        f"**{DOCUMENT_LABEL}**",
+        "",
+        f"**Document updated:** {DOCUMENT_DATE}",
+    ]:
+        raise AssertionError(f"Markdown development metadata mismatch: {document.source}")
     if info.get("Encrypted") != "no":
         raise AssertionError(f"encrypted PDF: {document.pdf}")
     pages = int(info["Pages"])
@@ -238,6 +274,7 @@ def validate_document(document: Document) -> dict[str, object]:
         if not nonempty or nonempty[-1] != str(number):
             raise AssertionError(f"missing footer page number {number}: {document.pdf}")
     normalized_pdf = normalize(extracted)
+    normalized_raw_pdf = normalize(run("pdftotext", "-raw", str(document.pdf), "-"))
     headings, code_blocks, prose_blocks = markdown_inventory(document.source)
     # Ordered extracted headings are supplemented by the exact bookmark outline
     # and ordered command coverage below; Contents text alone is insufficient.
@@ -250,12 +287,16 @@ def validate_document(document: Document) -> dict[str, object]:
         body_position = found + len(needle)
     code_lines = [line for block in code_blocks for line in block.splitlines() if normalize(line)]
     assert_in_order(code_lines, normalized_pdf, "fenced code line")
+    table_cells = markdown_table_cells(document.source)
+    for cell in table_cells:
+        if normalize_prose(cell) not in normalize_prose(normalized_raw_pdf):
+            raise AssertionError(f"missing table content: {cell!r}")
     representative = [p for p in prose_blocks if len(normalize(p)) >= 30][::8]
     for prose in representative:
-        if normalize(prose) not in normalized_pdf:
+        if normalize_prose(prose) not in normalize_prose(normalized_pdf):
             raise AssertionError(f"missing representative prose: {prose[:80]!r}")
-    # Check every list item's opening text, in addition to representative prose
-    # and all code. Neither approved source contains tables.
+    # Check every list item's opening text, in addition to all table cells,
+    # representative prose and all code.
     list_items: list[str] = []
     in_code = False
     for line in document.source.read_text(encoding="utf-8").splitlines():
@@ -264,12 +305,14 @@ def validate_document(document: Document) -> dict[str, object]:
         if not in_code and (item := re.match(r"^\s*(?:[-+*]|\d+\.)\s+(.+)$", line)):
             list_items.append(visible(item.group(1)))
     for item in list_items:
-        if normalize(item) not in normalized_pdf:
+        if normalize_prose(item) not in normalize_prose(normalized_pdf):
             raise AssertionError(f"missing list content: {item!r}")
     for opening in prose_blocks[:2]:
-        if normalize(opening) not in normalized_pdf:
+        if normalize_prose(opening) not in normalize_prose(normalized_pdf):
             raise AssertionError(f"opening source content missing: {opening!r}")
-    if normalize(visible(document.source.read_text().splitlines()[-1])) not in normalized_pdf:
+    if normalize_prose(
+        visible(document.source.read_text().splitlines()[-1])
+    ) not in normalize_prose(normalized_pdf):
         raise AssertionError(f"final source content missing from {document.pdf}")
     if re.search(r"(?m)^#{1,6}\s+\S", extracted) or "```" in extracted:
         raise AssertionError(f"obvious Markdown syntax leaked into {document.pdf}")
@@ -346,6 +389,7 @@ def validate_document(document: Document) -> dict[str, object]:
         "representative_prose_blocks": len(representative),
         "bookmarks": len(outline_titles),
         "list_items": len(list_items),
+        "table_cells": len(table_cells),
         "source_links": len(source_links),
         "rendered_html_links": len(rendered_links),
         "pdf_link_annotations": len(actions),

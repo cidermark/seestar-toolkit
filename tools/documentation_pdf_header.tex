@@ -5,6 +5,9 @@
 \usepackage{needspace}
 \usepackage{microtype}
 
+% Keep constrained tables legible without allowing long code values to clip.
+\AtBeginEnvironment{longtable}{\scriptsize}
+
 % Resolve fonts through TeX Live rather than the developer machine's font registry.
 \setmainfont{texgyreheros-regular.otf}[
   BoldFont=texgyreheros-bold.otf,

@@ -1,6 +1,14 @@
 # Seestar Toolkit User Guide
 
-**Version 1.1.0 --- 2026-09-23**
+**Development — ENH-001 (unreleased)**
+
+**Document updated:** 2026-10-01
+
+This development edition adds configuration management to the released v1.1.0
+workflows. The new `config` commands require an installation containing ENH-001;
+they are not included in the published v1.1.0 wheel. The released installation
+instructions and support boundaries remain as described below. No new release
+number has been assigned.
 
 ## Contents
 
@@ -40,6 +48,16 @@
   - [Which setting wins?](#which-setting-wins)
   - [Automatic and interactive location handling](#automatic-and-interactive-location-handling)
   - [Customise carefully, then keep it consistent](#customise-carefully-then-keep-it-consistent)
+- [Managing configuration](#managing-configuration)
+  - [Inspect your settings](#inspect-your-settings)
+  - [Save or remove an archive preference](#save-or-remove-an-archive-preference)
+  - [Inspect a capture's GPS and saved matches](#inspect-a-captures-gps-and-saved-matches)
+  - [Create a saved location](#create-a-saved-location)
+  - [Update a saved location](#update-a-saved-location)
+  - [Rename or remove a saved location](#rename-or-remove-a-saved-location)
+  - [Location names and matching areas](#location-names-and-matching-areas)
+  - [Manually edited configuration files and targeted repair](#manually-edited-configuration-files-and-targeted-repair)
+  - [Configuration file safety](#configuration-file-safety)
 - [Existing archives, collisions and moving original files](#existing-archives-collisions-and-moving-original-files)
   - [Re-running an archive operation](#re-running-an-archive-operation)
   - [What is a collision?](#what-is-a-collision)
@@ -76,11 +94,15 @@
   - [A copy or move stopped part way through](#a-copy-or-move-stopped-part-way-through)
   - [An external drive or NAS is unavailable](#an-external-drive-or-nas-is-unavailable)
   - [A configuration file is rejected](#a-configuration-file-is-rejected)
+  - [A saved hierarchy contains an unmatched brace](#a-saved-hierarchy-contains-an-unmatched-brace)
+  - [A saved location cannot be changed](#a-saved-location-cannot-be-changed)
+  - [FITS GPS extraction fails](#fits-gps-extraction-fails)
 - [Command reference](#command-reference)
   - [Main command](#main-command)
   - [`convert`](#convert)
   - [`convert-batch`](#convert-batch)
   - [`archive`](#archive)
+  - [`config`](#config)
   - [Exit codes](#exit-codes)
 - [Uninstalling Seestar Toolkit](#uninstalling-seestar-toolkit)
   - [Deactivate the environment](#deactivate-the-environment)
@@ -400,6 +422,12 @@ Activation applies only to the current Terminal session. It does not permanently
 change your Mac or your normal Python setup.
 
 ## 3. Install Seestar Toolkit
+
+These steps install the **published v1.1.0 release**, not ENH-001. The new
+configuration commands require an installation containing the development
+changes; confirm `seestar-toolkit config --help` is available in the environment
+you intend to use. The package version may still report `1.1.0`, so that number
+alone does not identify an ENH-001 build.
 
 Download the v1.1.0 release package from the project's GitHub Releases page.
 
@@ -893,8 +921,9 @@ necessarily need to specify it every time you create an archive.
 
 If supported Seestar captures contain usable location coordinates, the Toolkit
 can compare them locally with locations saved in its configuration file. If a
-saved location falls within its configured matching radius, the Toolkit can use
-that saved name automatically. No external geocoder is used.
+capture falls within a saved location's matching radius, the Toolkit can use
+that site's name automatically. If older saved areas overlap, the nearest
+containing site is selected. No external geocoder is used.
 
 **This is another important reason to start every new archive operation with
 `--dry-run`.**
@@ -935,19 +964,20 @@ You do **not** need a configuration file to use Seestar Toolkit.
 Without one, archive operations use the built-in defaults, including copy,
 `skip-identical`, and the default target/location/observing-night hierarchy.
 
-If you want persistent archive preferences, you can create a TOML file at:
+Persistent archive preferences and saved observing sites use a configuration file at:
 
 ``` text
 ~/.config/seestar-toolkit/config.toml
 ```
 
-In v1.1.0 this location is fixed. The Toolkit does not use `XDG_CONFIG_HOME` to
-select an alternative default configuration directory. Use `--config PATH` when
-you want an archive operation to read a different configuration file.
+This default location is fixed. The Toolkit does not use `XDG_CONFIG_HOME`
+to select another directory. Use `--config PATH` to select an existing
+alternative file for an individual command.
 
-The Toolkit treats configuration as **read-only**. It can read a file you create
-and edit yourself, but v1.1.0 does not create the file, rewrite it or save
-answers from interactive location prompts.
+The published v1.1.0 release only reads configuration you create manually.
+**ENH-001 adds `config show`, `config set` and `config unset`** so you can inspect
+and manage saved entries explicitly. See [Managing configuration](#managing-configuration).
+Archive-location prompt answers still apply only to the current run.
 
 A simple configuration might look like this:
 
@@ -964,17 +994,18 @@ longitude = -1.0000
 radius_m = 100.0
 ```
 
-The double brackets in `[[locations]]` are intentional. In TOML they define an
-**array of tables**, allowing you to save more than one observing site. Add
-another `[[locations]]` block for each additional site.
+The double brackets in `[[locations]]` are intentional. They allow repeated
+saved observing-site entries in the configuration file. Each needs a name, latitude, longitude
+and radius. You can maintain the file manually, or use ENH-001's location
+commands to add and check entries for you.
 
 The coordinates above are illustrative only. Replace them with your own
 observing-site values if you choose to use location matching, and remember that
 a configuration containing real coordinates is personal data that should be
 reviewed before sharing.
 
-If you do not want saved coordinate matching, simply omit the `[[locations]]`
-section.
+If you do not want saved coordinate matching, omit the `[[locations]]`
+entries or remove them individually with `config unset --location NAME`.
 
 ## Using a different configuration file
 
@@ -1009,7 +1040,9 @@ what the important behaviour will be.
 If you omit `--location`, saved-location matching can use capture coordinates as
 described above. In an interactive Terminal session, the Toolkit can ask you to
 confirm a saved match or enter a location label manually. A blank manual
-response means `unknown`.
+response means `unknown`. Neither confirmation nor a manually entered label
+adds or updates saved configuration; use the `config` commands when you want
+to save a site.
 
 For scripted or unattended use, `--non-interactive` prevents prompting. If no
 saved location matches, or the capture has no usable coordinates, the location
@@ -1033,6 +1066,349 @@ changing your filing convention manually can become a substantial task.
 The next chapter deals with the situations that deserve even more care:
 **existing destinations, repeated archive runs, collisions and moving original
 files.**
+
+# Managing configuration
+
+**Development — ENH-001 (unreleased).** The commands in this chapter require an
+installation containing ENH-001. They are not available in the published
+v1.1.0 wheel. Check `seestar-toolkit config --help` in the environment you intend
+to use.
+
+Saved configuration settings make archive preferences and observing sites
+persistent between runs. You can inspect, save and remove them explicitly.
+An archive command's options still apply to that run only; answers to
+archive-location prompts are not automatically saved.
+
+The examples below are optional; configuration is not required to use the
+Toolkit. Choose the examples that suit your needs rather than running them all
+in sequence. Replace quoted paths and site names with your own. Manual
+coordinates are illustrative only.
+
+## Inspect your settings
+
+Start with:
+
+```bash
+seestar-toolkit config show
+```
+
+The command displays the configuration file name and one value for each
+configurable archive setting. Each value is labelled **saved** or **default**.
+A saved value overrides the default in this view, even when both values happen
+to be equal. Saved locations are included.
+
+These settings apply when you run an archive command without overriding them
+on the command line. For example, `archive --source-action copy` uses copy for
+that run even if you have saved move as your preference. It does not change the
+saved value displayed by `config show`.
+
+| Command | What it shows |
+|---|---|
+| `config show` | Effective archive preferences, their saved/default labels, and saved locations. |
+| `config show --saved` | Saved values in the configuration file, including locations, comments and unfamiliar entries. No missing defaults are added. |
+| `config show --defaults` | Built-in values used when a setting is supplied neither on the command line nor in the configuration file. This command shows those defaults without reading the saved file. There are no default observing sites. |
+
+Prefix each command with `seestar-toolkit`.
+
+If the default file does not exist, inspection shows the defaults and creates
+nothing. If saved values are invalid, inspection identifies the problem and
+returns an error status. See [hierarchy repair](#a-saved-hierarchy-contains-an-unmatched-brace)
+for an example of correcting an invalid saved value.
+
+`--saved`, `--defaults` and `--extract` are alternative inspection modes; choose
+one at a time. `--defaults` cannot be combined with `--config` because built-in
+defaults are independent of a saved file.
+
+## Save or remove an archive preference
+
+These are the three preferences currently managed by the Toolkit:
+
+| Setting | Accepted values | Built-in default |
+|---|---|---|
+| `archive.hierarchy` | `{target}`, `{location}` and `{session_end_date}`, each once as a separate path component, in any order | `{target}/{location}/{session_end_date}` |
+| `archive.source_action` | `copy` or `move` | `copy` |
+| `archive.collision_policy` | `skip-identical`, `error` or `overwrite` | `skip-identical` |
+
+For example, save copy as your preferred source action:
+
+```bash
+seestar-toolkit config set archive.source_action copy
+```
+
+Or save a different hierarchy order:
+
+```bash
+seestar-toolkit config set archive.hierarchy '{location}/{session_end_date}/{target}'
+```
+
+`set` validates the proposed configuration and reports the change after saving.
+Replacing an archive preference does not ask another confirmation question.
+The first successful save can create the absent default file and its directory.
+Saving a preference does not itself run an archive operation.
+
+To remove a saved preference:
+
+```bash
+seestar-toolkit config unset archive.source_action
+```
+
+Later runs use its built-in default unless overridden on the command line.
+Removing an absent preference changes nothing. Setting an equivalent saved
+value also avoids rewriting the file; setting an absent preference explicitly
+to its default does save an entry labelled **saved**.
+
+Saved policy values and `config set` accept different letter cases, but not
+extra spaces around the value. Newly written policy values use lowercase.
+
+Source and destination paths, `--dry-run`, prompting flags, an explicit archive
+location and `--config` are choices for an individual command, not saved
+preferences. There is no `--save-config` or reset-all command.
+
+## Inspect a capture's GPS and saved matches
+
+Use one FITS capture from the observing site:
+
+```bash
+seestar-toolkit config show --extract "/path/to/capture.fit"
+```
+
+This reads the capture's observing-site coordinates and compares them with
+saved locations. It **does not save anything**.
+
+The display includes:
+
+- the FITS file and configuration file being checked;
+- the extracted latitude and longitude;
+- every matching saved site's name, coordinates and radius;
+- the distance from the capture coordinates to each matching site's centre.
+
+It distinguishes no saved locations, no match, one match or multiple matches.
+When several saved areas match the GPS coordinates, matches are listed nearest
+first. Archive operations still select the nearest match.
+
+If two sites are equally close, the site whose name comes first alphabetically
+is selected, ignoring capitalisation. For example, `Garden` comes before `Home`.
+If the names differ only in capitalisation, their original spellings determine
+a consistent order; for example, `Home` comes before `home`.
+
+GPS is read from the observing-site `SITELAT` and `SITELONG` fields in FITS
+headers. These are latitude and longitude in degrees. The target's celestial
+`RA` and `DEC` coordinates are never used as a substitute.
+
+The extractor checks all headers, including repeated site fields. Identical
+numeric coordinates are acceptable. Conflicting values, incomplete pairs or
+invalid coordinates produce an error rather than a guessed location. Headers
+with no site fields are ignored. Extraction reads headers without loading the
+image data and does not need an image that can be converted to TIFF.
+
+There is no online lookup or coordinate-format conversion. If extraction
+fails, choose a capture with consistent site coordinates or enter your site's
+coordinates manually.
+
+## Create a saved location
+
+To save the site coordinates from a FITS file as `Home`:
+
+```bash
+seestar-toolkit config set --location "Home" --extract "/path/to/capture.fit"
+```
+
+A **new** location defaults to a matching radius of **100 metres**. You can
+choose a different radius with `--radius-m`:
+
+```bash
+seestar-toolkit config set --location "Home" \
+  --extract "/path/to/capture.fit" --radius-m 150
+```
+
+The radius defines the circle within which capture coordinates match the saved
+site. It is not a distance from the target in the sky.
+
+You can instead enter both coordinates manually:
+
+```bash
+seestar-toolkit config set --location "Example Site" \
+  --latitude 10.0 --longitude 20.0 --radius-m 100
+```
+
+Replace those illustrative numbers with your site's latitude and longitude.
+New locations need both coordinates. Do not combine `--extract` with manual
+latitude or longitude in one command.
+
+A `config set` operation validates the proposed name, coordinates and radius,
+and checks for conflicts with existing saved locations before saving. Creating
+a new entry needs no additional confirmation. If the name already identifies
+an entry, the [update rules](#update-a-saved-location) apply instead.
+
+## Update a saved location
+
+Change only the fields you supply. For example:
+
+```bash
+seestar-toolkit config set --location "Home" --radius-m 250
+```
+
+This retains its coordinates. You may change latitude or longitude separately
+for an existing site; the other coordinate and radius remain saved.
+
+To replace both coordinates from a new FITS file:
+
+```bash
+seestar-toolkit config set --location "Home" --extract "/path/to/new-capture.fit"
+```
+
+Its existing radius is retained unless you also supply `--radius-m`. The
+100 m creation default is not reapplied to an update.
+
+Before a changed existing entry is saved, the Toolkit shows the old and
+proposed settings and asks:
+
+```text
+Update config / Skip [Skip]:
+```
+
+Enter `Update config` to save, or `Skip` to leave the file untouched. `update`
+or `u`, and `s` for skip, are also accepted without regard to case. Pressing
+the Enter key without an answer skips the change.
+
+For an unattended update, authorise the replacement explicitly:
+
+```bash
+seestar-toolkit config set --location "Home" --radius-m 250 --update
+```
+
+`--update` requires an existing location and suppresses the question. It never
+bypasses validation. Without an interactive terminal, a changed existing entry
+cannot be replaced unless `--update` is supplied.
+
+A valid unchanged edit needs no prompt and does not rewrite the file. Validation
+still happens first: resubmitting an unchanged older entry can fail if it does
+not meet the new edit rules.
+
+## Rename or remove a saved location
+
+Rename a uniquely identified site:
+
+```bash
+seestar-toolkit config set --location "Home" --rename "Garden"
+```
+
+Coordinates and radius are retained. A change in capitalisation alone, such as
+`home` to `Home`, is allowed. A name used by another site is rejected.
+
+Rename can be combined with coordinate or radius changes:
+
+```bash
+seestar-toolkit config set --location "Home" \
+  --rename "Garden" --radius-m 150
+```
+
+The complete edit is checked and saved together, with one confirmation question.
+`--update` can authorise an unattended rename or combined edit.
+
+**Renaming changes the saved configuration only. Existing archive directories
+and indexes keep their current names.**
+
+To remove the complete saved entry:
+
+```bash
+seestar-toolkit config unset --location "Home"
+```
+
+Removal needs no additional confirmation. If the name is absent, the Toolkit
+reports that and changes nothing, provided the configuration otherwise passes
+the required validation. Removing a location does not create a default site or
+delete archived captures.
+
+## Location names and matching areas
+
+Location names are matched without regard to case. Outer spaces are ignored
+for lookup and removed from newly saved or explicitly renamed names. Internal
+spaces and your chosen capitalisation are retained. An ordinary coordinate or
+radius edit preserves an existing name's spelling.
+
+New or edited entries must have:
+
+- a nonblank name, not a standalone `.` or `..`;
+- latitude from −90 to +90 degrees;
+- longitude from −180 to +180 degrees;
+- a finite radius greater than zero metres; decimal values are allowed;
+- a name and matching area that do not conflict with another saved entry.
+
+Different names must also remain distinct after the Toolkit cleans them for
+archive directory use. For example, `A/B` and `a-b` conflict after unsafe
+characters are replaced and case is ignored.
+
+**Saved matching circles must not touch or overlap.** If `Home` has a 100 m
+radius and another site has a 50 m radius, their centres must be more than
+150 m apart. A rejected change names the conflicting sites and explains the
+distance/radius problem. There is no option to force an overlapping save.
+
+These checks apply to the complete proposed location, including rename-only
+edits. Fix an existing zero radius or overlap as part of the edit if necessary.
+
+## Manually edited configuration files and targeted repair
+
+Older manually written configuration files may contain values that do not meet
+the rules applied during `config set` operations, such as zero-radius sites,
+duplicate names or overlapping areas. If they satisfy the original required-field,
+type and range rules, archive operations continue to use them with their existing
+matching behaviour. Configuration inspection warns about the conflicts.
+
+Unrelated older conflicts do not block a valid preference change or removal.
+You can repair sites one at a time, but any site you add or edit must pass the
+new rules. If several old entries have the same trimmed, case-insensitive name,
+the Toolkit cannot identify one safely: edit the configuration file manually to distinguish
+them first.
+
+Readable invalid values can be inspected with `config show --saved`
+and corrected with `set` or `unset`. Another invalid required value may still
+prevent saving; the proposed document must satisfy its required schema and
+hierarchy rules, apart from the allowed untouched legacy-location conflicts.
+An invalid configuration file format requires manual correction.
+
+An omitted radius in an existing configuration-file entry remains an error. The new-location
+100 m default does not fill missing values in a hand-written file.
+
+A saved hierarchy with unmatched braces is rejected with a validation message.
+You can replace it with a valid hierarchy or remove the saved entry to use the
+built-in default. See [troubleshooting](#a-saved-hierarchy-contains-an-unmatched-brace).
+
+## Configuration file safety
+
+`--config PATH` selects one existing file instead of the default; the two are
+not merged. Place it after the `show`, `set` or `unset` verb:
+
+```bash
+seestar-toolkit config show --config "/path/to/existing/config.toml"
+seestar-toolkit config set archive.source_action copy \
+  --config "/path/to/existing/config.toml"
+```
+
+An explicitly selected file must already exist, including for `set`. A missing
+or unreadable file is an error, not permission to create a replacement or use
+defaults silently. `show --defaults` remains available without reading a
+damaged saved file.
+
+When the configuration file is edited:
+
+- Unrelated settings, unfamiliar sections and comments are preserved.
+- Formatting around an edited value may change.
+- Removing an entry removes its fields and attached inline comments.
+- Standalone notes are retained but may move.
+
+If the configuration is a symbolic link—a shortcut to another file—the Toolkit
+shows the actual destination and updates that target while retaining the link.
+A broken link or link loop produces an error. Existing file permissions are
+retained; new default files are readable/writable only by their owner.
+
+The updated file is prepared separately and then replaces the original in one
+operation. A detected change since reading stops the save and asks you to retry.
+This protects against accidental edits during a prompt; it is not a multi-user
+locking system. The Toolkit reports success only after saving completes.
+
+Configuration-save protection is separate from archive execution: an archive
+copy or move still does not have whole-operation rollback.
 
 # Existing archives, collisions and moving original files
 
@@ -1517,6 +1893,8 @@ seestar-toolkit convert-batch --help
 seestar-toolkit archive --help
 ```
 
+For an ENH-001 installation, also use `seestar-toolkit config --help`.
+
 Use the installed help pages to confirm the exact options accepted by your
 installed version.
 
@@ -1540,8 +1918,15 @@ M 42/unknown/20260915/...
 
 the location has not been resolved to the label you expected.
 
-Check the coordinates and matching radius in your configuration, or supply the
-intended label explicitly:
+Check the coordinates and matching radius in your configuration. In an
+ENH-001 build, inspect a capture without saving anything:
+
+```bash
+seestar-toolkit config show --extract "/path/to/capture.fit"
+```
+
+This identifies any saved sites containing that capture's coordinates.
+Alternatively, supply the intended label explicitly for the archive run:
 
 ``` text
 --location "Home"
@@ -1604,11 +1989,11 @@ destination after it becomes available again.
 
 ## A configuration file is rejected
 
-An explicit `--config` path must name an existing, valid TOML file. If the file
+An explicit `--config` path must name an existing, valid configuration file. If the file
 is missing or malformed, the Toolkit reports an operational error rather than
 silently substituting another configuration.
 
-Check the path and TOML syntax. Repeatable saved observing locations use double
+Check the path and configuration-file format. Repeatable saved observing locations use double
 brackets:
 
 ``` toml
@@ -1619,10 +2004,84 @@ longitude = -1.0000
 radius_m = 100.0
 ```
 
+In an ENH-001 build, inspect readable saved entries with:
+
+```bash
+seestar-toolkit config show --saved
+```
+
+Correct a recognised invalid preference with `config set` or remove it with
+`config unset`. The resulting file must pass the required validation before it
+can be saved. Missing required fields or another invalid value may still need
+attention. An invalid configuration-file format must be corrected manually.
+
+To inspect built-in defaults without reading a damaged file:
+
+```bash
+seestar-toolkit config show --defaults
+```
+
+This does not repair the file or make an archive run ignore it.
+
+## A saved hierarchy contains an unmatched brace
+
+The hierarchy must contain `{target}`, `{location}` and `{session_end_date}`,
+each exactly once as a separate path component. Each placeholder needs both
+an opening `{` and a closing `}`.
+
+For example, a saved value such as `{target` is an invalid hierarchy, even
+though the quoted string can be stored in a correctly formatted configuration
+file. The Toolkit reports the validation error rather than using that value.
+
+Inspect the saved entries with:
+
+```bash
+seestar-toolkit config show --saved
+```
+
+Then replace the invalid hierarchy with a complete valid value:
+
+```bash
+seestar-toolkit config set archive.hierarchy '{target}/{location}/{session_end_date}'
+```
+
+Alternatively, remove the saved preference so the built-in default applies:
+
+```bash
+seestar-toolkit config unset archive.hierarchy
+```
+
+These are alternative repairs. If another required value is invalid, correct
+that problem too before the proposed configuration can be saved. Broken
+configuration-file syntax, such as an unclosed quotation mark, still requires
+manual correction.
+
+A valid `archive --hierarchy` override applies to that run only; it does not
+repair the saved value.
+
+## A saved location cannot be changed
+
+Read the reported name, coordinate or overlap problem first. A new or edited
+entry must have a positive radius and a distinct name/matching area. Older
+conflicts may remain usable for archiving, but do not bypass the edit rules.
+
+If several entries share the requested name after outer spaces and case are
+ignored, distinguish them manually in the configuration file before using a name-based command.
+For an intended unattended replacement, use `--update`; it cannot bypass
+validation and requires an existing entry.
+
+## FITS GPS extraction fails
+
+The file needs a consistent observing-site `SITELAT`/`SITELONG` pair. Target
+`RA`/`DEC` does not identify the site. Choose another suitable capture or enter
+both site coordinates manually. Conflicting, incomplete or invalid site fields
+are rejected rather than guessed.
+
 # Command reference
 
-This section is a compact reminder of the v1.1.0 command-line interface. The
-earlier chapters explain the workflows and safety considerations in more detail.
+This section covers the existing command-line interface plus ENH-001's
+unreleased `config` commands. The earlier chapters explain the workflows and
+safety considerations in more detail.
 
 For the exact syntax accepted by the version installed on your Mac, use the
 relevant `--help` command.
@@ -1631,7 +2090,7 @@ relevant `--help` command.
 
 ``` text
 seestar-toolkit [-h] [--version] [--verbose]
-                {convert,convert-batch,archive} ...
+                {convert,convert-batch,archive,config} ...
 ```
 
 The global `--version` and `--verbose` options belong before the subcommand.
@@ -1703,6 +2162,54 @@ seestar-toolkit archive --dry-run --source-action copy \
 After inspecting the dry run, repeat the same command without `--dry-run` to
 perform the copy.
 
+## `config`
+
+**ENH-001 development build required.** Prefix these forms with
+`seestar-toolkit`. Square brackets indicate optional arguments and are not typed.
+
+```text
+config show [--config PATH]
+config show --saved [--config PATH]
+config show --defaults
+config show --extract FILE [--config PATH]
+config set PREF VALUE [--config PATH]
+config unset PREF [--config PATH]
+config set --location NAME [CHANGE FIELDS] [--update] [--config PATH]
+config unset --location NAME [--config PATH]
+```
+
+`PREF` is `archive.hierarchy`, `archive.source_action` or
+`archive.collision_policy`. An explicitly selected `PATH` must exist.
+
+Location change fields are `--latitude`, `--longitude`, `--extract FILE`,
+`--radius-m` and `--rename`. At least one change is required. A new site needs
+both coordinates, supplied manually or from FITS; an existing site permits
+partial edits. Its radius is retained unless changed explicitly.
+
+| Combination | Behaviour |
+|---|---|
+| Rename with coordinate/radius edits | Supported for an existing location, as one checked save. |
+| `--update` with an existing-location edit | Supported; skips the question, not validation. |
+| `--extract` with either manual coordinate | Rejected. |
+| Two inspection modes, or `--defaults --config PATH` | Rejected. |
+| Scalar and location forms mixed | Rejected. |
+| `set --location NAME` with no change fields | Rejected. |
+| Update/rename/coordinate flags on `unset` | Rejected. |
+
+`show` does not save, `set` saves an explicitly requested preference/location,
+and `unset` removes a saved entry. There is no `config location` subcommand or
+top-level `config --extract` shorthand.
+
+See [Managing configuration](#managing-configuration) for examples and
+compatibility/repair rules. Command help is available with:
+
+```bash
+seestar-toolkit config --help
+seestar-toolkit config show --help
+seestar-toolkit config set --help
+seestar-toolkit config unset --help
+```
+
 ## Exit codes
 
 ``` text
@@ -1717,6 +2224,12 @@ error.
 
 An exit code of `2` normally means the command itself was not formed correctly,
 such as missing required arguments or an unrecognised option.
+
+For `config`, successful Skip and valid no-op operations also return `0`.
+Handled configuration, extraction, write and unattended-authorisation failures
+return `1`; unsupported preferences or invalid argument combinations return `2`.
+Legacy-location warnings alone do not make inspection fail. Normal output goes
+to standard output; warnings and errors go to standard error.
 
 For batch or archive workflows, a nonzero result does not imply that every
 earlier filesystem action has been rolled back.
@@ -1847,6 +2360,8 @@ seestar-toolkit convert --help
 seestar-toolkit convert-batch --help
 ```
 
+For an ENH-001 installation, also use `seestar-toolkit config --help`.
+
 ## Check privacy before sharing diagnostics
 
 Do **not** upload astronomical captures, FITS headers, configuration files or
@@ -1872,6 +2387,7 @@ making decisions about removing source files.
 
 ------------------------------------------------------------------------
 
-This completes the main Seestar Toolkit v1.1.0 User Guide. For a shorter
-installation and first-use path, see the
+This development guide retains the released v1.1.0 workflows and adds
+ENH-001 configuration management. Final ENH-001 closure validation remains
+pending. For a shorter installation and first-use path, see the
 [Seestar Toolkit Quick Start](SEESTAR_TOOLKIT_QUICK_START.md).
