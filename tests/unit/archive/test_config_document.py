@@ -30,7 +30,8 @@ def test_effective_provenance_and_saved_unknown_entries(tmp_path):
     settings = {s.name: s for s in inspection.settings}
     assert settings["archive.source_action"].source == "saved"
     assert settings["archive.collision_policy"].source == "default"
-    assert len(settings) == 3
+    assert settings["archive.observation_date_policy"].value == "end"
+    assert len(settings) == 4
     assert document.raw["other"]["x"] == 1
     assert not inspection.errors
 

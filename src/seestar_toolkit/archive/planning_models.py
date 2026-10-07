@@ -26,6 +26,7 @@ class ArchivePlanningConfig:
     hierarchy_template: str = "{target}/{location}/{session_end_date}"
     saved_locations: tuple[SavedLocation, ...] = ()
     explicit_location: str | None = None
+    observation_date_policy: str = "end"
 
 
 @dataclass(frozen=True, slots=True)

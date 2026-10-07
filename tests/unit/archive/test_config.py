@@ -44,6 +44,7 @@ radius_m = 500
     assert config.hierarchy == "{location}/{target}/{session_end_date}"
     assert config.source_action is SourceAction.MOVE
     assert config.collision_policy is CollisionPolicy.ERROR
+    assert config.observation_date_policy == "end"
     assert len(config.saved_locations) == 1
     assert config.saved_locations[0].name == "Warfield"
 
@@ -68,3 +69,23 @@ def test_invalid_configuration_is_rejected(tmp_path: Path, content: str, message
 def test_missing_explicit_configuration_is_an_error(tmp_path: Path) -> None:
     with pytest.raises(ArchiveConfigError, match="does not exist"):
         load_archive_config(tmp_path / "missing.toml")
+
+
+@pytest.mark.parametrize(("value", "expected"), [("start", "start"), ("END", "end")])
+def test_observation_date_policy_is_case_insensitive(
+    tmp_path: Path, value: str, expected: str
+) -> None:
+    path = tmp_path / "config.toml"
+    path.write_text(f'[archive]\nobservation_date_policy = "{value}"\n')
+
+    assert load_archive_config(path).observation_date_policy == expected
+
+
+@pytest.mark.parametrize("value", ["tomorrow", "", 1])
+def test_invalid_observation_date_policy_is_rejected(tmp_path: Path, value: object) -> None:
+    path = tmp_path / "config.toml"
+    rendered = repr(value) if not isinstance(value, str) else f'"{value}"'
+    path.write_text(f"[archive]\nobservation_date_policy = {rendered}\n")
+
+    with pytest.raises(ArchiveConfigError, match="observation_date_policy|observation date policy"):
+        load_archive_config(path)

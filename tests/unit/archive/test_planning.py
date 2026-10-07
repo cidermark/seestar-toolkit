@@ -204,16 +204,35 @@ def test_archive_root_with_traversal_is_rejected() -> None:
 
 
 @pytest.mark.parametrize(
-    ("captured_at", "expected"),
+    ("captured_at", "start", "end"),
     [
-        (datetime(2026, 9, 1, 11, 59, 59), "20260901"),
-        (datetime(2026, 9, 1, 12, 0, 0), "20260902"),
-        (datetime(2026, 9, 1, 22, 0, 0), "20260902"),
-        (datetime(2026, 9, 2, 1, 30, 0), "20260902"),
+        (datetime(2026, 9, 5, 11, 59, 59), "20260904", "20260905"),
+        (datetime(2026, 9, 5, 12, 0, 0), "20260905", "20260906"),
+        (datetime(2026, 9, 5, 12, 0, 1), "20260905", "20260906"),
+        (datetime(2026, 9, 5, 23, 59, 59), "20260905", "20260906"),
+        (datetime(2026, 9, 6, 0, 0, 0), "20260905", "20260906"),
+        (datetime(2026, 9, 6, 0, 0, 1), "20260905", "20260906"),
+        (datetime(2026, 9, 6, 11, 59, 59), "20260905", "20260906"),
+        (datetime(2026, 9, 6, 12, 0, 0), "20260906", "20260907"),
+        (datetime(2026, 1, 1, 0, 0, 0), "20251231", "20260101"),
+        (datetime(2026, 3, 1, 0, 0, 0), "20260228", "20260301"),
     ],
 )
-def test_session_end_date_uses_twelve_hour_rule(captured_at: datetime, expected: str) -> None:
-    assert session_end_date(captured_at) == expected
+def test_session_end_date_uses_selected_fixed_noon_policy(
+    captured_at: datetime, start: str, end: str
+) -> None:
+    assert session_end_date(captured_at, "start") == start
+    assert session_end_date(captured_at) == end
+    assert session_end_date(captured_at, "end") == end
+
+
+def test_start_policy_changes_planning_group_and_destination() -> None:
+    observation = _observation(first_at=datetime(2026, 9, 5, 22, 0))
+
+    planned = _plan(observation, observation_date_policy="start").observations[0]
+
+    assert planned.metadata.session_end_date == "20260905"
+    assert planned.hierarchy_directory == ARCHIVE_ROOT / "IC 434/unknown/20260905"
 
 
 def test_first_light_time_is_preferred_over_stack_time() -> None:
@@ -226,6 +245,8 @@ def test_first_light_time_is_preferred_over_stack_time() -> None:
     )
 
     assert _plan(observation).observations[0].metadata.session_end_date == "20260901"
+    start_plan = _plan(observation, observation_date_policy="start")
+    assert start_plan.observations[0].metadata.session_end_date == "20260831"
 
 
 def test_stack_time_supports_stack_only_planning() -> None:
@@ -242,6 +263,8 @@ def test_stack_time_supports_stack_only_planning() -> None:
 
     assert planned.observation_name == "observation_01"
     assert planned.stack is not None
+    start_plan = _plan(observation, observation_date_policy="start")
+    assert start_plan.observations[0].metadata.session_end_date == "20260901"
 
 
 def test_explicit_location_wins_over_saved_gps_match() -> None:

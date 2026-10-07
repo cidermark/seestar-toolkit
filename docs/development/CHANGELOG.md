@@ -288,3 +288,12 @@ acceptance evidence. Base: `cc5a0df`; documentation/artifact commit: **PENDING
 [Checkpoint 3 report](change_documents/ENH_001/ENH-001_CHECKPOINT_3_REPORT.md).
 ENH-001 remains STARTED pending user PDF review, commits/push, pull-request CI and
 post-integration verification. Published v1.1.0 metadata remains unchanged.
+
+## Pending development work — ENH-002 observing-night date policy
+
+ENH-002 adds the persistent `archive.observation_date_policy` preference,
+with `end` as the compatible built-in default and `start` as the alternative
+fixed-noon observing-night label. It flows through existing archive planning;
+it has no per-run archive override and does not reorganise existing archives.
+Implementation evidence is pending user review and Git actions. See the
+[authoritative ENH-002 specification](change_documents/ENH-002/ENH-002.md).

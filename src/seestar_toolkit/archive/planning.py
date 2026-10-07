@@ -42,9 +42,16 @@ def normalize_archive_component(value: str) -> str:
     return normalized
 
 
-def session_end_date(capture_datetime: datetime) -> str:
-    """Return the archive observing-night token using the fixed +12-hour rule."""
-    return (capture_datetime + timedelta(hours=12)).date().strftime("%Y%m%d")
+def session_end_date(capture_datetime: datetime, policy: str = "end") -> str:
+    """Return the archive observing-night token for the selected fixed-noon policy."""
+    offsets = {"start": -12, "end": 12}
+    try:
+        offset = offsets[policy]
+    except KeyError as error:
+        raise ArchivePlanningConfigurationError(
+            "observation_date_policy must be 'start' or 'end'"
+        ) from error
+    return (capture_datetime + timedelta(hours=offset)).date().strftime("%Y%m%d")
 
 
 def plan_seestar_archive(
@@ -54,6 +61,7 @@ def plan_seestar_archive(
     hierarchy_template: str = "{target}/{location}/{session_end_date}",
     explicit_location: str | None = None,
     saved_locations: tuple[SavedLocation, ...] = (),
+    observation_date_policy: str = "end",
 ) -> ArchivePlan:
     """Plan archive destinations from an existing reconstruction without I/O."""
     config = ArchivePlanningConfig(
@@ -61,6 +69,7 @@ def plan_seestar_archive(
         hierarchy_template=hierarchy_template,
         saved_locations=tuple(saved_locations),
         explicit_location=explicit_location,
+        observation_date_policy=observation_date_policy,
     )
     _validate_config(config)
 
@@ -106,6 +115,8 @@ def _validate_config(config: ArchivePlanningConfig) -> None:
     if ".." in config.archive_root.parts:
         raise ArchivePlanningConfigurationError("archive_root must not contain traversal")
     _template_tokens(config.hierarchy_template)
+    if config.observation_date_policy not in {"start", "end"}:
+        raise ArchivePlanningConfigurationError("observation_date_policy must be 'start' or 'end'")
     for location in config.saved_locations:
         if not math.isfinite(location.latitude) or not -90 <= location.latitude <= 90:
             raise ArchivePlanningConfigurationError(
@@ -176,7 +187,7 @@ def _observation_candidate(
         longitude=longitude,
         saved_locations=config.saved_locations,
     )
-    date_token = session_end_date(capture_at)
+    date_token = session_end_date(capture_at, config.observation_date_policy)
     metadata = ObservationArchiveMetadata(
         logical_target=logical_target,
         target_component=normalize_archive_component(logical_target),

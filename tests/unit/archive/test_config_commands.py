@@ -221,3 +221,26 @@ def test_invalid_saved_policy_is_not_bypassed_by_archive_override(config_path, t
         )
         == 1
     )
+
+
+def test_observation_date_policy_set_unset_and_manual_case(config_path, capsys):
+    assert cli.main(["config", "set", "archive.observation_date_policy", "START"]) == 0
+    assert 'observation_date_policy = "start"' in config_path.read_text()
+    assert cli.main(["config", "unset", "archive.observation_date_policy"]) == 0
+    assert "observation_date_policy" not in config_path.read_text()
+
+    config_path.write_text('[archive]\nobservation_date_policy = "StArT"\n')
+    before = config_path.read_bytes()
+    assert cli.main(["config", "show"]) == 0
+    assert "archive.observation_date_policy = start [saved]" in capsys.readouterr().out
+    assert config_path.read_bytes() == before
+
+
+def test_invalid_observation_date_policy_can_be_inspected_and_repaired(config_path, capsys):
+    config_path.parent.mkdir(parents=True)
+    config_path.write_text('[archive]\nobservation_date_policy = "invalid"\n')
+
+    assert cli.main(["config", "show"]) == 1
+    assert "observation date policy" in capsys.readouterr().err
+    assert cli.main(["config", "set", "archive.observation_date_policy", "end"]) == 0
+    assert 'observation_date_policy = "end"' in config_path.read_text()

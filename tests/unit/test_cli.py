@@ -122,6 +122,7 @@ def test_archive_config_defaults_and_cli_overrides_pass_through(
         hierarchy_template="{target}",
         explicit_location=None,
         saved_locations=(),
+        observation_date_policy="end",
     )
 
 

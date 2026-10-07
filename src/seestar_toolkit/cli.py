@@ -76,12 +76,18 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="FILE",
         help="Read FITS site headers and report all matching saved locations without writing.",
     )
-    preferences = ("archive.hierarchy", "archive.source_action", "archive.collision_policy")
+    preferences = (
+        "archive.hierarchy",
+        "archive.source_action",
+        "archive.collision_policy",
+        "archive.observation_date_policy",
+    )
     set_parser = verbs.add_parser(
         "set",
         help="Validate and save an archive preference or location.",
         description="Set hierarchy (each of {target}/{location}/{session_end_date} once), "
-        "source_action (copy/move), or collision_policy (skip-identical/error/overwrite). "
+        "source_action (copy/move), collision_policy (skip-identical/error/overwrite), or "
+        "observation_date_policy (start/end). "
         "Locations require coordinates on creation (radius defaults to 100 m); existing "
         "entries retain unspecified fields. Existing changes ask Update config / Skip "
         "unless --update is supplied; unattended replacement requires --update.",
@@ -461,6 +467,7 @@ def _run_archive(args: argparse.Namespace) -> int:
             hierarchy_template=hierarchy,
             explicit_location=explicit_location,
             saved_locations=config.saved_locations,
+            observation_date_policy=config.observation_date_policy,
         )
         interactive = not args.non_interactive and sys.stdin.isatty()
         if interactive and explicit_location is None:
@@ -532,6 +539,7 @@ def _replan_with_manual_location(prepared: PreparedSeestarArchive) -> PreparedSe
         hierarchy_template=config.hierarchy_template,
         explicit_location=entered,
         saved_locations=config.saved_locations,
+        observation_date_policy=config.observation_date_policy,
     )
     return PreparedSeestarArchive(
         discovery=prepared.discovery,

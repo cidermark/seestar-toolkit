@@ -100,6 +100,23 @@ def _planned(root: Path, archive_root: Path):
     return plan_seestar_archive(reconstruction, archive_root=archive_root)
 
 
+def test_start_date_policy_flows_through_archive_reconciliation_and_index(tmp_path: Path) -> None:
+    root, _, _ = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+
+    result = archive_seestar_session(
+        root, archive_root=archive_root, observation_date_policy="start"
+    )
+    prepared = orchestration.prepare_seestar_archive(
+        root, archive_root=archive_root, observation_date_policy="start"
+    )
+
+    assert result.status is SeestarArchiveStatus.COMPLETE
+    assert (archive_root / "Target/unknown/20260902/observation_01").is_dir()
+    assert prepared.plan.observations[0].observation_name == "observation_01"
+    assert "unknown — 2026-09-02" in (archive_root / "Target/INDEX.md").read_text()
+
+
 def _fingerprint(path: Path) -> tuple[int, str]:
     content = path.read_bytes()
     return len(content), hashlib.sha256(content).hexdigest()

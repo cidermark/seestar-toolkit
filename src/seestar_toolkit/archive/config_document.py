@@ -16,7 +16,9 @@ from tomlkit.toml_document import TOMLDocument
 
 from .config import (
     DEFAULT_HIERARCHY,
+    DEFAULT_OBSERVATION_DATE_POLICY,
     _collision_policy,
+    _observation_date_policy,
     _parse_config,
     _saved_location,
     _source_action,
@@ -30,6 +32,7 @@ BUILTIN_SETTINGS = {
     "archive.hierarchy": DEFAULT_HIERARCHY,
     "archive.source_action": "copy",
     "archive.collision_policy": "skip-identical",
+    "archive.observation_date_policy": DEFAULT_OBSERVATION_DATE_POLICY,
 }
 
 
@@ -143,6 +146,8 @@ def _scalar_value(name: str, value: Any) -> str:
             return _source_action(value).name.lower()
         if name == "archive.collision_policy":
             return _collision_policy(value).name.lower().replace("_", "-")
+        if name == "archive.observation_date_policy":
+            return _observation_date_policy(value)
     except ArchivePlanningConfigurationError as error:
         raise ArchiveConfigError(f"{name}: {error}") from error
     raise ArchiveConfigError(f"Unsupported preference: {name}")

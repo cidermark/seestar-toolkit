@@ -24,6 +24,7 @@ v1.1.0 (Development)
 -   [x] BUG-001 --- archive light-TIFF side effect --- **Complete**
 -   [x] BUG-002 --- telescope-aware Observation reconstruction --- **Complete**
 -   [x] ENH-001 --- Configuration Management --- **Complete**
+-   [ ] ENH-002 --- Configurable Observing-Night Date Policy --- **Implementation evidence pending review**
 
 > Stage 2 now includes reader-level recognition of RGB FITS images.
 > Stage 4 provides handling for already-RGB FITS beyond basic reader-level

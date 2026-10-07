@@ -2,6 +2,7 @@
 
 from .config import (
     DEFAULT_HIERARCHY,
+    DEFAULT_OBSERVATION_DATE_POLICY,
     ArchiveConfig,
     default_archive_config_path,
     load_archive_config,
@@ -87,6 +88,7 @@ __all__ = [
     "DiscoveryClassification",
     "CollisionPolicy",
     "DEFAULT_HIERARCHY",
+    "DEFAULT_OBSERVATION_DATE_POLICY",
     "SeestarDiscoveryInventory",
     "SeestarDiscoveryItem",
     "SourceDirectoryContext",

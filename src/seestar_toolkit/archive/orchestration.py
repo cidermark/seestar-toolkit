@@ -50,6 +50,7 @@ def archive_seestar_session(
     hierarchy_template: str = "{target}/{location}/{session_end_date}",
     explicit_location: str | None = None,
     saved_locations: tuple[SavedLocation, ...] = (),
+    observation_date_policy: str = "end",
     source_action: SourceAction = SourceAction.COPY,
     collision_policy: CollisionPolicy = CollisionPolicy.SKIP_IDENTICAL,
 ) -> SeestarArchiveResult:
@@ -60,6 +61,7 @@ def archive_seestar_session(
         hierarchy_template=hierarchy_template,
         explicit_location=explicit_location,
         saved_locations=saved_locations,
+        observation_date_policy=observation_date_policy,
     )
     return execute_prepared_seestar_archive(
         prepared,
@@ -75,6 +77,7 @@ def prepare_seestar_archive(
     hierarchy_template: str = "{target}/{location}/{session_end_date}",
     explicit_location: str | None = None,
     saved_locations: tuple[SavedLocation, ...] = (),
+    observation_date_policy: str = "end",
 ) -> PreparedSeestarArchive:
     """Discover, reconstruct, and plan without filesystem mutation."""
     discovery = discover_seestar_inputs(source_root)
@@ -85,6 +88,7 @@ def prepare_seestar_archive(
         hierarchy_template=hierarchy_template,
         explicit_location=explicit_location,
         saved_locations=saved_locations,
+        observation_date_policy=observation_date_policy,
     )
     plan = _reconcile_incremental_observations(plan)
     return PreparedSeestarArchive(discovery=discovery, reconstruction=reconstruction, plan=plan)

@@ -1121,13 +1121,14 @@ defaults are independent of a saved file.
 
 ## Save or remove an archive preference
 
-These are the three preferences currently managed by the Toolkit:
+These are the archive preferences currently managed by the Toolkit:
 
 | Setting | Accepted values | Built-in default |
 |---|---|---|
 | `archive.hierarchy` | `{target}`, `{location}` and `{session_end_date}`, each once as a separate path component, in any order | `{target}/{location}/{session_end_date}` |
 | `archive.source_action` | `copy` or `move` | `copy` |
 | `archive.collision_policy` | `skip-identical`, `error` or `overwrite` | `skip-identical` |
+| `archive.observation_date_policy` | `start` to identify the observing night by its starting date, or `end` to identify it by its ending date | `end` |
 
 For example, save copy as your preferred source action:
 
@@ -1373,6 +1374,29 @@ An omitted radius in an existing configuration-file entry remains an error. The 
 A saved hierarchy with unmatched braces is rejected with a validation message.
 You can replace it with a valid hierarchy or remove the saved entry to use the
 built-in default. See [troubleshooting](#a-saved-hierarchy-contains-an-unmatched-brace).
+
+## Observing-night date policy
+
+`archive.observation_date_policy` controls the date used in the existing
+`{session_end_date}` hierarchy token. Its built-in value is `end`, preserving
+the established `capture time + 12 hours` rule. Set it to `start` to use
+`capture time - 12 hours` instead:
+
+```bash
+seestar-toolkit config set archive.observation_date_policy start
+```
+
+The fixed boundary is noon: captures from noon through the following morning
+before noon share one observing night. `start` names it for the first calendar
+date; `end` names it for the second. Values are case-insensitive when saved and
+are stored in lowercase. Remove a saved value to restore `end`:
+
+```bash
+seestar-toolkit config unset archive.observation_date_policy
+```
+
+There is no per-run archive override. Changing this preference affects later
+plans only; it does not scan, rename, move, or reorganise existing archives.
 
 ## Configuration file safety
 
@@ -2178,8 +2202,9 @@ config set --location NAME [CHANGE FIELDS] [--update] [--config PATH]
 config unset --location NAME [--config PATH]
 ```
 
-`PREF` is `archive.hierarchy`, `archive.source_action` or
-`archive.collision_policy`. An explicitly selected `PATH` must exist.
+`PREF` is `archive.hierarchy`, `archive.source_action`,
+`archive.collision_policy` or `archive.observation_date_policy`. An explicitly
+selected `PATH` must exist.
 
 Location change fields are `--latitude`, `--longitude`, `--extract FILE`,
 `--radius-m` and `--rename`. At least one change is required. A new site needs

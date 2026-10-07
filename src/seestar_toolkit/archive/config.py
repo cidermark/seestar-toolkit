@@ -14,6 +14,7 @@ from .execution_models import CollisionPolicy, SourceAction
 from .planning_models import SavedLocation
 
 DEFAULT_HIERARCHY = "{target}/{location}/{session_end_date}"
+DEFAULT_OBSERVATION_DATE_POLICY = "end"
 
 
 @dataclass(frozen=True, slots=True)
@@ -23,6 +24,7 @@ class ArchiveConfig:
     hierarchy: str = DEFAULT_HIERARCHY
     source_action: SourceAction = SourceAction.COPY
     collision_policy: CollisionPolicy = CollisionPolicy.SKIP_IDENTICAL
+    observation_date_policy: str = DEFAULT_OBSERVATION_DATE_POLICY
     saved_locations: tuple[SavedLocation, ...] = ()
 
 
@@ -87,6 +89,9 @@ def _parse_config(data: dict[str, Any]) -> ArchiveConfig:
         raise ArchiveConfigError("archive.hierarchy must be a string")
     source_action = _source_action(archive.get("source_action", "copy"))
     collision_policy = _collision_policy(archive.get("collision_policy", "skip-identical"))
+    observation_date_policy = _observation_date_policy(
+        archive.get("observation_date_policy", DEFAULT_OBSERVATION_DATE_POLICY)
+    )
     locations_data = data.get("locations", [])
     if not isinstance(locations_data, list):
         raise ArchiveConfigError("locations must be an array of tables")
@@ -95,6 +100,7 @@ def _parse_config(data: dict[str, Any]) -> ArchiveConfig:
         hierarchy=hierarchy,
         source_action=source_action,
         collision_policy=collision_policy,
+        observation_date_policy=observation_date_policy,
         saved_locations=locations,
     )
 
@@ -123,6 +129,15 @@ def _collision_policy(value: Any) -> CollisionPolicy:
         return mapping[value.casefold()]
     except KeyError as error:
         raise ArchiveConfigError(f"Unsupported archive collision policy: {value!r}") from error
+
+
+def _observation_date_policy(value: Any) -> str:
+    if not isinstance(value, str):
+        raise ArchiveConfigError("archive.observation_date_policy must be 'start' or 'end'")
+    policy = value.casefold()
+    if policy not in {"start", "end"}:
+        raise ArchiveConfigError(f"Unsupported archive observation date policy: {value!r}")
+    return policy
 
 
 def _saved_location(value: Any, index: int) -> SavedLocation:
