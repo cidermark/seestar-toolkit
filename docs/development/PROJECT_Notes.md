@@ -24,7 +24,7 @@ v1.1.0 (Development)
 -   [x] BUG-001 --- archive light-TIFF side effect --- **Complete**
 -   [x] BUG-002 --- telescope-aware Observation reconstruction --- **Complete**
 -   [x] ENH-001 --- Configuration Management --- **Complete**
--   [ ] ENH-002 --- Configurable Observing-Night Date Policy --- **Implementation evidence pending review**
+-   [x] ENH-002 --- Configurable Observing-Night Date Policy --- **Complete**
 
 > Stage 2 now includes reader-level recognition of RGB FITS images.
 > Stage 4 provides handling for already-RGB FITS beyond basic reader-level
@@ -1200,3 +1200,16 @@ Requirements:
 
 Assign an ENH identifier and a dedicated branch when this work
 is formally scheduled. ENH-001 remains COMPLETE.
+
+## ENH-002 — COMPLETE: configurable observing-night date policy
+
+ENH-002 completed on 2026-10-07 at implementation commit `2c48ecd`.
+It delivers the persistent `archive.observation_date_policy` preference, with
+the compatible `end` default and alternative fixed-noon `start` observing-night
+label. The policy flows through existing archive planning without a per-run
+archive CLI override or reorganisation of existing archives.
+
+All D01–D10 acceptance requirements passed. Final validation recorded 568
+pytest passes with two expected warnings, Ruff clean, formatting checks clean,
+and `git diff --check` clean; the formal closure-audit findings were resolved.
+ENH-002 is COMPLETE. This does not create a new package release.

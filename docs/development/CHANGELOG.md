@@ -201,6 +201,8 @@
   |------------|-------------------------------------------|-----------|------------|
   | ENH-001    | integrate and close configuration         | 4595540   | 2026-10-05 |
   |            | management enhancement                    |           |            |
+  |------------|-------------------------------------------|-----------|------------|
+  | ENH-002    | add configurable observation date policy  | 2c48ecd   | 2026-10-07 |
   -----------------------------------------------------------------------------------
 
 
@@ -289,11 +291,14 @@ acceptance evidence. Base: `cc5a0df`; documentation/artifact commit: **PENDING
 ENH-001 remains STARTED pending user PDF review, commits/push, pull-request CI and
 post-integration verification. Published v1.1.0 metadata remains unchanged.
 
-## Pending development work — ENH-002 observing-night date policy
+## ENH-002 — COMPLETE: configurable observing-night date policy
 
-ENH-002 adds the persistent `archive.observation_date_policy` preference,
+ENH-002 completed on 2026-10-07 at implementation commit `2c48ecd`.
+It adds the persistent `archive.observation_date_policy` preference,
 with `end` as the compatible built-in default and `start` as the alternative
 fixed-noon observing-night label. It flows through existing archive planning;
 it has no per-run archive override and does not reorganise existing archives.
-Implementation evidence is pending user review and Git actions. See the
-[authoritative ENH-002 specification](change_documents/ENH-002/ENH-002.md).
+All D01–D10 acceptance requirements passed; final validation recorded 568
+pytest passes with two expected warnings, Ruff clean, formatting checks clean,
+and `git diff --check` clean. Formal closure-audit findings were resolved.
+See the [authoritative ENH-002 specification](change_documents/ENH-002/ENH-002.md).
