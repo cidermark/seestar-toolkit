@@ -324,9 +324,9 @@ def _planned_observation(
     observation_name: str,
 ) -> PlannedArchiveObservation:
     observation_directory = hierarchy_directory / observation_name
-    lights_directory = observation_directory / "lights"
+    lights_directory = observation_directory / "fits_images" / "lights"
     stack_directory = observation_directory / "seestar_stacked"
-    tiff_directory = observation_directory / "tiff"
+    tiff_directory = observation_directory / "tiff_images" / "lights"
     lights = tuple(
         PlannedFile(
             source_path=item.source_path,

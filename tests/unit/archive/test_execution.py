@@ -48,9 +48,9 @@ def _plan(
         hierarchy_directory=observation_directory.parent,
         observation_name="observation_01",
         observation_directory=observation_directory,
-        lights_directory=observation_directory / "lights",
+        lights_directory=observation_directory / "fits_images" / "lights",
         seestar_stacked_directory=observation_directory / "seestar_stacked",
-        tiff_directory=observation_directory / "tiff",
+        tiff_directory=observation_directory / "tiff_images" / "lights",
         lights=files,
         stack=stack,
     )
@@ -111,7 +111,9 @@ def test_copy_is_default_creates_parents_and_preserves_exact_source(tmp_path: Pa
     content = bytes(range(256)) * 20
     source.write_bytes(content)
     archive_root = tmp_path / "archive"
-    destination = archive_root / "Target/unknown/20260903/observation_01/lights/source.fit"
+    destination = (
+        archive_root / "Target/unknown/20260903/observation_01/fits_images/lights/source.fit"
+    )
 
     result = execute_archive_plan(_plan(archive_root, (_file(source, destination),)))
 
@@ -137,7 +139,9 @@ def test_move_must_be_explicit_and_removes_source_after_destination_success(
     source = tmp_path / "source.fits"
     source.write_bytes(b"astronomical source")
     archive_root = tmp_path / "archive"
-    destination = archive_root / "Target/unknown/20260903/observation_01/lights/source.fits"
+    destination = (
+        archive_root / "Target/unknown/20260903/observation_01/fits_images/lights/source.fits"
+    )
 
     result = execute_archive_plan(
         _plan(archive_root, (_file(source, destination),)), action=SourceAction.MOVE

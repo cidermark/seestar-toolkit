@@ -144,14 +144,14 @@ def test_real_seestar_copy_cli_reopens_tiffs_and_verifies_index(
 
     assert status == 0
     assert {path: _fingerprint(path) for path in before} == before
-    archived_light = next(archive_root.rglob("lights/*.fit"))
+    archived_light = next(archive_root.rglob("fits_images/lights/*.fit"))
     archived_stack = next(archive_root.rglob("seestar_stacked/*.fit"))
     assert _fingerprint(archived_light) == _fingerprint(source_light)
     assert _fingerprint(archived_stack) == _fingerprint(source_stack)
     stack_tiff = tifffile.imread(next(archive_root.rglob("seestar_stacked/*.tiff")))
     assert stack_tiff.shape == (3840, 2160, 3)
     assert stack_tiff.dtype == np.uint16
-    assert not tuple(archive_root.rglob("tiff"))
+    assert not tuple(archive_root.rglob("tiff_images"))
     index = (archive_root / "IC 434/INDEX.md").read_text()
     assert "# IC 434" in index
     assert "### Observation 01" in index
@@ -186,12 +186,35 @@ def test_full_copy_workflow_preserves_light_without_tiff_and_generates_stack_tif
     assert stack_tiff.shape == (8, 10, 3)
     assert stack_tiff.dtype == np.uint16
     assert planned.lights[0].fits_destination.read_bytes() == lights[0].read_bytes()
+    assert (
+        planned.lights[0].fits_destination.parent
+        == planned.observation_directory / "fits_images/lights"
+    )
     assert planned.stack.fits_destination.read_bytes() == stack.read_bytes()
     assert {path: _fingerprint(path) for path in (*lights, stack, jpeg)} == before
     assert tuple(archive_root.rglob("INDEX.md")) == (archive_root / "Target/INDEX.md",)
     index = (archive_root / "Target/INDEX.md").read_text()
     assert "Light subs: 1" in index
     assert "Stacked_1_Target_20260903-010030.fit" in index
+
+
+def test_convert_lights_flag_establishes_layout_without_light_conversion(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root, _, _ = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        ["archive", str(root), str(archive_root), "--convert-lights", "--non-interactive"]
+    )
+
+    assert status == 0
+    observation = archive_root / "Target/unknown/20260903/observation_01"
+    assert tuple((observation / "fits_images/lights").glob("*.fit"))
+    assert not (observation / "tiff_images").exists()
+    assert not (observation / "tmp").exists()
+    assert tuple((observation / "seestar_stacked").glob("*.tiff"))
 
 
 def test_target_index_contains_required_structured_metadata(tmp_path: Path) -> None:
@@ -403,6 +426,8 @@ def test_archive_cli_dry_run_plans_without_any_filesystem_mutation(
     light_line = next(line for line in output.splitlines() if "Light_1_Target" in line)
     stack_line = next(line for line in output.splitlines() if "Stacked_1_Target" in line)
     assert "FITS" in light_line and "TIFF" not in light_line
+    assert "fits_images/lights" in light_line
+    assert "/observation_01/lights/" not in light_line
     assert "FITS" in stack_line and "TIFF" in stack_line
     assert f"Index: {archive_root / 'Target/INDEX.md'}" in output
 
@@ -429,7 +454,7 @@ def test_archive_cli_real_copy_and_move_workflows(
     assert all(path.exists() is source_exists for path in (*lights, stack))
     assert len(tuple(archive_root.rglob("*.fit"))) == 2
     assert len(tuple(archive_root.rglob("*.tiff"))) == 1
-    assert not tuple(archive_root.rglob("tiff"))
+    assert not tuple(archive_root.rglob("tiff_images"))
     output = capsys.readouterr().out
     assert summary in output
     assert tuple(archive_root.rglob("INDEX.md")) == (archive_root / "Target/INDEX.md",)
@@ -1078,6 +1103,21 @@ def test_unreadable_archived_metadata_does_not_authorise_filename_reuse(
     )
     prepared = orchestration.prepare_seestar_archive(root, archive_root=archive_root)
     assert prepared.plan.observations[0].observation_name == "observation_02"
+
+
+def test_historical_lights_directory_does_not_authorise_filename_reuse(tmp_path: Path) -> None:
+    root, lights, _ = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+    historical = archive_root / "Target/unknown/20260903/observation_01/lights"
+    historical.mkdir(parents=True)
+    shutil.copyfile(lights[0], historical / lights[0].name)
+
+    prepared = orchestration.prepare_seestar_archive(root, archive_root=archive_root)
+
+    assert prepared.plan.observations[0].observation_name == "observation_01"
+    assert prepared.plan.observations[0].lights_directory == (
+        archive_root / "Target/unknown/20260903/observation_01/fits_images/lights"
+    )
 
 
 @pytest.mark.parametrize("reject_saved", [False, True])

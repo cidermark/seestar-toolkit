@@ -430,7 +430,9 @@ def test_only_stack_has_planned_tiff_destination() -> None:
     planned = _plan(observation).observations[0]
 
     assert planned.lights_directory.name == "lights"
-    assert planned.tiff_directory.name == "tiff"
+    assert planned.lights_directory.parent.name == "fits_images"
+    assert planned.tiff_directory.name == "lights"
+    assert planned.tiff_directory.parent.name == "tiff_images"
     assert planned.seestar_stacked_directory.name == "seestar_stacked"
     assert planned.lights[0].fits_destination.name == "Light_Target.FITS"
     assert planned.lights[0].tiff_destination is None

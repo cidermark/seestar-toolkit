@@ -49,6 +49,7 @@ def test_archive_command_and_options_are_registered() -> None:
             "--collision-policy",
             "error",
             "--non-interactive",
+            "--convert-lights",
             "--config",
             "settings.toml",
         ]
@@ -60,6 +61,7 @@ def test_archive_command_and_options_are_registered() -> None:
     assert args.dry_run
     assert args.source_action == "move"
     assert args.collision_policy == "error"
+    assert args.convert_lights
 
 
 def test_archive_help_documents_contract(capsys: pytest.CaptureFixture[str]) -> None:
@@ -77,9 +79,13 @@ def test_archive_help_documents_contract(capsys: pytest.CaptureFixture[str]) -> 
         "--source-action",
         "--collision-policy",
         "--non-interactive",
+        "--convert-lights",
         "--config",
     ):
         assert value in output
+    assert "Reserved individual-light TIFF conversion option (not active yet)." in " ".join(
+        output.split()
+    )
 
 
 def test_archive_config_defaults_and_cli_overrides_pass_through(

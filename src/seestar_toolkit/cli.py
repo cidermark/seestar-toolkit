@@ -195,6 +195,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--non-interactive", action="store_true", help="Never prompt for a location."
     )
     archive_parser.add_argument(
+        "--convert-lights",
+        action="store_true",
+        help="Reserved individual-light TIFF conversion option (not active yet).",
+    )
+    archive_parser.add_argument(
         "--config", type=Path, metavar="PATH", help="Explicit archive TOML configuration."
     )
     batch_parser.add_argument(

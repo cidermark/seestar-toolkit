@@ -115,7 +115,9 @@ def _reconcile_incremental_observations(plan: ArchivePlan) -> ArchivePlan:
             )
             if (identity := _telescope_identity(item)) is not None
         }
-        relative_files = [Path("lights") / item.source_path.name for item in observation.lights]
+        relative_files = [
+            Path("fits_images/lights") / item.source_path.name for item in observation.lights
+        ]
         if observation.stack is not None:
             relative_files.append(Path("seestar_stacked") / observation.stack.source_path.name)
 
@@ -155,7 +157,7 @@ def _existing_observation_directories(hierarchy: Path) -> dict[int, Path]:
         try:
             has_archived_fits = any(
                 child.is_file() and child.suffix.casefold() in {".fit", ".fits"}
-                for directory in (path / "lights", path / "seestar_stacked")
+                for directory in (path / "fits_images" / "lights", path / "seestar_stacked")
                 if directory.is_dir() and not directory.is_symlink()
                 for child in directory.iterdir()
             )
@@ -171,8 +173,10 @@ def _archived_device_identities(directory: Path) -> frozenset[str] | None:
     """Read all relevant FITS; an inspection failure makes this history unsafe to reuse."""
     identities = set()
     try:
-        for name in ("lights", "seestar_stacked"):
-            frame_directory = directory / name
+        for frame_directory in (
+            directory / "fits_images" / "lights",
+            directory / "seestar_stacked",
+        ):
             if frame_directory.is_symlink():
                 return None
             if not frame_directory.is_dir():
@@ -196,9 +200,9 @@ def _rename_planned_observation(observation, name: str):
     if observation.observation_name == name:
         return observation
     directory = observation.hierarchy_directory / name
-    lights_directory = directory / "lights"
+    lights_directory = directory / "fits_images" / "lights"
     stack_directory = directory / "seestar_stacked"
-    tiff_directory = directory / "tiff"
+    tiff_directory = directory / "tiff_images" / "lights"
     lights = tuple(
         replace(
             item,

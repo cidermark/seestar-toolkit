@@ -98,7 +98,8 @@ def _records_for_index(
         (
             path
             for path in target_directory.rglob("observation_*")
-            if path.is_dir() and ((path / "lights").is_dir() or (path / "seestar_stacked").is_dir())
+            if path.is_dir()
+            and ((path / "fits_images" / "lights").is_dir() or (path / "seestar_stacked").is_dir())
         ),
         key=lambda path: path.as_posix(),
     ):
@@ -131,7 +132,9 @@ def _record_from_directory(
         *relative.parts[: tokens.index("{target}") + 1]
     ):
         return None
-    light_paths = _established_fits(observation_directory / "lights", current_outcomes)
+    light_paths = _established_fits(
+        observation_directory / "fits_images" / "lights", current_outcomes
+    )
     stack_paths = _established_fits(observation_directory / "seestar_stacked", current_outcomes)
     if not light_paths and not stack_paths:
         return None

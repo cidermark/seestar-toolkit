@@ -55,9 +55,9 @@ def _planned_observation(
         hierarchy_directory=hierarchy_directory,
         observation_name=observation_name,
         observation_directory=observation_directory,
-        lights_directory=observation_directory / "lights",
+        lights_directory=observation_directory / "fits_images" / "lights",
         seestar_stacked_directory=observation_directory / "seestar_stacked",
-        tiff_directory=observation_directory / "tiff",
+        tiff_directory=observation_directory / "tiff_images" / "lights",
         lights=(),
         stack=None,
     )

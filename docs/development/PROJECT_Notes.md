@@ -830,6 +830,17 @@ created during this audit; the pending CHANGELOG workflow is preserved.
     when explicitly requested. The option should reuse the existing
     convert-batch processing pipeline rather than introduce a separate
     conversion implementation.
+-   Archive-aware `convert` / `convert-batch` output inference — After ENH-003
+    establishes the archive layout, consider allowing standalone conversion
+    without an output path to infer `observation_NN/tiff_images/lights/` when
+    operating on a recognised Seestar Toolkit archive observation. CLI design
+    remains future work.
+-   Archive TIFF verification — Consider a separate future facility that
+    regenerates a TIFF candidate from authoritative archived FITS through the
+    Toolkit conversion pipeline, compares it with the archived TIFF using a
+    digest such as SHA-256, and reports whether they match. CLI design is
+    deliberately undecided; this does not include archive repair, migration or
+    reorganisation.
 
 ## BUG-001 — archive light-TIFF side effect
 
