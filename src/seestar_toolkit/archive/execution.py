@@ -272,6 +272,7 @@ def _finish_action(
             collision=collision,
             source_sha256=source_hash,
             destination_sha256=source_hash,
+            destination_established=True,
             bytes_processed=source_size,
             diagnostic=(
                 "Different destination content replaced after explicit overwrite"
@@ -288,6 +289,7 @@ def _finish_action(
             collision=collision,
             source_sha256=source_hash,
             destination_sha256=source_hash,
+            destination_established=True,
             bytes_processed=source_size,
             diagnostic=f"Destination established but source removal failed: {error}",
         )
@@ -297,6 +299,7 @@ def _finish_action(
         collision=collision,
         source_sha256=source_hash,
         destination_sha256=source_hash,
+        destination_established=True,
         bytes_processed=source_size,
     )
 

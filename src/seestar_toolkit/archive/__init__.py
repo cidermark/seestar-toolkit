@@ -28,6 +28,13 @@ from .execution_models import (
 )
 from .index_models import ArchiveIndexOutcome, ArchiveIndexResult
 from .indexing import generate_archive_indexes, planned_index_paths
+from .light_tiff import (
+    LightTiffCollisionDecision,
+    LightTiffOutcome,
+    LightTiffResult,
+    finalise_archived_light_tiff,
+    is_light_tiff_eligible,
+)
 from .models import (
     DiscoveryClassification,
     SeestarDiscoveryInventory,
@@ -85,6 +92,9 @@ __all__ = [
     "ArchivePlanningProblem",
     "ArchiveTiffOutcome",
     "ArchiveTiffResult",
+    "LightTiffCollisionDecision",
+    "LightTiffOutcome",
+    "LightTiffResult",
     "DiscoveryClassification",
     "CollisionPolicy",
     "DEFAULT_HIERARCHY",
@@ -112,6 +122,8 @@ __all__ = [
     "execute_prepared_seestar_archive",
     "load_archive_config",
     "generate_archive_indexes",
+    "finalise_archived_light_tiff",
+    "is_light_tiff_eligible",
     "normalize_archive_component",
     "plan_seestar_archive",
     "planned_index_paths",

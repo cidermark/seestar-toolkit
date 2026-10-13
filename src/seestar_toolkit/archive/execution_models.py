@@ -62,6 +62,7 @@ class ArchiveFileExecutionResult:
     collision: ArchiveCollisionState
     source_sha256: str | None = None
     destination_sha256: str | None = None
+    destination_established: bool = False
     bytes_processed: int = 0
     diagnostic: str | None = None
 

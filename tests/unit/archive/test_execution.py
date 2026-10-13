@@ -30,6 +30,7 @@ from seestar_toolkit.archive import (
     SourceDirectoryContext,
     execute_archive_plan,
     execution,
+    is_light_tiff_eligible,
     plan_seestar_archive,
     sha256_file,
 )
@@ -198,6 +199,8 @@ def test_move_source_delete_failure_is_explicit_partial_result(
     assert result.status is ArchiveExecutionStatus.PARTIAL
     assert result.failed_count == 1
     assert result.files[0].outcome is ArchiveFileOutcome.PARTIAL
+    assert result.files[0].destination_established
+    assert is_light_tiff_eligible(result.files[0])
     assert "source removal failed" in (result.files[0].diagnostic or "")
 
 
