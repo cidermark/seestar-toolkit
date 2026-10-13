@@ -211,6 +211,8 @@
   |------------|-------------------------------------------|-----------|------------|
   | ENH-003c   | integrate archive light TIFF conversion   | 511ca08   | 2026-10-13 |
   |            | workflow                                  |           |            |
+  |------------|-------------------------------------------|-----------|------------|
+  | docs       | record ENH-003 completion                 | 70ec93d   | 2026-10-13 |
   -----------------------------------------------------------------------------------
 
 
@@ -311,10 +313,11 @@ pytest passes with two expected warnings, Ruff clean, formatting checks clean,
 and `git diff --check` clean. Formal closure-audit findings were resolved.
 See the [authoritative ENH-002 specification](change_documents/ENH-002/ENH-002.md).
 
-## ENH-003 — documentation and closure review pending
+## ENH-003 — COMPLETE: Optional Archive Light-TIFF Conversion
 
+ENH-003 completed on 2026-10-13.
 ENH-003a (`989c0ea`), ENH-003b (`e39aa04`) and ENH-003c (`511ca08`) implement
 the new light layout and the optional, invocation-only archive light-TIFF
-workflow. The documentation/closure commit is **PENDING** (user-controlled), so
-this record does not declare ENH-003 complete. See the
+workflow. Documentation and formal closure were completed in `70ec93d`.
+All L01–L36 acceptance requirements passed. See the
 [authoritative ENH-003 specification](change_documents/ENH-003/ENH-003.md).
