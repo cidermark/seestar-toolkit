@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
@@ -55,6 +56,9 @@ class LightTiffResult:
     diagnostic: str | None = None
 
 
+LightTiffCollisionDecider = Callable[[Path, bool], LightTiffCollisionDecision]
+
+
 def is_light_tiff_eligible(result: ArchiveFileExecutionResult) -> bool:
     """Return whether verified archived FITS evidence permits later conversion.
 
@@ -76,6 +80,7 @@ def finalise_archived_light_tiff(
     archive_root: str | Path,
     observation_directory: str | Path,
     decision: LightTiffCollisionDecision | None = None,
+    collision_decider: LightTiffCollisionDecider | None = None,
 ) -> LightTiffResult:
     """Convert one authoritative archived light and finalise it safely.
 
@@ -111,13 +116,17 @@ def finalise_archived_light_tiff(
                 candidate = None
                 result = LightTiffResult(**base, outcome=LightTiffOutcome.ALREADY_PRESENT)
             else:
+                has_duplicate = duplicate.exists() or duplicate.is_symlink()
+                selected_decision = decision
+                if selected_decision is None and collision_decider is not None:
+                    selected_decision = collision_decider(primary, has_duplicate)
                 result = _finalise_collision(
                     candidate,
                     primary=primary,
                     duplicate=duplicate,
                     root_real=root_real,
                     base=base,
-                    decision=decision or LightTiffCollisionDecision.SKIP,
+                    decision=selected_decision or LightTiffCollisionDecision.SKIP,
                 )
         else:
             _promote_new(candidate, primary, root_real, created_final_directories)

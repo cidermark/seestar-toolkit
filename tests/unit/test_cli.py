@@ -7,7 +7,15 @@ from unittest.mock import Mock
 import pytest
 
 from seestar_toolkit import __version__, cli
-from seestar_toolkit.archive import ArchiveConfig, CollisionPolicy, SourceAction
+from seestar_toolkit.archive import (
+    ArchiveConfig,
+    CollisionPolicy,
+    LightTiffCollisionDecision,
+    LightTiffOutcome,
+    LightTiffResult,
+    SeestarArchiveStatus,
+    SourceAction,
+)
 from seestar_toolkit.batch import BatchConversionResult, BatchFailure, BatchSuccess
 from seestar_toolkit.fits import InvalidFitsFileError
 from seestar_toolkit.tiff import TiffWriteError
@@ -83,9 +91,120 @@ def test_archive_help_documents_contract(capsys: pytest.CaptureFixture[str]) -> 
         "--config",
     ):
         assert value in output
-    assert "Reserved individual-light TIFF conversion option (not active yet)." in " ".join(
-        output.split()
+    normalized = " ".join(output.split())
+    assert (
+        "Create or verify TIFF derivatives for eligible archived individual lights for this "
+        "archive invocation only."
+    ) in normalized
+    assert (
+        "Run without prompts; automatically process applicable existing light FITS and safely "
+        "skip differing-TIFF collisions."
+    ) in normalized
+    assert "not active" not in output
+    assert "--unattended" not in output
+
+
+@pytest.mark.parametrize(("answer", "expected"), [("", True), ("y", True), ("n", False)])
+def test_existing_light_prompt_defaults_yes(
+    monkeypatch: pytest.MonkeyPatch, answer: str, expected: bool
+) -> None:
+    monkeypatch.setattr("builtins.input", Mock(return_value=answer))
+
+    assert cli._prompt_process_existing_lights(38, 20, 18) is expected
+
+
+@pytest.mark.parametrize(
+    ("has_duplicate", "answer", "expected"),
+    [
+        (False, "k", LightTiffCollisionDecision.KEEP_BOTH),
+        (False, "r", LightTiffCollisionDecision.REPLACE_EXISTING),
+        (False, "", LightTiffCollisionDecision.SKIP),
+        (True, "r", LightTiffCollisionDecision.REPLACE_DUPLICATE),
+        (True, "s", LightTiffCollisionDecision.SKIP),
+    ],
+)
+def test_light_tiff_collision_prompt_choices(
+    monkeypatch: pytest.MonkeyPatch,
+    has_duplicate: bool,
+    answer: str,
+    expected: LightTiffCollisionDecision,
+) -> None:
+    monkeypatch.setattr("builtins.input", Mock(return_value=answer))
+
+    assert cli._prompt_light_tiff_collision(Path("Light.tiff"), has_duplicate) is expected
+
+
+def test_light_tiff_summary_preserves_all_seven_categories(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    light_tiffs = tuple(
+        LightTiffResult(
+            archived_fits_path=Path(f"Light-{outcome.name}.fit"),
+            tiff_destination=Path(f"Light-{outcome.name}.tiff"),
+            outcome=outcome,
+            diagnostic="representative failure" if outcome is LightTiffOutcome.FAILED else None,
+        )
+        for outcome in LightTiffOutcome
     )
+    result = SimpleNamespace(
+        status=SeestarArchiveStatus.PARTIAL,
+        execution=SimpleNamespace(
+            copied_count=7,
+            moved_count=0,
+            skipped_count=0,
+            failed_count=0,
+            files=(),
+        ),
+        tiffs=(),
+        light_tiffs=light_tiffs,
+        existing_lights_declined=0,
+        indexes=(),
+    )
+
+    cli._print_archive_result(result)
+
+    output = capsys.readouterr().out
+    for label in (
+        "created",
+        "primary replaced",
+        "duplicate created",
+        "duplicate replaced",
+        "already present",
+        "skipped",
+        "failed",
+    ):
+        assert f"  1 {label}" in output
+
+
+def test_light_tiff_summary_omits_zero_valued_categories(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    result = SimpleNamespace(
+        status=SeestarArchiveStatus.COMPLETE,
+        execution=SimpleNamespace(
+            copied_count=1,
+            moved_count=0,
+            skipped_count=0,
+            failed_count=0,
+            files=(),
+        ),
+        tiffs=(),
+        light_tiffs=(
+            LightTiffResult(
+                archived_fits_path=Path("Light.fit"),
+                tiff_destination=Path("Light.tiff"),
+                outcome=LightTiffOutcome.CREATED,
+            ),
+        ),
+        existing_lights_declined=0,
+        indexes=(),
+    )
+
+    cli._print_archive_result(result)
+
+    output = capsys.readouterr().out
+    assert "  1 created" in output
+    assert "  0 " not in output
 
 
 def test_archive_config_defaults_and_cli_overrides_pass_through(

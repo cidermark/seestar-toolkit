@@ -21,6 +21,8 @@ from seestar_toolkit.archive import (
     ArchiveIndexOutcome,
     ArchiveTiffOutcome,
     CollisionPolicy,
+    LightTiffCollisionDecision,
+    LightTiffOutcome,
     ObservationStatus,
     SavedLocation,
     SeestarArchiveStatus,
@@ -29,6 +31,7 @@ from seestar_toolkit.archive import (
     discover_seestar_inputs,
     execute_archive_plan,
     indexing,
+    light_tiff,
     orchestration,
     plan_seestar_archive,
     reconstruct_seestar_observations,
@@ -198,7 +201,7 @@ def test_full_copy_workflow_preserves_light_without_tiff_and_generates_stack_tif
     assert "Stacked_1_Target_20260903-010030.fit" in index
 
 
-def test_convert_lights_flag_establishes_layout_without_light_conversion(
+def test_convert_lights_flag_creates_individual_light_tiff(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     root, _, _ = _source_tree(tmp_path)
@@ -212,9 +215,351 @@ def test_convert_lights_flag_establishes_layout_without_light_conversion(
     assert status == 0
     observation = archive_root / "Target/unknown/20260903/observation_01"
     assert tuple((observation / "fits_images/lights").glob("*.fit"))
-    assert not (observation / "tiff_images").exists()
+    assert tuple((observation / "tiff_images/lights").glob("*.tiff"))
     assert not (observation / "tmp").exists()
     assert tuple((observation / "seestar_stacked").glob("*.tiff"))
+
+
+def test_library_convert_lights_uses_archived_fits_after_move(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root, lights, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    inputs = []
+    real_convert = light_tiff.convert_fits_to_tiff
+
+    def record(input_path, output_path):
+        inputs.append(Path(input_path))
+        real_convert(input_path, output_path)
+
+    monkeypatch.setattr(light_tiff, "convert_fits_to_tiff", record)
+    result = archive_seestar_session(
+        root,
+        archive_root=archive_root,
+        source_action=SourceAction.MOVE,
+        convert_lights=True,
+    )
+
+    assert result.light_tiffs[0].outcome is LightTiffOutcome.CREATED
+    assert inputs == [result.execution.files[0].destination_path]
+    assert not lights[0].exists()
+    assert result.execution.files[0].destination_path.exists()
+
+
+def test_repeat_identical_lights_use_one_aggregate_decision_and_verify_tiff(
+    tmp_path: Path,
+) -> None:
+    root, _, _ = _source_tree(tmp_path, light_count=2, include_stack=False)
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root, convert_lights=True)
+    calls = []
+
+    second = archive_seestar_session(
+        root,
+        archive_root=archive_root,
+        convert_lights=True,
+        process_existing_lights=lambda total, create, compare: (
+            calls.append((total, create, compare)) or True
+        ),
+    )
+
+    assert calls == [(2, 0, 2)]
+    assert all(item.outcome is LightTiffOutcome.ALREADY_PRESENT for item in second.light_tiffs)
+    assert all(item.tiff_destination.exists() for item in first.light_tiffs)
+    assert second.status is SeestarArchiveStatus.COMPLETE
+
+
+def test_declined_existing_lights_are_unchanged_and_not_skipped(tmp_path: Path) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root)
+    observation = first.plan.observations[0]
+
+    second = archive_seestar_session(
+        root,
+        archive_root=archive_root,
+        convert_lights=True,
+        process_existing_lights=lambda *_: False,
+    )
+
+    assert second.existing_lights_declined == 1
+    assert second.light_tiffs == ()
+    assert not observation.tiff_directory.exists()
+    assert second.status is SeestarArchiveStatus.COMPLETE
+
+
+def test_declining_existing_lights_does_not_suppress_new_light_conversion(tmp_path: Path) -> None:
+    root, lights, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root)
+    existing_destination = first.execution.files[0].destination_path
+    new_source = lights[0].with_name("Light_2_Target_20260903-010011.fit")
+    _write_raw(new_source, CAPTURED_AT + timedelta(seconds=11))
+    decisions = []
+
+    second = archive_seestar_session(
+        root,
+        archive_root=archive_root,
+        convert_lights=True,
+        process_existing_lights=lambda total, create, compare: (
+            decisions.append((total, create, compare)) or False
+        ),
+    )
+
+    assert decisions == [(1, 1, 0)]
+    assert second.existing_lights_declined == 1
+    assert [item.outcome for item in second.light_tiffs] == [LightTiffOutcome.CREATED]
+    assert second.light_tiffs[0].archived_fits_path.name == new_source.name
+    existing_tiff = (
+        existing_destination.parents[2]
+        / "tiff_images/lights"
+        / existing_destination.with_suffix(".tiff").name
+    )
+    assert not existing_tiff.exists()
+    assert not any(item.outcome is LightTiffOutcome.SKIPPED for item in second.light_tiffs)
+
+
+def test_broken_primary_symlink_counts_as_existing_tiff_for_aggregate(tmp_path: Path) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root)
+    archived_fits = first.execution.files[0].destination_path
+    primary = (
+        archived_fits.parents[2] / "tiff_images/lights" / archived_fits.with_suffix(".tiff").name
+    )
+    primary.parent.mkdir(parents=True)
+    primary.symlink_to(tmp_path / "missing.tiff")
+    decisions = []
+
+    second = archive_seestar_session(
+        root,
+        archive_root=archive_root,
+        convert_lights=True,
+        process_existing_lights=lambda total, create, compare: (
+            decisions.append((total, create, compare)) or False
+        ),
+    )
+
+    assert decisions == [(1, 0, 1)]
+    assert second.existing_lights_declined == 1
+    assert second.light_tiffs == ()
+    assert primary.is_symlink()
+
+
+def test_cli_non_interactive_repeat_processes_existing_and_safely_skips_collision(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root, convert_lights=True)
+    primary = first.light_tiffs[0].tiff_destination
+    primary.write_bytes(b"different existing primary")
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+    input_mock = Mock(side_effect=AssertionError("non-interactive archive prompted"))
+    monkeypatch.setattr("builtins.input", input_mock)
+
+    status = cli.main(
+        [
+            "archive",
+            str(root),
+            str(archive_root),
+            "--convert-lights",
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 0
+    input_mock.assert_not_called()
+    assert primary.read_bytes() == b"different existing primary"
+    assert not primary.with_name(f"{primary.name}.duplicate").exists()
+    output = capsys.readouterr().out
+    assert "  1 skipped" in output
+    assert "Process these existing FITS?" not in output
+
+
+@pytest.mark.parametrize(
+    ("decision", "outcome"),
+    [
+        (LightTiffCollisionDecision.KEEP_BOTH, LightTiffOutcome.DUPLICATE_CREATED),
+        (LightTiffCollisionDecision.REPLACE_EXISTING, LightTiffOutcome.PRIMARY_REPLACED),
+        (LightTiffCollisionDecision.SKIP, LightTiffOutcome.SKIPPED),
+    ],
+)
+def test_repeat_differing_light_tiff_uses_collision_decision(
+    tmp_path: Path,
+    decision: LightTiffCollisionDecision,
+    outcome: LightTiffOutcome,
+) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root, convert_lights=True)
+    primary = first.light_tiffs[0].tiff_destination
+    primary.write_bytes(b"different")
+
+    second = archive_seestar_session(
+        root,
+        archive_root=archive_root,
+        convert_lights=True,
+        light_tiff_collision_decider=lambda *_: decision,
+    )
+
+    assert second.light_tiffs[0].outcome is outcome
+    assert second.status is SeestarArchiveStatus.COMPLETE
+    assert not primary.with_name(f"{primary.name}.duplicate.2").exists()
+
+
+def test_light_conversion_failure_continues_and_makes_archive_partial(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root, _, _ = _source_tree(tmp_path, light_count=2, include_stack=False)
+    archive_root = tmp_path / "archive"
+    real_convert = light_tiff.convert_fits_to_tiff
+    calls = 0
+
+    def fail_first(input_path, output_path):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise OSError("representative writer failure")
+        real_convert(input_path, output_path)
+
+    monkeypatch.setattr(light_tiff, "convert_fits_to_tiff", fail_first)
+    result = archive_seestar_session(root, archive_root=archive_root, convert_lights=True)
+
+    assert [item.outcome for item in result.light_tiffs] == [
+        LightTiffOutcome.FAILED,
+        LightTiffOutcome.CREATED,
+    ]
+    assert result.status is SeestarArchiveStatus.PARTIAL
+    assert all(item.destination_path.exists() for item in result.execution.files)
+
+
+def test_convert_lights_dry_run_reports_plan_without_converter_or_mutation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+    converter = Mock(side_effect=AssertionError("converter called during dry run"))
+    monkeypatch.setattr(light_tiff, "convert_fits_to_tiff", converter)
+
+    status = cli.main(
+        [
+            "archive",
+            str(root),
+            str(archive_root),
+            "--dry-run",
+            "--convert-lights",
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 0
+    assert not archive_root.exists()
+    converter.assert_not_called()
+    output = capsys.readouterr().out
+    assert "Light TIFFs:" in output
+    assert "1 would be created" in output
+    assert "0 existing TIFFs require comparison during conversion" in output
+
+
+def test_convert_lights_dry_run_existing_primary_requires_later_comparison(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root, convert_lights=True)
+    primary = first.light_tiffs[0].tiff_destination
+    before = {path: _fingerprint(path) for path in archive_root.rglob("*") if path.is_file()}
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+    converter = Mock(side_effect=AssertionError("converter called during dry run"))
+    candidate_hash = Mock(side_effect=AssertionError("candidate digest compared during dry run"))
+    collision_prompt = Mock(side_effect=AssertionError("TIFF collision prompt issued"))
+    existing_prompt = Mock(side_effect=AssertionError("existing-FITS prompt issued"))
+    monkeypatch.setattr(light_tiff, "convert_fits_to_tiff", converter)
+    monkeypatch.setattr(light_tiff, "sha256_file", candidate_hash)
+    monkeypatch.setattr(cli, "_prompt_light_tiff_collision", collision_prompt)
+    monkeypatch.setattr(cli, "_prompt_process_existing_lights", existing_prompt)
+
+    status = cli.main(
+        [
+            "archive",
+            str(root),
+            str(archive_root),
+            "--dry-run",
+            "--convert-lights",
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 0
+    converter.assert_not_called()
+    candidate_hash.assert_not_called()
+    collision_prompt.assert_not_called()
+    existing_prompt.assert_not_called()
+    assert {
+        path: _fingerprint(path) for path in archive_root.rglob("*") if path.is_file()
+    } == before
+    assert not (primary.parents[2] / "tmp").exists()
+    output = capsys.readouterr().out
+    assert "0 would be created" in output
+    assert "1 existing TIFFs require comparison during conversion" in output
+
+
+def test_light_derivative_failure_composes_with_original_collision(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root, _, _ = _source_tree(tmp_path, light_count=2, include_stack=False)
+    archive_root = tmp_path / "archive"
+    real_execute = execute_archive_plan
+
+    def execute_with_collision(plan, **kwargs):
+        execution = real_execute(plan, **kwargs)
+        files = list(execution.files)
+        files[1] = replace(
+            files[1],
+            outcome=ArchiveFileOutcome.COLLISION,
+            destination_established=False,
+            diagnostic="representative original collision",
+        )
+        return replace(execution, files=tuple(files))
+
+    monkeypatch.setattr(orchestration, "execute_archive_plan", execute_with_collision)
+    monkeypatch.setattr(
+        light_tiff,
+        "convert_fits_to_tiff",
+        Mock(side_effect=OSError("representative derivative failure")),
+    )
+
+    result = archive_seestar_session(root, archive_root=archive_root, convert_lights=True)
+
+    assert [item.outcome for item in result.execution.files] == [
+        ArchiveFileOutcome.COPIED,
+        ArchiveFileOutcome.COLLISION,
+    ]
+    assert [item.outcome for item in result.light_tiffs] == [LightTiffOutcome.FAILED]
+    assert result.execution.files[0].destination_path.exists()
+    assert result.status is SeestarArchiveStatus.PARTIAL
+
+
+def test_stack_processing_is_independent_of_convert_lights(tmp_path: Path) -> None:
+    plain_root, _, _ = _source_tree(tmp_path / "plain")
+    converted_root, _, _ = _source_tree(tmp_path / "converted")
+
+    plain = archive_seestar_session(plain_root, archive_root=tmp_path / "plain-archive")
+    converted = archive_seestar_session(
+        converted_root,
+        archive_root=tmp_path / "converted-archive",
+        convert_lights=True,
+    )
+
+    assert [item.outcome for item in plain.tiffs] == [ArchiveTiffOutcome.CREATED]
+    assert [item.outcome for item in converted.tiffs] == [ArchiveTiffOutcome.CREATED]
+    assert _fingerprint(plain.tiffs[0].tiff_destination) == _fingerprint(
+        converted.tiffs[0].tiff_destination
+    )
+    assert plain.tiffs[0].tiff_destination.parent.name == "seestar_stacked"
+    assert converted.tiffs[0].tiff_destination.parent.name == "seestar_stacked"
 
 
 def test_target_index_contains_required_structured_metadata(tmp_path: Path) -> None:

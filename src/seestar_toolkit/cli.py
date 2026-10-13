@@ -18,11 +18,14 @@ from seestar_toolkit.archive import (
     ArchivePlanningError,
     ArchiveTiffOutcome,
     CollisionPolicy,
+    LightTiffCollisionDecision,
+    LightTiffOutcome,
     PreparedSeestarArchive,
     SavedLocation,
     SeestarArchiveStatus,
     SourceAction,
     execute_prepared_seestar_archive,
+    light_tiff_dry_run_counts,
     load_archive_config,
     plan_seestar_archive,
     planned_index_paths,
@@ -192,12 +195,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="Policy for existing FITS destinations (default: skip-identical).",
     )
     archive_parser.add_argument(
-        "--non-interactive", action="store_true", help="Never prompt for a location."
+        "--non-interactive",
+        action="store_true",
+        help=(
+            "Run without prompts; automatically process applicable existing light FITS "
+            "and safely skip differing-TIFF collisions."
+        ),
     )
     archive_parser.add_argument(
         "--convert-lights",
         action="store_true",
-        help="Reserved individual-light TIFF conversion option (not active yet).",
+        help=(
+            "Create or verify TIFF derivatives for eligible archived individual lights "
+            "for this archive invocation only."
+        ),
     )
     archive_parser.add_argument(
         "--config", type=Path, metavar="PATH", help="Explicit archive TOML configuration."
@@ -478,12 +489,19 @@ def _run_archive(args: argparse.Namespace) -> int:
         if interactive and explicit_location is None:
             prepared = _resolve_interactive_location(prepared, config.saved_locations)
         if args.dry_run:
-            _print_archive_plan(prepared, action, collision_policy)
+            _print_archive_plan(prepared, action, collision_policy, args.convert_lights)
             return 1 if prepared.has_operational_problems else 0
         result = execute_prepared_seestar_archive(
             prepared,
             source_action=action,
             collision_policy=collision_policy,
+            convert_lights=args.convert_lights,
+            process_existing_lights=(
+                _prompt_process_existing_lights if interactive and args.convert_lights else None
+            ),
+            light_tiff_collision_decider=(
+                _prompt_light_tiff_collision if interactive and args.convert_lights else None
+            ),
         )
     except (
         ArchiveConfigError,
@@ -557,6 +575,7 @@ def _print_archive_plan(
     prepared: PreparedSeestarArchive,
     action: SourceAction,
     collision_policy: CollisionPolicy,
+    convert_lights: bool = False,
 ) -> None:
     print(
         f"Dry run: {len(prepared.plan.observations)} observation(s); "
@@ -581,6 +600,69 @@ def _print_archive_plan(
             print(f"Discovery problem: {item.source_path}: {item.problem}", file=sys.stderr)
     for index_path in planned_index_paths(prepared.plan):
         print(f"Index: {index_path}")
+    if convert_lights:
+        create, compare, existing = light_tiff_dry_run_counts(prepared, collision_policy)
+        print("Light TIFFs:")
+        print(f"  {create} would be created")
+        print(f"  {compare} existing TIFFs require comparison during conversion")
+        if existing:
+            print(f"{existing} previously archived light FITS were found.")
+
+
+def _prompt_process_existing_lights(total: int, create: int, compare: int) -> bool:
+    print(f"{total} previously archived light FITS were found:")
+    print(f"  {create} require TIFF creation")
+    print(f"  {compare} have existing TIFFs that can be verified")
+    while True:
+        try:
+            answer = input("\nProcess these existing FITS? [Y/n]: ").strip().casefold()
+        except EOFError:
+            return True
+        if answer in {"", "y", "yes"}:
+            return True
+        if answer in {"n", "no"}:
+            return False
+        print("Choose Yes or No")
+
+
+def _prompt_light_tiff_collision(primary: Path, has_duplicate: bool) -> LightTiffCollisionDecision:
+    print(f"Light TIFF collision: {primary}")
+    prompt = (
+        "(R)eplace duplicate / (S)kip conversion [S]: "
+        if has_duplicate
+        else "(K)eep both / (R)eplace existing / (S)kip conversion [S]: "
+    )
+    choices = {
+        "r": (
+            LightTiffCollisionDecision.REPLACE_DUPLICATE
+            if has_duplicate
+            else LightTiffCollisionDecision.REPLACE_EXISTING
+        ),
+        "replace": (
+            LightTiffCollisionDecision.REPLACE_DUPLICATE
+            if has_duplicate
+            else LightTiffCollisionDecision.REPLACE_EXISTING
+        ),
+        "s": LightTiffCollisionDecision.SKIP,
+        "skip": LightTiffCollisionDecision.SKIP,
+    }
+    if not has_duplicate:
+        choices.update(
+            {
+                "k": LightTiffCollisionDecision.KEEP_BOTH,
+                "keep": LightTiffCollisionDecision.KEEP_BOTH,
+            }
+        )
+    while True:
+        try:
+            answer = input(prompt).strip().casefold()
+        except EOFError:
+            answer = ""
+        if answer == "":
+            return LightTiffCollisionDecision.SKIP
+        if answer in choices:
+            return choices[answer]
+        print("Choose one of the displayed options")
 
 
 def _print_archive_result(result) -> None:
@@ -593,6 +675,25 @@ def _print_archive_result(result) -> None:
     created = sum(item.outcome is ArchiveTiffOutcome.CREATED for item in result.tiffs)
     failed = len(result.tiffs) - created
     print(f"TIFFs: {created} created, {failed} skipped/collided/failed")
+    if result.light_tiffs:
+        labels = (
+            (LightTiffOutcome.CREATED, "created"),
+            (LightTiffOutcome.PRIMARY_REPLACED, "primary replaced"),
+            (LightTiffOutcome.DUPLICATE_CREATED, "duplicate created"),
+            (LightTiffOutcome.DUPLICATE_REPLACED, "duplicate replaced"),
+            (LightTiffOutcome.ALREADY_PRESENT, "already present"),
+            (LightTiffOutcome.SKIPPED, "skipped"),
+            (LightTiffOutcome.FAILED, "failed"),
+        )
+        print("Light TIFFs:")
+        for outcome, label in labels:
+            count = sum(item.outcome is outcome for item in result.light_tiffs)
+            if count:
+                print(f"  {count} {label}")
+    if result.existing_lights_declined:
+        print(
+            f"{result.existing_lights_declined} previously archived light FITS were left unchanged."
+        )
     index_counts = {
         outcome: sum(item.outcome is outcome for item in result.indexes)
         for outcome in ArchiveIndexOutcome
@@ -619,6 +720,15 @@ def _print_archive_result(result) -> None:
                 f"TIFF {item.outcome.name.lower()}: {item.tiff_destination}: {item.diagnostic}",
                 file=sys.stderr,
             )
+    for item in result.light_tiffs:
+        if item.outcome is LightTiffOutcome.FAILED:
+            print("Light TIFF conversion failed:", file=sys.stderr)
+            print(f"  {item.archived_fits_path.name}", file=sys.stderr)
+            print(f"  {item.diagnostic}", file=sys.stderr)
+    if any(item.outcome is LightTiffOutcome.FAILED for item in result.light_tiffs):
+        if result.execution.failed_count == 0:
+            print("Archive FITS preservation completed successfully.")
+        print("One or more requested light TIFF conversions failed.", file=sys.stderr)
     for item in result.indexes:
         if item.outcome is ArchiveIndexOutcome.FAILED:
             print(f"Index failed: {item.index_path}: {item.diagnostic}", file=sys.stderr)

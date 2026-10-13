@@ -29,6 +29,7 @@ from .execution_models import (
 from .index_models import ArchiveIndexOutcome, ArchiveIndexResult
 from .indexing import generate_archive_indexes, planned_index_paths
 from .light_tiff import (
+    LightTiffCollisionDecider,
     LightTiffCollisionDecision,
     LightTiffOutcome,
     LightTiffResult,
@@ -44,6 +45,7 @@ from .models import (
 from .orchestration import (
     archive_seestar_session,
     execute_prepared_seestar_archive,
+    light_tiff_dry_run_counts,
     prepare_seestar_archive,
 )
 from .orchestration_models import (
@@ -93,6 +95,7 @@ __all__ = [
     "ArchiveTiffOutcome",
     "ArchiveTiffResult",
     "LightTiffCollisionDecision",
+    "LightTiffCollisionDecider",
     "LightTiffOutcome",
     "LightTiffResult",
     "DiscoveryClassification",
@@ -120,6 +123,7 @@ __all__ = [
     "default_archive_config_path",
     "execute_archive_plan",
     "execute_prepared_seestar_archive",
+    "light_tiff_dry_run_counts",
     "load_archive_config",
     "generate_archive_indexes",
     "finalise_archived_light_tiff",

@@ -12,6 +12,7 @@ from .execution_models import (
     ArchiveFileOutcome,
 )
 from .index_models import ArchiveIndexOutcome, ArchiveIndexResult
+from .light_tiff import LightTiffOutcome, LightTiffResult
 from .models import DiscoveryClassification, SeestarDiscoveryInventory
 from .planning_models import ArchivePlan
 from .reconstruction_models import ObservationReconstructionResult
@@ -74,6 +75,8 @@ class SeestarArchiveResult:
     execution: ArchiveExecutionResult
     tiffs: tuple[ArchiveTiffResult, ...]
     indexes: tuple[ArchiveIndexResult, ...] = ()
+    light_tiffs: tuple[LightTiffResult, ...] = ()
+    existing_lights_declined: int = 0
 
     @property
     def status(self) -> SeestarArchiveStatus:
@@ -88,6 +91,9 @@ class SeestarArchiveResult:
             result.outcome in archive_success_outcomes for result in self.execution.files
         )
         tiff_success = any(result.outcome is ArchiveTiffOutcome.CREATED for result in self.tiffs)
+        light_tiff_success = any(
+            result.outcome is not LightTiffOutcome.FAILED for result in self.light_tiffs
+        )
         bad_fits_discovery = any(
             item.classification is DiscoveryClassification.UNKNOWN
             and item.source_path.suffix.casefold() in {".fit", ".fits"}
@@ -98,10 +104,11 @@ class SeestarArchiveResult:
             or bad_fits_discovery
             or self.execution.failed_count > 0
             or any(result.outcome is not ArchiveTiffOutcome.CREATED for result in self.tiffs)
+            or any(result.outcome is LightTiffOutcome.FAILED for result in self.light_tiffs)
             or any(result.outcome is ArchiveIndexOutcome.FAILED for result in self.indexes)
         )
         if not has_problem:
             return SeestarArchiveStatus.COMPLETE
-        if archive_success or tiff_success:
+        if archive_success or tiff_success or light_tiff_success:
             return SeestarArchiveStatus.PARTIAL
         return SeestarArchiveStatus.FAILED

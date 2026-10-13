@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from dataclasses import replace
 from pathlib import Path
 
@@ -11,7 +12,7 @@ from seestar_toolkit.fits import FitsError, inspect_fits
 from seestar_toolkit.tiff import TiffError
 
 from .discovery import discover_seestar_inputs
-from .execution import execute_archive_plan
+from .execution import execute_archive_plan, sha256_file
 from .execution_models import (
     ArchiveFileExecutionResult,
     ArchiveFileOutcome,
@@ -19,6 +20,11 @@ from .execution_models import (
     SourceAction,
 )
 from .indexing import generate_archive_indexes
+from .light_tiff import (
+    LightTiffCollisionDecider,
+    finalise_archived_light_tiff,
+    is_light_tiff_eligible,
+)
 from .orchestration_models import (
     ArchiveTiffOutcome,
     ArchiveTiffResult,
@@ -53,6 +59,9 @@ def archive_seestar_session(
     observation_date_policy: str = "end",
     source_action: SourceAction = SourceAction.COPY,
     collision_policy: CollisionPolicy = CollisionPolicy.SKIP_IDENTICAL,
+    convert_lights: bool = False,
+    process_existing_lights: Callable[[int, int, int], bool] | None = None,
+    light_tiff_collision_decider: LightTiffCollisionDecider | None = None,
 ) -> SeestarArchiveResult:
     """Run the established Seestar archive and TIFF pipeline in safe order."""
     prepared = prepare_seestar_archive(
@@ -67,6 +76,9 @@ def archive_seestar_session(
         prepared,
         source_action=source_action,
         collision_policy=collision_policy,
+        convert_lights=convert_lights,
+        process_existing_lights=process_existing_lights,
+        light_tiff_collision_decider=light_tiff_collision_decider,
     )
 
 
@@ -241,6 +253,9 @@ def execute_prepared_seestar_archive(
     *,
     source_action: SourceAction = SourceAction.COPY,
     collision_policy: CollisionPolicy = CollisionPolicy.SKIP_IDENTICAL,
+    convert_lights: bool = False,
+    process_existing_lights: Callable[[int, int, int], bool] | None = None,
+    light_tiff_collision_decider: LightTiffCollisionDecider | None = None,
 ) -> SeestarArchiveResult:
     """Execute originals and TIFFs from one already-prepared archive plan."""
     execution = execute_archive_plan(
@@ -248,13 +263,50 @@ def execute_prepared_seestar_archive(
         action=source_action,
         collision_policy=collision_policy,
     )
-    paired_files = zip(_planned_files(prepared.plan), execution.files, strict=True)
+    pairs = tuple(zip(_planned_files(prepared.plan), execution.files, strict=True))
+    paired_files = iter(pairs)
     tiffs = tuple(
         _generate_tiff(prepared.plan, planned_file, file_execution)
         for planned_file, file_execution in paired_files
         if planned_file.tiff_destination is not None
     )
     indexes = generate_archive_indexes(prepared.plan, execution)
+    light_tiffs = ()
+    declined = 0
+    if convert_lights:
+        eligible = [
+            (planned, result)
+            for planned, result in pairs
+            if planned.tiff_destination is None and is_light_tiff_eligible(result)
+        ]
+        existing = [
+            pair for pair in eligible if pair[1].outcome is ArchiveFileOutcome.SKIPPED_IDENTICAL
+        ]
+        new = [
+            pair for pair in eligible if pair[1].outcome is not ArchiveFileOutcome.SKIPPED_IDENTICAL
+        ]
+        selected_existing = existing
+        if existing and process_existing_lights is not None:
+            create_count = sum(
+                not (
+                    _light_tiff_destination(planned).exists()
+                    or _light_tiff_destination(planned).is_symlink()
+                )
+                for planned, _ in existing
+            )
+            compare_count = len(existing) - create_count
+            if not process_existing_lights(len(existing), create_count, compare_count):
+                selected_existing = []
+                declined = len(existing)
+        light_tiffs = tuple(
+            finalise_archived_light_tiff(
+                result.destination_path,
+                archive_root=prepared.plan.config.archive_root,
+                observation_directory=_observation_for_light(prepared.plan, planned),
+                collision_decider=light_tiff_collision_decider,
+            )
+            for planned, result in (*new, *selected_existing)
+        )
     return SeestarArchiveResult(
         discovery=prepared.discovery,
         reconstruction=prepared.reconstruction,
@@ -262,7 +314,55 @@ def execute_prepared_seestar_archive(
         execution=execution,
         tiffs=tiffs,
         indexes=indexes,
+        light_tiffs=light_tiffs,
+        existing_lights_declined=declined,
     )
+
+
+def _observation_for_light(plan: ArchivePlan, planned_file: PlannedFile) -> Path:
+    for observation in plan.observations:
+        if planned_file in observation.lights:
+            return observation.observation_directory
+    raise ValueError("Planned light does not belong to an observation")
+
+
+def _light_tiff_destination(planned_file: PlannedFile) -> Path:
+    return (
+        planned_file.fits_destination.parents[2]
+        / "tiff_images"
+        / "lights"
+        / planned_file.fits_destination.with_suffix(".tiff").name
+    )
+
+
+def light_tiff_dry_run_counts(
+    prepared: PreparedSeestarArchive, collision_policy: CollisionPolicy
+) -> tuple[int, int, int]:
+    """Return would-create, requires-comparison, and previously-archived counts."""
+    create = compare = existing = 0
+    for observation in prepared.plan.observations:
+        for light in observation.lights:
+            previously_archived = False
+            if light.fits_destination.exists() or light.fits_destination.is_symlink():
+                if collision_policy is CollisionPolicy.ERROR:
+                    continue
+                try:
+                    identical = sha256_file(light.source_path) == sha256_file(
+                        light.fits_destination
+                    )
+                except OSError:
+                    continue
+                if not identical and collision_policy is not CollisionPolicy.OVERWRITE:
+                    continue
+                previously_archived = identical
+            destination = _light_tiff_destination(light)
+            if destination.exists() or destination.is_symlink():
+                compare += 1
+            else:
+                create += 1
+            if previously_archived:
+                existing += 1
+    return create, compare, existing
 
 
 def _planned_files(plan: ArchivePlan) -> tuple[PlannedFile, ...]:
