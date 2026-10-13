@@ -1,12 +1,12 @@
 # Seestar Toolkit User Guide
 
-**Development — ENH-001 (unreleased)**
+**Development — ENH-003 (unreleased)**
 
-**Document updated:** 2026-10-01
+**Document updated:** 2026-10-13
 
-This development edition adds configuration management to the released v1.1.0
-workflows. The new `config` commands require an installation containing ENH-001;
-they are not included in the published v1.1.0 wheel. The released installation
+This development edition includes the unreleased ENH-001 configuration commands,
+ENH-002 observing-night date policy and ENH-003 archive light-TIFF option. They
+are not included in the published v1.1.0 wheel. The released installation
 instructions and support boundaries remain as described below. No new release
 number has been assigned.
 
@@ -38,6 +38,7 @@ number has been assigned.
   - [What is an observation?](#what-is-an-observation)
   - [How is the observing night chosen?](#how-is-the-observing-night-chosen)
   - [What goes inside an observation?](#what-goes-inside-an-observation)
+  - [Optional individual-light TIFFs](#optional-individual-light-tiffs)
   - [Target indexes](#target-indexes)
   - [When the Toolkit is not sure](#when-the-toolkit-is-not-sure)
 - [Customising your archive](#customising-your-archive)
@@ -218,7 +219,8 @@ Astronomy Archive/
 │   └── Home/
 │       └── 20260910/
 │           └── observation_01/
-│               ├── lights/
+│               ├── fits_images/
+│               │   └── lights/
 │               └── seestar_stacked/
 │
 └── M 57/
@@ -793,11 +795,12 @@ as:
 
 ``` text
 observation_01/
-├── lights/
+├── fits_images/
+│   └── lights/
 └── seestar_stacked/
 ```
 
-### `lights/`
+### `fits_images/lights/`
 
 This contains the preserved original FITS light frames belonging to the
 observation.
@@ -809,13 +812,54 @@ The Toolkit preserves that stack and creates its required TIFF companion in the
 same directory. It does **not** recreate a new astronomical stack from the
 individual light frames.
 
-Normal archive operations do not convert individual light FITS files to TIFF and
-do not create an observation-level `tiff/` directory. You can still use
-`convert` or `convert-batch` separately when you explicitly want light TIFFs.
+Normal archive operations preserve individual light FITS files but do not create
+individual-light TIFF derivatives. Stack-TIFF behaviour remains independent.
 
 Not every observation will necessarily contain every directory. The contents
 depend on what was present in the source material and what could be safely
 reconstructed.
+
+### Optional individual-light TIFFs
+
+Use `--convert-lights` only when you want the archive operation to create or
+verify TIFF derivatives for eligible individual lights:
+
+``` bash
+seestar-toolkit archive --convert-lights SOURCE_ROOT ARCHIVE_ROOT
+```
+
+The archived FITS remains authoritative at `fits_images/lights/`. Successful
+individual-light derivatives are placed at `tiff_images/lights/`; that directory
+is created only when at least one TIFF is successfully finalised. This option is
+for the current invocation only—it is not a saved configuration preference.
+
+The archive generates each candidate from its archived FITS, not from the source
+work folder. If a TIFF with the primary name already exists, the Toolkit compares
+the generated candidate with it instead of trusting its filename. An identical
+TIFF is retained. For a different TIFF, interactive use offers **Keep both**,
+**Replace existing** or **Skip**; when a `.tiff.duplicate` already exists, the
+choices are **Replace duplicate** or **Skip**. Skip is the safe default. The
+Toolkit never makes a numbered duplicate chain. `--non-interactive` safely skips
+these differing-TIFF collisions.
+
+When the current archive operation encounters identical FITS already archived by
+that operation, it presents one aggregate prompt, defaulting to Yes. Declining
+leaves those existing FITS and TIFFs unchanged. With `--non-interactive`, the
+applicable current-operation set is processed automatically. This is not a
+recursive archive-maintenance or verification command.
+
+For a preview of this work without any conversion or comparison, use:
+
+``` bash
+seestar-toolkit archive --dry-run --convert-lights SOURCE_ROOT ARCHIVE_ROOT
+```
+
+Dry-run reports intended derivative work but creates or changes nothing: it does
+not generate a candidate, compare TIFF bytes or prompt. In a real run, archived
+FITS is established before derivative conversion. A derivative failure preserves
+that FITS, leaves existing TIFFs safe, continues with other eligible lights and
+causes a non-zero result; verified existing TIFFs and safe skips do not by
+themselves fail the command.
 
 ### What about the JPEGs?
 
@@ -1684,8 +1728,8 @@ You do not need to convert your existing FITS collection before archiving it,
 and you do not need to archive a FITS image before converting it.
 
 The archive workflow creates the TIFF companion for a Seestar-created stacked
-FITS where appropriate. It does not automatically convert individual lights;
-use the standalone conversion commands when you want those TIFF files.
+FITS where appropriate. It preserves individual lights without TIFF derivatives
+unless the archive invocation explicitly includes `--convert-lights`.
 
 ## Where should I put converted TIFFs?
 
@@ -1698,15 +1742,15 @@ move your separately created TIFF files into the archive. If you want to keep
 those TIFFs with the archived observation, you will need to move them there
 yourself.
 
-If you convert an image **after** creating the archive, you can create a `tiff/`
-directory within the appropriate archived observation and use that as the output
-location.
+If you convert an image **after** creating the archive, choose an output path
+yourself. Standalone `convert` and `convert-batch` do not infer or manage an
+archive's `tiff_images/lights/` directory.
 
 ``` text
 observation_01/
-├── lights/
+├── fits_images/lights/
 ├── seestar_stacked/
-└── tiff/              <- your standalone converted TIFFs
+└── chosen-output/      <- your standalone converted TIFFs
 ```
 
 This is separate from the Seestar stack TIFF companion that the archive workflow
@@ -2163,7 +2207,7 @@ Batch discovery is non-recursive.
 seestar-toolkit archive [OPTIONS] SOURCE_ROOT ARCHIVE_ROOT
 ```
 
-The v1.1.0 archive options include:
+The development archive options include:
 
 ``` text
 --dry-run
@@ -2172,6 +2216,7 @@ The v1.1.0 archive options include:
 --source-action {copy,move}
 --collision-policy {skip-identical,error,overwrite}
 --non-interactive
+--convert-lights
 --config PATH
 ```
 
@@ -2185,6 +2230,15 @@ seestar-toolkit archive --dry-run --source-action copy \
 
 After inspecting the dry run, repeat the same command without `--dry-run` to
 perform the copy.
+
+Representative archive invocations:
+
+``` bash
+seestar-toolkit archive SOURCE_ROOT ARCHIVE_ROOT
+seestar-toolkit archive --convert-lights SOURCE_ROOT ARCHIVE_ROOT
+seestar-toolkit archive --dry-run --convert-lights SOURCE_ROOT ARCHIVE_ROOT
+seestar-toolkit archive --convert-lights --non-interactive SOURCE_ROOT ARCHIVE_ROOT
+```
 
 ## `config`
 

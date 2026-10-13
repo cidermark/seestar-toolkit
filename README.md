@@ -17,13 +17,17 @@ Target/
 `-- Location/
     `-- 20260915/
         `-- observation_01/
-            |-- lights/
+            |-- fits_images/
+            |   `-- lights/
             `-- seestar_stacked/
 ```
 
-Individual light FITS files remain in `lights/` without automatic TIFF
-conversion. When a Seestar-created stacked FITS is present, its required TIFF
-companion is generated beside it in `seestar_stacked/`.
+In the ENH-003 development workflow, individual light FITS remain in
+`fits_images/lights/` without automatic TIFF conversion. The explicit,
+invocation-only `archive --convert-lights` option can create or verify their
+derivatives in `tiff_images/lights/`; it is not a saved preference. When a
+Seestar-created stacked FITS is present, its required TIFF companion is still
+generated beside it in `seestar_stacked/`.
 
 The Toolkit can also convert supported FIT/FITS images into linear RGB TIFFs,
 one file at a time or as a non-recursive batch. Conversion complements archive

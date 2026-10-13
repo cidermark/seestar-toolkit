@@ -19,16 +19,16 @@ ROOT = Path(__file__).resolve().parents[1]
 USER_DOCS = ROOT / "docs" / "user"
 EXPECTED_HASHES = {
     "SEESTAR_TOOLKIT_USER_GUIDE.md": (
-        "f67f19899b9950b96c7f453adc2907a0a89cb507508cb2b117a5ae63bcec6a64"
+        "0df3be3151b4e31d6ed07093bdfb9454ad9cdb2cd29192907560f190e9f73ed8"
     ),
     "SEESTAR_TOOLKIT_QUICK_START.md": (
-        "52d55a0d3af428196dadcb407c50420684722cb1ad001494c4b079c675254296"
+        "e6c912726606a400563d1e354804fb5dfdb445511b189d617324bdd3d9c2ffec"
     ),
 }
-DOCUMENT_LABEL = "Development — ENH-001 (unreleased)"
-DOCUMENT_DATE = "2026-10-01"
+DOCUMENT_LABEL = "Development — ENH-003 (unreleased)"
+DOCUMENT_DATE = "2026-10-13"
 DOCUMENT_SUBJECT = f"Seestar Toolkit {DOCUMENT_LABEL} documentation"
-DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-001, unreleased, documentation"
+DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-003, unreleased, documentation"
 
 
 @dataclass(frozen=True)
@@ -117,6 +117,10 @@ def markdown_inventory(source: Path) -> tuple[list[str], list[str], list[str]]:
         if item:
             finish_paragraph()
             prose_blocks.append(visible(item.group(1)))
+            continue
+        if line.lstrip().startswith("|"):
+            # Table cells are inventoried and checked independently below.
+            finish_paragraph()
             continue
         if not line.strip():
             finish_paragraph()

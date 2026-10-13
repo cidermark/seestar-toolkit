@@ -1,12 +1,12 @@
 # Seestar Toolkit Quick Start
 
-**Development — ENH-001 (unreleased)**
+**Development — ENH-003 (unreleased)**
 
-**Document updated:** 2026-10-01
+**Document updated:** 2026-10-13
 
-This development edition adds configuration management to the released v1.1.0
-workflows. The new `config` commands require an installation containing ENH-001;
-they are not included in the published v1.1.0 wheel. The released installation
+This development edition includes the unreleased ENH-001 configuration commands,
+ENH-002 observing-night date policy and ENH-003 archive light-TIFF option. They
+are not included in the published v1.1.0 wheel. The released installation
 instructions and support boundaries remain as described below. No new release
 number has been assigned.
 
@@ -210,7 +210,8 @@ Target/
 └── Location/
     └── Observing night/
         └── observation_01/
-            ├── lights/
+            ├── fits_images/
+            │   └── lights/
             └── seestar_stacked/
 ```
 
@@ -359,8 +360,8 @@ the image or alter brightness, contrast or colour, so an astronomical TIFF can
 initially look very dark.
 
 Standalone `convert` and `convert-batch` outputs are not automatically added to
-an existing Toolkit archive. If you want a standalone TIFF inside an archived
-observation, choose or create the appropriate `tiff/` directory yourself.
+an existing Toolkit archive. They do not infer an archive's
+`tiff_images/lights/` destination; choose an explicit output directory yourself.
 
 Keep the original FITS file.
 

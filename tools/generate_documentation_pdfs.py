@@ -17,10 +17,10 @@ ROOT = Path(__file__).resolve().parents[1]
 USER_DOCS = ROOT / "docs" / "user"
 HEADER = ROOT / "tools" / "documentation_pdf_header.tex"
 FILTER = ROOT / "tools" / "documentation_pdf_filter.lua"
-DOCUMENT_LABEL = "Development — ENH-001 (unreleased)"
-DOCUMENT_DATE = "2026-10-01"
+DOCUMENT_LABEL = "Development — ENH-003 (unreleased)"
+DOCUMENT_DATE = "2026-10-13"
 DOCUMENT_SUBJECT = f"Seestar Toolkit {DOCUMENT_LABEL} documentation"
-DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-001, unreleased, documentation"
+DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-003, unreleased, documentation"
 
 
 @dataclass(frozen=True)
@@ -37,14 +37,14 @@ DOCUMENTS = (
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.md",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.sha256",
-        "f67f19899b9950b96c7f453adc2907a0a89cb507508cb2b117a5ae63bcec6a64",
+        "0df3be3151b4e31d6ed07093bdfb9454ad9cdb2cd29192907560f190e9f73ed8",
         "Seestar Toolkit User Guide",
     ),
     Document(
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.md",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.sha256",
-        "52d55a0d3af428196dadcb407c50420684722cb1ad001494c4b079c675254296",
+        "e6c912726606a400563d1e354804fb5dfdb445511b189d617324bdd3d9c2ffec",
         "Seestar Toolkit Quick Start",
     ),
 )
@@ -69,7 +69,7 @@ def require_tools() -> None:
             raise SystemExit(f"required documentation command not found: {command}")
 
     expected = {
-        "pandoc": "pandoc 3.11",
+        "pandoc": "pandoc 3.12",
         "xelatex": "XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew)",
     }
     for command, first_line in expected.items():

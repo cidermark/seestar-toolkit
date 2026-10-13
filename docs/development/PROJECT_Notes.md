@@ -25,6 +25,7 @@ v1.1.0 (Development)
 -   [x] BUG-002 --- telescope-aware Observation reconstruction --- **Complete**
 -   [x] ENH-001 --- Configuration Management --- **Complete**
 -   [x] ENH-002 --- Configurable Observing-Night Date Policy --- **Complete**
+-   [X] ENH-003 --- Optional Archive Light-TIFF Conversion --- **Complete**
 
 > Stage 2 now includes reader-level recognition of RGB FITS images.
 > Stage 4 provides handling for already-RGB FITS beyond basic reader-level
@@ -822,14 +823,6 @@ created during this audit; the pending CHANGELOG workflow is preserved.
     must never be modified in place; the command should produce a separate
     anonymised copy and report what metadata was removed or changed. A future
     workflow could support anonymise → verify → share.
--   Archive with batch conversion option
-    Add an explicit option to seestar-toolkit archive allowing the user to
-    request FITS → TIFF batch conversion of archived light frames as part
-    of the same operation.
-    Default archive behaviour remains archive-only. Batch conversion occurs only
-    when explicitly requested. The option should reuse the existing
-    convert-batch processing pipeline rather than introduce a separate
-    conversion implementation.
 -   Archive-aware `convert` / `convert-batch` output inference — After ENH-003
     establishes the archive layout, consider allowing standalone conversion
     without an output path to infer `observation_NN/tiff_images/lights/` when
@@ -1211,6 +1204,36 @@ Requirements:
 
 Assign an ENH identifier and a dedicated branch when this work
 is formally scheduled. ENH-001 remains COMPLETE.
+
+## ENH-003 — documentation and closure review
+
+The authoritative [ENH-003 specification](change_documents/ENH-003/ENH-003.md)
+defines an invocation-only `archive --convert-lights` capability. ENH-003a
+(`989c0ea`) established the new `fits_images/lights/` archive layout and related
+recognition/indexing boundary; ENH-003b (`e39aa04`) added the safe archived-FITS
+light-TIFF candidate/finalisation engine; ENH-003c (`511ca08`) integrated CLI,
+aggregate reporting, prompts, dry-run and archive orchestration.
+
+Normal archive runs retain individual light FITS without creating light TIFFs.
+When explicitly requested, eligible archived FITS can produce verified light
+TIFF derivatives in `tiff_images/lights/`, independently of stack TIFFs. The
+implementation is deliberately prospective: it does not migrate or recognise
+the historical `observation_NN/lights/` layout, reorganise archives, add a saved
+preference, or introduce a general archive-verification command.
+
+The implementation commits include focused planning, indexing, execution,
+orchestration and CLI coverage, including collision, non-interactive, dry-run,
+failure-continuation and historical-layout boundaries. This documentation stage
+records the final user/development contract and refreshes the generated guide
+artifacts. The ENH-003d documentation commit remains **PENDING** until the user
+creates it; formal ENH-003 closure remains subject to independent review of the
+L01–L36 evidence.
+
+Deferred work remains separate: archive-aware standalone `convert` /
+`convert-batch` output inference, a general archive TIFF-verification command,
+archive regeneration/reorganisation, anonymisation and telescope-identity work.
+BUG-003 remains a separate unresolved bug and is not remediated or subsumed by
+ENH-003.
 
 ## ENH-002 — COMPLETE: configurable observing-night date policy
 

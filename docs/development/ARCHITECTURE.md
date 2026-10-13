@@ -214,20 +214,22 @@ ARCHIVE_ROOT/
     └── {location}/
         └── {session_end_date}/
             ├── observation_01/
-            │   ├── lights/
+            │   ├── fits_images/
+            │   │   └── lights/
             │   └── seestar_stacked/
             └── observation_02/
-                ├── lights/
+                ├── fits_images/
+                │   └── lights/
                 └── seestar_stacked/
 ```
 
-Original light FIT/FITS files are placed directly in `lights/`, without an
-extra `source/` or `fits/` level, so the observation remains convenient for
-Siril and similar stacking software. Normal archive operations do not request
-TIFF derivatives for individual lights. The original Seestar stack and its
-required `.tiff` companion remain together in `seestar_stacked/`. Original FITS
-basenames are preserved wherever practical; the stack derivative replaces
-`.fit` or `.fits` with `.tiff`.
+Original light FIT/FITS files are placed in `fits_images/lights/`. Normal
+archive operations do not request TIFF derivatives for individual lights.
+When explicitly requested with `--convert-lights`, successfully finalised light
+derivatives are placed in `tiff_images/lights/`; no empty derivative directory
+is created. The original Seestar stack and its required `.tiff` companion remain
+together in `seestar_stacked/`. Original FITS basenames are preserved wherever
+practical; the stack derivative replaces `.fit` or `.fits` with `.tiff`.
 
 Future sibling frame directories such as `darks/`, `flats/` and `biases/` are
 permitted by the architecture, but unused directories and calibration-frame
@@ -355,8 +357,10 @@ remain available, and planning has no network or reverse-geocoder dependency.
 Within each target/location/session group, observations are sorted by retained
 capture time and deterministic source-path evidence and numbered from
 `observation_01`. Width expands above 99 observations to prevent ambiguity.
-Planned original lights retain their filenames under `lights/` and have no
-planned TIFF derivative. A Seestar stack and its `.tiff` derivative are both
+Planned original lights retain their filenames under `fits_images/lights/`.
+They have no light-TIFF operation unless the current archive invocation supplies
+`--convert-lights`; then their derivative destination is
+`tiff_images/lights/`. A Seestar stack and its `.tiff` derivative are both
 planned under `seestar_stacked/`. In-memory destination collisions between
 distinct sources consider only destinations that are actually planned;
 filesystem collision and content policy remains Stage 7.1e.
@@ -406,13 +410,26 @@ result for later presentation and does not duplicate FITS inspection,
 demosaicing, RGB normalization, TIFF writing, reconstruction, placement or
 original-file safety logic.
 
-TIFF conversion occurs only for a Seestar stack with a planned derivative and
-only after the corresponding original archive result is `COPIED`, `MOVED` or
-`SKIPPED_IDENTICAL`. `COLLISION`, `FAILED` and `PARTIAL` original outcomes are
-conservatively ineligible. The archived stack FITS destination is always the
+Stack TIFF conversion occurs only for a Seestar stack with a planned derivative
+and only after the corresponding original archive result is `COPIED`, `MOVED`
+or `SKIPPED_IDENTICAL`. Its existing `COLLISION`, `FAILED` and `PARTIAL`
+semantics remain unchanged. The archived stack FITS destination is always the
 conversion input, allowing TIFF creation after MOVE and ensuring an identical
-archived stack can produce a missing derivative. Individual light FITS files
-have no derivative destination during a normal archive operation.
+archived stack can produce a missing derivative.
+
+Every newly planned individual light is stored in
+`observation_NN/fits_images/lights/`; a stack and its TIFF companion remain in
+`observation_NN/seestar_stacked/`. Normal archive operation creates no
+individual-light TIFF. For the invocation-only `--convert-lights` request,
+eligible established archived lights are converted through
+`convert_fits_to_tiff()` into safely finalised derivatives under
+`observation_NN/tiff_images/lights/`. This directory is lazy and exists only
+after an actual derivative is successfully finalised. Existing light TIFFs are
+verified from a fresh candidate; interactive differing-TIFF collisions use the
+separate Keep both/Replace/Skip policy, while unattended operation safely skips.
+This is limited to eligible FITS encountered during the current archive
+operation; it provides neither historical-layout compatibility nor recursive
+archive maintenance.
 
 Eligible TIFF parent directories are created only after resolved-path archive
 containment is revalidated. A pre-existing TIFF is preserved and reported as a
@@ -454,7 +471,8 @@ and the same filename with different content is never silently overwritten.
 Dry-run follows the same discovery, classification, reconstruction, metadata,
 path, collision, stack-TIFF placement and file-action planning path as a real
 run, but performs zero filesystem mutation and generates no archive TIFF or
-index. It does not advertise a TIFF destination for individual lights.
+index. With `--convert-lights`, it reports intended light-derivative work but
+does not convert, create a candidate, compare candidate bytes or prompt.
 
 ### Ancillary products and indexes
 

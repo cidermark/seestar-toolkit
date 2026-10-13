@@ -7,7 +7,7 @@ Start PDFs. It is not required to install or run Seestar Toolkit.
 
 Stage 9.3b tested the following Homebrew packages on macOS arm64:
 
-- Pandoc 3.11;
+- Pandoc 3.12;
 - TeX Live 2026/Homebrew (`texlive` 20260301), providing XeTeX
   0.999998 and the TeX Gyre Heros and DejaVu Sans Mono fonts; and
 - Poppler 26.09.0, providing `pdfinfo`, `pdftotext`, `pdffonts`,
@@ -40,8 +40,8 @@ requires byte-identical PDFs, validates candidates, installs each PDF atomically
 synchronises its mtime to its Markdown source, writes its two-entry SHA-256
 manifest, and then runs final validation.
 
-The current frozen sources are the unreleased ENH-001 development editions,
-labelled `Development — ENH-001 (unreleased)` and dated 2026-10-01. This does not
+The current frozen sources are the unreleased ENH-003 development editions,
+labelled `Development — ENH-003 (unreleased)` and dated 2026-10-13. This does not
 change the published v1.1.0 release or assign a later release version.
 
 The validator is read-only. To create temporary visual-review images outside the
@@ -89,7 +89,7 @@ fresh checkouts with different filesystem timestamps.
 
 Optional ImageMagick 7.1.2-31 `montage` creates contact sheets when available;
 `pdftoppm` alone supplies all required 150-dpi page images. It was installed as a
-Homebrew TeX Live dependency. The ENH-001 development review set contains 35 User
+Homebrew TeX Live dependency. The ENH-003 development review set contains 35 User
 Guide and six Quick Start pages. Temporary review images are removed after
 acceptance; rerendering for a later review is optional and does not replace the
 PDFs.
