@@ -834,6 +834,20 @@ created during this audit; the pending CHANGELOG workflow is preserved.
     digest such as SHA-256, and reports whether they match. CLI design is
     deliberately undecided; this does not include archive repair, migration or
     reorganisation.
+-   Archive --dry-run Output Improvements
+    The current archive --dry-run command produces a detailed, per-file listing
+    of planned archive operations. Although useful for diagnostics, this becomes excessively verbose when processing observations containing hundreds of light
+    FITS files, making it difficult to review the proposed archive structure and
+    identify potential problems. A future enhancement should introduce a concise,
+    human-readable summary as the default output, reporting the number of
+    observations, telescope identity for each observation, counts of light FITS
+    and stacked FITS files, planned TIFF conversions, and any warnings or conflicts.
+    The summary should also explicitly display the configured archive hierarchy
+    template and the resolved destination paths, allowing users to verify the
+    intended directory structure before executing the archive operation. A --verbose
+    option should retain the existing detailed per-file mappings for troubleshooting
+    and auditing. This enhancement is deferred and is not part of the current S50
+    Pro qualification exercise.
 
 ## BUG-001 — archive light-TIFF side effect
 
