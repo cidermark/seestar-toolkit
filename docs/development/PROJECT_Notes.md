@@ -26,6 +26,7 @@ v1.1.0 (Development)
 -   [x] ENH-001 --- Configuration Management --- **Complete**
 -   [x] ENH-002 --- Configurable Observing-Night Date Policy --- **Complete**
 -   [X] ENH-003 --- Optional Archive Light-TIFF Conversion --- **Complete**
+-   [X] BUG-003 --- S50 Pro Telescope Identity Recognition --- **Complete**
 
 > Stage 2 now includes reader-level recognition of RGB FITS images.
 > Stage 4 provides handling for already-RGB FITS beyond basic reader-level
@@ -1261,3 +1262,13 @@ All D01–D10 acceptance requirements passed. Final validation recorded 568
 pytest passes with two expected warnings, Ruff clean, formatting checks clean,
 and `git diff --check` clean; the formal closure-audit findings were resolved.
 ENH-002 is COMPLETE. This does not create a new package release.
+
+### BUG-003 — S50 Pro Telescope Identity Recognition
+**Status:** COMPLETE — 21 October 2026
+- Added recognition of S50 Pro telescope identities.
+- Prevented cross-telescope light association between S50 and S50 Pro observations.
+- Preserved existing S50 recognition and unknown-identity compatibility.
+- Validated against the original twelve-file M27 reconnaissance dataset.
+- Automated validation: 626 tests passed.
+- Implementation commit: `ea69b99`
+- Closure documentation commit: `548a632`
