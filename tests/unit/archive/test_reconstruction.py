@@ -17,6 +17,7 @@ from seestar_toolkit.archive import (
     SourceDirectoryContext,
     reconstruct_seestar_observations,
 )
+from seestar_toolkit.archive.reconstruction import _recognised_telescope_identity
 from seestar_toolkit.fits import FitsImageClass, FitsInspection
 
 ROOT = Path("My Works")
@@ -778,6 +779,59 @@ def test_different_device_light_and_stack_do_not_associate() -> None:
     assert result.observations[1].stack == stack
     assert result.observations[1].lights == ()
     assert result.observations[1].status is ObservationStatus.STACK_ONLY
+
+
+@pytest.mark.parametrize(
+    ("telescope", "expected"),
+    [
+        ("S50_12345678", "s50_12345678"),
+        (" s50_ABCDEF12 ", "s50_abcdef12"),
+        ("S50 Pro_12345678", "s50 pro_12345678"),
+        (" s50 PRO_ABCDEF12 ", "s50 pro_abcdef12"),
+        (None, None),
+        ("S50Pro_12345678", None),
+        ("S50 Pro_1234567", None),
+        ("S50 Pro_123456789", None),
+        ("S50 Pro_zzzzzzzz", None),
+        ("S30 Pro_12345678", None),
+    ],
+)
+def test_recognised_telescope_identity_supports_only_complete_s50_formats(
+    telescope: str | None, expected: str | None
+) -> None:
+    assert _recognised_telescope_identity(telescope) == expected
+
+
+def test_s50_and_s50_pro_with_same_serial_do_not_associate() -> None:
+    s50_light = _item(
+        DiscoveryClassification.LIGHT_FITS, "Light_s50.fit", BASE_TIME, telescope="S50_12345678"
+    )
+    pro_light = _item(
+        DiscoveryClassification.LIGHT_FITS,
+        "Light_pro.fit",
+        BASE_TIME + timedelta(seconds=1),
+        telescope="S50 Pro_12345678",
+    )
+    s50_stack = _item(
+        DiscoveryClassification.SEESTAR_STACK_FITS,
+        "Stacked_1_s50.fit",
+        BASE_TIME + timedelta(seconds=11),
+        telescope="S50_12345678",
+    )
+    pro_stack = _item(
+        DiscoveryClassification.SEESTAR_STACK_FITS,
+        "Stacked_1_pro.fit",
+        BASE_TIME + timedelta(seconds=12),
+        telescope="S50 Pro_12345678",
+    )
+    result = reconstruct_seestar_observations(
+        _inventory(s50_light, pro_light, s50_stack, pro_stack)
+    )
+    assert len(result.observations) == 2
+    assert result.observations[0].lights == (s50_light,)
+    assert result.observations[0].stack == s50_stack
+    assert result.observations[1].lights == (pro_light,)
+    assert result.observations[1].stack == pro_stack
 
 
 @pytest.mark.parametrize("unknown", [None, "Seestar S50"])

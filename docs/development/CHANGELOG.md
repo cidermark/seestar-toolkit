@@ -321,3 +321,12 @@ the new light layout and the optional, invocation-only archive light-TIFF
 workflow. Documentation and formal closure were completed in `70ec93d`.
 All L01–L36 acceptance requirements passed. See the
 [authoritative ENH-003 specification](change_documents/ENH-003/ENH-003.md).
+
+## BUG-003 — S50 Pro telescope identity recognition
+
+BUG-003 corrects archive reconstruction identity recognition for complete
+case-insensitive `S50 Pro_<8 hex>` TELESCOP values while retaining the established
+S50 and unknown-identity compatibility rules. Validation reconstructed and archived
+the twelve-file S50/S50 Pro M27 dataset as six telescope-homogeneous observations.
+Formal closure remains subject to user review. See the
+[BUG-003 report](change_documents/BUG_003/BUG_003_REPORT.md).

@@ -24,7 +24,7 @@ from .reconstruction_models import (
 
 _FILENAME_TIMESTAMP = re.compile(r"(?P<date>\d{8})-(?P<time>\d{6})(?:_|$)")
 _STACK_COUNT = re.compile(r"^stacked_(?P<count>\d+)_", re.IGNORECASE)
-_SEESTAR_DEVICE_ID = re.compile(r"s50_[0-9a-f]{8}")
+_SEESTAR_DEVICE_ID = re.compile(r"s50(?: pro)?_[0-9a-f]{8}")
 _MAX_STACK_ASSOCIATION_GAP = timedelta(hours=12)
 _MIN_LIGHTS_ONLY_CADENCE_LIMIT = timedelta(seconds=60)
 
@@ -193,13 +193,13 @@ def _capture_mode_is_compatible(first: SeestarDiscoveryItem, second: SeestarDisc
 
 
 def _telescope_identity(item: SeestarDiscoveryItem) -> str | None:
-    """Recognise only the evidenced S50 serial form, not generic model names."""
+    """Recognise only evidenced Seestar serial forms, not generic model names."""
     telescope = item.fits_inspection.telescope if item.fits_inspection else None
     return _recognised_telescope_identity(telescope)
 
 
 def _recognised_telescope_identity(telescope: str | None) -> str | None:
-    """Normalise the narrow BUG-002 device convention for both archive stages."""
+    """Normalise supported S50 and S50 Pro identities for both archive stages."""
     if telescope is None:
         return None
     identity = telescope.strip().casefold()
