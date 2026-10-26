@@ -12,6 +12,7 @@ The original Stages 1–9 refer to the v1.1.0 development programme; the later S
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
+| S50 Pro qualification — Stage 3 | Technical qualification completion, independent closure-readiness PASS and T01–T06 user approval recorded; administrative closure approved subject to documentation and Git workflow completion | Pending administrative entry — no commit recorded | 2026-10-26 |
 | DOC | Update roadmap with BUG-003 completion | `ff39cb1` | 2026-10-23 |
 | BUG-003 | Record BUG-003 closure documentation | `548a632` | 2026-10-21 |
 | BUG-003 | Closure documentation | `548a632` | 2026-10-21 |
@@ -122,7 +123,11 @@ The original Stages 1–9 refer to the v1.1.0 development programme; the later S
 - **v1.1.0:** release commit `b954d97` dated **23 September 2026**; annotated tag `v1.1.0` created **24 September 2026**. Subsequent development work is not represented here as a newly published release.
 - **BUG-001, BUG-002 and BUG-003:** completed and closed. BUG-003 implementation `ea69b99`, closure documentation `548a632`, and roadmap update `ff39cb1` are separate recorded events.
 - **ENH-001, ENH-002 and ENH-003:** completed and closed.
-- **S50 Pro qualification Stage 3:** technical PASS recorded; formal administrative closure remains pending as of 23 October 2026. It is not part of the original Stage 3 demosaicing work.
+- **S50 Pro qualification Stage 3:** technical PASS and independent
+  closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
+  October 2026. Administrative closure is approved subject to completion of
+  the documentation and Git workflow. This pending administrative entry has no
+  commit identifier. It is not part of the original Stage 3 demosaicing work.
 - The `.DS_Store` input discovery warning recorded during qualification is non-blocking; no product defect was confirmed from that finding.
 
 ## Provenance and maintenance

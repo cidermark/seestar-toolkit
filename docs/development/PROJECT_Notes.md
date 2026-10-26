@@ -1,6 +1,6 @@
 # Seestar Toolkit — Project Notes
 
-> **Status date:** 23 October 2026<br>
+> **Status date:** 26 October 2026<br>
 > **Purpose:** Current project state, architectural decisions, roadmap and outstanding work.<br>
 > **Historical detail:** The source notes contain a chronological development diary. The original notes are preserved in `docs/development/history/PROJECT_Notes_HISTORICAL_SNAPSHOT.md` to avoid losing prior checkpoint evidence.
 
@@ -33,7 +33,7 @@ The numbered Stages 1–9 below refer to the original development and release pr
 | ENH-002 | Configurable observing-night date policy | Complete |
 | ENH-003 | Optional archive light-TIFF conversion | Complete |
 | BUG-003 | S50 Pro telescope identity recognition | Complete |
-| S50 Pro qualification — Stage 3 | Technical qualification T01–T06 | Technical PASS; formal closure pending |
+| S50 Pro qualification — Stage 3 | Technical qualification T01–T06 | Technical PASS; closure readiness PASS; T01–T06 user acceptance APPROVED 26 October 2026; administrative closure APPROVED, subject to documentation and Git workflow completion |
 
 ## 3. Current behaviour and architectural decisions
 
@@ -106,7 +106,13 @@ The qualification report is `docs/development/S50_PRO_QUALIFICATION.md`.
 - **T06a/T06b:** Sequential archiving into the same destination passed. All 30 original S50 image files were SHA-256 verified unchanged after adding S50 Pro data. Final archive: 63 FITS, six observations, six TIFFs and updated index.
 - A Finder `.DS_Store` file caused a non-blocking discovery warning in a test input. No confirmed product defect was established.
 
-**Current status:** Technical qualification and report review PASS. Formal administrative Stage 3 closure, documentation recording and any related Git operations are **pending**. Qualification is limited to the tested firmware, captures and workflows; S30/S30 Pro and untested modes are not qualified.
+**Current status:** Technical qualification and independent closure-readiness
+review PASS. User acceptance of T01–T06 is **APPROVED, 26 October 2026**;
+qualification limitations and the non-blocking Finder `.DS_Store` warning are
+accepted. Administrative closure is **APPROVED, subject to completion of the
+documentation and Git workflow**. Qualification is limited to the tested
+firmware, captures and workflows; S30/S30 Pro and untested modes are not
+qualified.
 
 ## 5. Future work and deferred ideas
 
@@ -155,4 +161,6 @@ These are candidates, not approved implementations or commitments. Priorities an
 3. Use an authoritative change document before implementation. Resolve material design decisions with the user first.
 4. Separate implementation, validation, formal closure, commit, push and merge operations.
 5. Preserve older technical evidence in the change documents and historical snapshot; do not reinterpret it as a current feature contract.
-6. Do not mark S50 Pro qualification Stage 3 administratively complete until its closure requirements are reviewed and approved.
+6. Administrative approval of S50 Pro qualification Stage 3 does not itself
+   complete the documentation or Git workflow; record any completed Git action
+   only after it occurs.
