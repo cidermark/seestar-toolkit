@@ -12,7 +12,7 @@ The original Stages 1–9 refer to the v1.1.0 development programme; the later S
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
-| S50 Pro qualification — Stage 3 | Technical qualification completion, independent closure-readiness PASS and T01–T06 user approval recorded; administrative closure approved subject to documentation and Git workflow completion | Pending administrative entry — no commit recorded | 2026-10-26 |
+| S50 Pro qualification — Stage 3 | Technical qualification completion, independent closure-readiness PASS and T01–T06 user approval recorded; administrative closure approved subject to documentation and Git workflow completion | `1aac9ec` | 2026-10-26 |
 | DOC | Update roadmap with BUG-003 completion | `ff39cb1` | 2026-10-23 |
 | BUG-003 | Record BUG-003 closure documentation | `548a632` | 2026-10-21 |
 | BUG-003 | Closure documentation | `548a632` | 2026-10-21 |
