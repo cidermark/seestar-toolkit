@@ -10,11 +10,14 @@ from pathlib import Path
 
 from seestar_toolkit import __version__
 from seestar_toolkit.archive import (
+    ArchiveCanonicalLightsMissingError,
     ArchiveConfigError,
     ArchiveDiscoveryError,
     ArchiveExecutionError,
     ArchiveFileOutcome,
     ArchiveIndexOutcome,
+    ArchiveInferenceError,
+    ArchivePathSafetyError,
     ArchivePlanningError,
     ArchiveTiffOutcome,
     CollisionPolicy,
@@ -25,11 +28,13 @@ from seestar_toolkit.archive import (
     SeestarArchiveStatus,
     SourceAction,
     execute_prepared_seestar_archive,
+    infer_archived_light_destination,
     light_tiff_dry_run_counts,
     load_archive_config,
     plan_seestar_archive,
     planned_index_paths,
     prepare_seestar_archive,
+    resolve_archive_batch_input,
 )
 from seestar_toolkit.archive.orchestration import _reconcile_incremental_observations
 from seestar_toolkit.batch import convert_fits_directory
@@ -133,10 +138,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     convert_parser = subparsers.add_parser(
         "convert",
-        help="Convert one FIT/FITS image to one TIFF.",
+        help="Convert one FIT/FITS image, with archive-aware output inference.",
         description=(
             "Convert one FIT/FITS image to one TIFF. Supported inputs include raw Seestar "
-            "Bayer, native Seestar RGB, and Siril RGB images."
+            "Bayer, native Seestar RGB, and Siril RGB images. When OUTPUT_TIFF is omitted, "
+            "infer tiff_images/lights for a recognised archived light."
         ),
     )
     convert_parser.add_argument(
@@ -149,15 +155,17 @@ def build_parser() -> argparse.ArgumentParser:
         "output_tiff",
         metavar="OUTPUT_TIFF",
         type=Path,
-        help="Explicit output TIFF path.",
+        nargs="?",
+        help="Explicit output TIFF path; omit only for a recognised archived light.",
     )
 
     batch_parser = subparsers.add_parser(
         "convert-batch",
-        help="Convert a flat directory of FIT/FITS images to TIFF.",
+        help="Convert FIT/FITS images with archive-aware input and output inference.",
         description=(
-            "Convert supported FIT/FITS files in one non-recursive input directory "
-            "to an explicit output directory."
+            "Convert supported FIT/FITS files from one flat, non-recursive directory. "
+            "Archive inputs may be observation_NN, fits_images, or fits_images/lights; "
+            "they resolve to canonical lights. Omit OUTPUT_DIR only for a recognised archive."
         ),
     )
     batch_parser.add_argument(
@@ -217,7 +225,8 @@ def build_parser() -> argparse.ArgumentParser:
         "output_directory",
         metavar="OUTPUT_DIR",
         type=Path,
-        help="Explicit flat output directory for stem-matched .tiff files.",
+        nargs="?",
+        help="Explicit output directory; omit to infer archive tiff_images/lights.",
     )
 
     return parser
@@ -243,9 +252,23 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     if args.command == "convert":
+        output_tiff = args.output_tiff
+        inferred = output_tiff is None
         try:
-            destination = convert_fits_to_tiff(args.input_fits, args.output_tiff)
-        except (FitsError, TiffError, ValueError) as error:
+            if inferred:
+                output_tiff = infer_archived_light_destination(args.input_fits).output_path
+            destination = _convert_single(
+                args.input_fits,
+                output_tiff,
+                create_output_lazily=inferred,
+            )
+        except ArchiveInferenceError as error:
+            print(
+                f"Error: {error}. Supply OUTPUT_TIFF explicitly to convert this file.",
+                file=sys.stderr,
+            )
+            return 1
+        except (FitsError, TiffError, ValueError, OSError) as error:
             print(f"Error: {error}", file=sys.stderr)
             return 1
 
@@ -253,9 +276,38 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     if args.command == "convert-batch":
+        input_directory = args.input_directory
+        output_directory = args.output_directory
+        inferred = output_directory is None
         try:
-            result = convert_fits_directory(args.input_directory, args.output_directory)
-        except ValueError as error:
+            try:
+                archive_paths = resolve_archive_batch_input(input_directory)
+            except (ArchiveCanonicalLightsMissingError, ArchivePathSafetyError):
+                raise
+            except ArchiveInferenceError:
+                if inferred:
+                    raise
+            else:
+                input_directory = archive_paths.source_directory
+                if inferred:
+                    output_directory = archive_paths.inferred_output_directory
+            if inferred:
+                print(f"Inferred output directory: {output_directory}")
+            if inferred:
+                result = convert_fits_directory(
+                    input_directory,
+                    output_directory,
+                    create_output_lazily=True,
+                )
+            else:
+                result = convert_fits_directory(input_directory, output_directory)
+        except ArchiveInferenceError as error:
+            print(
+                f"Error: {error}. Supply OUTPUT_DIR explicitly for a non-archive directory.",
+                file=sys.stderr,
+            )
+            return 1
+        except (ValueError, OSError) as error:
             print(f"Error: {error}", file=sys.stderr)
             return 1
 
@@ -266,13 +318,20 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         if result.discovered_count == 0:
             print(
-                f"No FIT/FITS files found in: {args.input_directory}",
+                f"No FIT/FITS files found (no eligible FIT/FITS files) in: {input_directory}",
                 file=sys.stderr,
             )
         print(
             f"Batch complete: {result.discovered_count} discovered, "
             f"{result.succeeded_count} converted, {result.failed_count} failed"
         )
+        if result.succeeded_count and not result.failed_count:
+            status = "SUCCESS"
+        elif result.succeeded_count:
+            status = "PARTIAL SUCCESS"
+        else:
+            status = "FAILED"
+        print(f"Batch status: {status}")
         return 0 if result.discovered_count > 0 and result.failed_count == 0 else 1
 
     if args.command == "archive":
@@ -280,6 +339,25 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     parser.error(f"Unknown command: {args.command}")
     return 2
+
+
+def _convert_single(
+    input_path: Path,
+    output_path: Path,
+    *,
+    create_output_lazily: bool,
+) -> Path:
+    """Convert once, creating an inferred parent only after TIFF writing is reached."""
+    try:
+        return convert_fits_to_tiff(input_path, output_path)
+    except TiffError:
+        if not create_output_lazily or output_path.parent.exists():
+            raise
+        try:
+            output_path.parent.mkdir(parents=True)
+        except OSError as error:
+            raise ValueError(f"Unable to create output directory: {output_path.parent}") from error
+        return convert_fits_to_tiff(input_path, output_path)
 
 
 def _validate_config_arguments(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:

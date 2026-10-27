@@ -322,16 +322,13 @@ def test_convert_help_documents_required_paths(
     assert "one FIT/FITS image" in output
 
 
-def test_convert_missing_required_argument_is_usage_error(
+def test_convert_omitted_output_is_operational_inference_failure(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    with pytest.raises(SystemExit) as raised:
-        cli.main(["convert", "input.fit"])
+    status = cli.main(["convert", "input.fit"])
 
-    assert raised.value.code == 2
-    captured = capsys.readouterr()
-    assert "usage:" in captured.err
-    assert "OUTPUT_TIFF" in captured.err
+    assert status == 1
+    assert "Supply OUTPUT_TIFF explicitly" in capsys.readouterr().err
 
 
 def test_convert_batch_reports_successes_failures_and_summary(
@@ -413,14 +410,13 @@ def test_convert_batch_help_documents_required_directories(
     assert "non-recursive" in output
 
 
-def test_convert_batch_missing_required_argument_is_usage_error(
+def test_convert_batch_omitted_output_is_operational_inference_failure(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    with pytest.raises(SystemExit) as raised:
-        cli.main(["convert-batch", "input"])
+    status = cli.main(["convert-batch", "input"])
 
-    assert raised.value.code == 2
-    assert "OUTPUT_DIR" in capsys.readouterr().err
+    assert status == 1
+    assert "Supply OUTPUT_DIR explicitly" in capsys.readouterr().err
 
 
 def test_version_option_remains_working(capsys: pytest.CaptureFixture[str]) -> None:

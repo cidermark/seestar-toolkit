@@ -48,6 +48,8 @@ class BatchConversionResult:
 def convert_fits_directory(
     input_directory: str | Path,
     output_directory: str | Path,
+    *,
+    create_output_lazily: bool = False,
 ) -> BatchConversionResult:
     """Convert supported FIT/FITS files from one flat directory.
 
@@ -64,7 +66,7 @@ def convert_fits_directory(
         raise ValueError(f"Input path is not a directory: {source_directory}")
     if destination_directory.exists() and not destination_directory.is_dir():
         raise ValueError(f"Output path is not a directory: {destination_directory}")
-    if not destination_directory.exists():
+    if not destination_directory.exists() and not create_output_lazily:
         try:
             destination_directory.mkdir()
         except OSError as error:
@@ -86,7 +88,11 @@ def convert_fits_directory(
     for input_path in inputs:
         output_path = destination_directory / f"{input_path.stem}.tiff"
         try:
-            destination = convert_fits_to_tiff(input_path, output_path)
+            destination = _convert_with_optional_lazy_directory(
+                input_path,
+                output_path,
+                create_output_lazily=create_output_lazily,
+            )
         except (FitsError, TiffError, ValueError) as error:
             failures.append(BatchFailure(input_path=input_path, reason=str(error)))
         else:
@@ -97,3 +103,22 @@ def convert_fits_directory(
         successes=tuple(successes),
         failures=tuple(failures),
     )
+
+
+def _convert_with_optional_lazy_directory(
+    input_path: Path,
+    output_path: Path,
+    *,
+    create_output_lazily: bool,
+) -> Path:
+    """Create an inferred output directory only after conversion reaches TIFF writing."""
+    try:
+        return convert_fits_to_tiff(input_path, output_path)
+    except TiffError:
+        if not create_output_lazily or output_path.parent.exists():
+            raise
+        try:
+            output_path.parent.mkdir(parents=True)
+        except OSError as error:
+            raise ValueError(f"Unable to create output directory: {output_path.parent}") from error
+        return convert_fits_to_tiff(input_path, output_path)
