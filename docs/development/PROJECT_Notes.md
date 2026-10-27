@@ -33,7 +33,7 @@ The numbered Stages 1–9 below refer to the original development and release pr
 | ENH-002 | Configurable observing-night date policy | Complete |
 | ENH-003 | Optional archive light-TIFF conversion | Complete |
 | BUG-003 | S50 Pro telescope identity recognition | Complete |
-| ENH-004 | Archive-aware standalone conversion | ENH-004a and ENH-004b complete; ENH-004c documentation and validation in progress; formal closure pending review |
+| ENH-004 | Archive-aware standalone conversion | Formally approved and complete 27 October 2026; Git integration pending. Real-world archive testing has not yet been performed. |
 | S50 Pro qualification — Stage 3 | Technical qualification T01–T06 | Technical PASS; closure readiness PASS; T01–T06 user acceptance APPROVED 26 October 2026; administrative closure APPROVED, subject to documentation and Git workflow completion |
 
 ## 3. Current behaviour and architectural decisions
@@ -105,7 +105,7 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 | ENH-002 | D01–D10 accepted; 568 pytest passes at closure |
 | ENH-003 | L01–L36 accepted; three implementation substages and documentation closure |
 | BUG-003 | Implementation and validation complete; 626 tests passed; mixed S50/S50 Pro 12-file archive verified; formally closed 21 October 2026 |
-| ENH-004 | ENH-004a archive recognition complete at `ddde7c2`; ENH-004b CLI integration complete at `cc3f86a`; ENH-004c documentation and final validation in progress, with formal closure pending ChatGPT/user review |
+| ENH-004 | Formally approved and complete 27 October 2026. ENH-004a archive recognition completed at `ddde7c2`; ENH-004b CLI integration completed at `cc3f86a`; ENH-004c documentation and validation completed at `8a5b294`. T01–T32 coverage satisfied; 195 focused/regression tests and 664 full-suite tests passed; Ruff, changed-file formatting, CLI-help verification and Git whitespace checks passed. No implementation defects remain outstanding. Real-world testing against the user's observing archive has not yet been performed; automated validation is not presented as field testing. Git integration remains pending. |
 
 ### 4.1 S50 Pro qualification — separate Stage 3
 
