@@ -33,6 +33,18 @@ The Toolkit can also convert supported FIT/FITS images into linear RGB TIFFs,
 one file at a time or as a non-recursive batch. Conversion complements archive
 organisation; it is not required to use the archive.
 
+Standalone conversion accepts explicit destinations as before:
+
+```bash
+seestar-toolkit convert INPUT_FITS OUTPUT_TIFF
+seestar-toolkit convert-batch INPUT_DIR OUTPUT_DIR
+```
+
+In the current development workflow, `OUTPUT_TIFF` or `OUTPUT_DIR` may be
+omitted for a recognised archived light or observation. The Toolkit then uses
+the observation's lazy `tiff_images/lights/` directory. See the User Guide for
+the recognised archive input forms, collision behaviour and exit statuses.
+
 ## Supported environment and captures
 
 For v1.1.0, **supported** means tested and validated for this release:

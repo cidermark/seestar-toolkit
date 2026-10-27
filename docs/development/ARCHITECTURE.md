@@ -159,15 +159,37 @@ The public single-file pipeline boundary is
 explicit FIT/FITS input and one explicit TIFF destination, returns the
 successful destination as a `pathlib.Path`, rejects unsupported
 classifications, and allows subsystem exceptions to remain visible. Stage 6
-exposes this boundary through the single-file `convert INPUT_FITS OUTPUT_TIFF`
-CLI. Its `convert-batch INPUT_DIR OUTPUT_DIR` command is a thin orchestration
-layer over that same operation: it scans one directory non-recursively for
-case-insensitive `.fit`/`.fits` extensions, processes filename-sorted inputs,
-and maps each source stem to a `.tiff` in one explicit flat output directory.
-Expected per-file failures are recorded while later inputs continue, and a
-structured result supplies the CLI summary counts. Stage 7 owns recursive
-archive scanning, archive paths, placement, hierarchy creation, and source-file
-movement; Stage 8 owns broad real-dataset qualification.
+exposes this boundary through the single-file conversion CLI. ENH-004 extends
+the command grammar to `convert INPUT_FITS [OUTPUT_TIFF]` and
+`convert-batch INPUT_DIR [OUTPUT_DIR]` without changing that service boundary.
+The batch command remains a thin orchestration layer over the same operation:
+it scans one resolved directory non-recursively for case-insensitive
+`.fit`/`.fits` extensions, processes filename-sorted inputs, and maps each
+source stem to a `.tiff` in one flat output directory. Expected per-file
+failures are recorded while later inputs continue, and a structured result
+supplies the CLI summary counts.
+
+ENH-004a adds a read-only archive-recognition boundary under
+`seestar_toolkit.archive.recognition`. Recognition is structural: it accepts
+the current `observation_NN/fits_images/lights/` layout, resolves observation,
+`fits_images` and canonical-lights batch inputs, checks resolved containment and
+infers `observation_NN/tiff_images/lights/`. It does not inspect FITS content,
+require an archive index or hierarchy ancestors, or create directories.
+Historical `observation_NN/lights/` and unsafe symbolic-link paths are not
+recognised.
+
+ENH-004b integrates that boundary in the CLI. An omitted single-file output is
+allowed only for a direct archived FIT/FITS light. Archive-form batch inputs
+resolve to canonical lights whether output is inferred or explicit. The CLI
+creates an inferred destination lazily only when conversion needs it, while the
+existing conversion engine retains FITS validation, TIFF generation and
+exclusive-create collision protection. This keeps archive recognition, CLI
+orchestration and conversion responsibilities separate.
+
+Stage 7 continues to own recursive archive scanning, archive paths, placement,
+hierarchy creation, source-file movement and archive-specific collision policy.
+ENH-004 makes no change to archive planning or execution, including
+`archive --convert-lights`. Stage 8 owns broad real-dataset qualification.
 
 ### Export Profiles
 

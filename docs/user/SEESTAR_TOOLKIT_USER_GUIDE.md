@@ -1650,7 +1650,7 @@ brightness, contrast or colour to make it look finished.
 The basic command is:
 
 ``` bash
-seestar-toolkit convert INPUT_FITS OUTPUT_TIFF
+seestar-toolkit convert INPUT_FITS [OUTPUT_TIFF]
 ```
 
 For example:
@@ -1663,6 +1663,20 @@ seestar-toolkit convert \
 
 The input and output filenames are explicit, so you decide where the TIFF is
 created and what it is called.
+
+When the input is a `.fit` or `.fits` file directly under a recognised current
+`observation_NN/fits_images/lights/` directory, you may omit `OUTPUT_TIFF`:
+
+``` bash
+seestar-toolkit convert \
+"/path/to/archive/M 42/Home/20260915/observation_01/fits_images/lights/Light_M42.fit"
+```
+
+The Toolkit preserves the input stem and infers
+`observation_01/tiff_images/lights/Light_M42.tiff`. A stack, historical
+`observation_NN/lights/` path, non-FIT/FITS input, unsafe symbolic-link path or
+file outside a recognised observation cannot use inference; supply an explicit
+output instead.
 
 The original FITS file is not replaced by the conversion.
 
@@ -1688,7 +1702,7 @@ Your FITS file remains the authoritative original capture.
 To convert the supported FITS images in a directory:
 
 ``` bash
-seestar-toolkit convert-batch INPUT_DIR OUTPUT_DIR
+seestar-toolkit convert-batch INPUT_DIR [OUTPUT_DIR]
 ```
 
 For example:
@@ -1703,6 +1717,31 @@ Batch conversion is deliberately directory-oriented rather than a recursive
 search of an entire storage tree. Give it the input directory containing the
 FITS images you intend to process and a separate output directory for the TIFF
 files.
+
+For a recognised current archive, `INPUT_DIR` may be any of these three levels:
+
+``` text
+observation_NN/
+observation_NN/fits_images/
+observation_NN/fits_images/lights/
+```
+
+Each resolves to the canonical `fits_images/lights/` directory, even when an
+explicit `OUTPUT_DIR` is supplied. If `OUTPUT_DIR` is omitted, the Toolkit
+infers `observation_NN/tiff_images/lights/`:
+
+``` bash
+seestar-toolkit convert-batch \
+"/path/to/archive/M 42/Home/20260915/observation_01"
+```
+
+The scan remains flat, case-insensitive for `.fit`/`.fits`, and filename
+ordered. It does not traverse stacks, other observations or unrelated
+directories. An ordinary directory still works with an explicit output; when
+its output is omitted, the command reports that `OUTPUT_DIR` is required.
+A recognised observation with no canonical lights directory is an error. An
+existing but empty canonical lights directory is a failed empty batch and does
+not create a TIFF destination.
 
 ## Batch operations can partially succeed
 
@@ -1733,8 +1772,20 @@ unless the archive invocation explicitly includes `--convert-lights`.
 
 ## Where should I put converted TIFFs?
 
-The standalone `convert` and `convert-batch` commands do not automatically add
-their TIFF outputs to a Seestar Toolkit archive.
+For recognised archived lights, standalone `convert` and `convert-batch` can
+place inferred outputs in the current archive location:
+
+``` text
+observation_01/
+├── fits_images/lights/
+├── seestar_stacked/
+└── tiff_images/lights/   <- inferred standalone light TIFFs
+```
+
+The inferred directory is lazy: it is created only when a valid conversion
+needs it, not for inference failures, invalid or unsupported FITS, or empty
+batches. A pre-existing destination directory is accepted, including one that
+already contains TIFFs.
 
 If you convert your FITS files **before** creating the archive, the archive
 operation will organise the supported FITS captures but will not discover and
@@ -1742,20 +1793,19 @@ move your separately created TIFF files into the archive. If you want to keep
 those TIFFs with the archived observation, you will need to move them there
 yourself.
 
-If you convert an image **after** creating the archive, choose an output path
-yourself. Standalone `convert` and `convert-batch` do not infer or manage an
-archive's `tiff_images/lights/` directory.
-
-``` text
-observation_01/
-├── fits_images/lights/
-├── seestar_stacked/
-└── chosen-output/      <- your standalone converted TIFFs
-```
-
 This is separate from the Seestar stack TIFF companion that the archive workflow
-creates in `seestar_stacked/`. With the standalone conversion commands, **you
-choose the TIFF destination explicitly**.
+creates in `seestar_stacked/`, and it does not change archive execution or
+`archive --convert-lights`. Outside recognised current archive structure, you
+choose the standalone TIFF destination explicitly.
+
+Standalone conversion always retains exclusive-create collision protection.
+An existing TIFF—whether identical or different—and a destination occupied by
+a directory fail rather than being overwritten, skipped, renamed or replaced.
+In a batch, each failure is reported and independent later inputs continue.
+The final status is `SUCCESS` for one or more conversions and no failures,
+`PARTIAL SUCCESS` for a mixture of conversions and failures, or `FAILED` when
+nothing converted. Only `SUCCESS` returns exit code `0`; partial, failed and
+empty batches return `1`.
 
 ## Check the result
 
@@ -2172,7 +2222,7 @@ python -m seestar_toolkit
 ## `convert`
 
 ``` text
-seestar-toolkit convert INPUT_FITS OUTPUT_TIFF
+seestar-toolkit convert INPUT_FITS [OUTPUT_TIFF]
 ```
 
 Example:
@@ -2185,10 +2235,14 @@ seestar-toolkit convert \
 
 The source FITS is not replaced.
 
+Omit `OUTPUT_TIFF` only for a FIT/FITS light directly under a recognised
+current `observation_NN/fits_images/lights/` directory. Its same-stem TIFF is
+inferred under `observation_NN/tiff_images/lights/`.
+
 ## `convert-batch`
 
 ``` text
-seestar-toolkit convert-batch INPUT_DIR OUTPUT_DIR
+seestar-toolkit convert-batch INPUT_DIR [OUTPUT_DIR]
 ```
 
 Example:
@@ -2200,6 +2254,10 @@ seestar-toolkit convert-batch \
 ```
 
 Batch discovery is non-recursive.
+
+For current archives, `INPUT_DIR` may be `observation_NN`, `fits_images` or
+`fits_images/lights`; each resolves to canonical lights with either inferred or
+explicit output. Ordinary directories require an explicit `OUTPUT_DIR`.
 
 ## `archive`
 
@@ -2300,6 +2358,11 @@ seestar-toolkit config unset --help
 An exit code of `1` can represent an invalid input, unreadable or unwritable
 path, conversion failure, archive/configuration problem or another operational
 error.
+
+For `convert-batch`, `SUCCESS` returns `0`; `PARTIAL SUCCESS`, `FAILED`, an
+empty batch and archive-inference failure return `1`. Omitting an output is
+valid command syntax, so an unavailable inference is operational failure `1`,
+not usage error `2`.
 
 An exit code of `2` normally means the command itself was not formed correctly,
 such as missing required arguments or an unrecognised option.

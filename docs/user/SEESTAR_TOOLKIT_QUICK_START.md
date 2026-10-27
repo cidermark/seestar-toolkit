@@ -345,6 +345,15 @@ seestar-toolkit convert \
   "/path/to/output.tiff"
 ```
 
+For a light directly under a current archive's
+`observation_NN/fits_images/lights/`, omit the output to create the
+same-stem TIFF under `observation_NN/tiff_images/lights/`:
+
+``` bash
+seestar-toolkit convert \
+  "/path/to/archive/Target/Home/20260915/observation_01/fits_images/lights/Light_M42.fit"
+```
+
 Batch-convert the supported FITS files directly inside one directory:
 
 ``` bash
@@ -355,13 +364,32 @@ seestar-toolkit convert-batch \
 
 Batch conversion is non-recursive.
 
+For a current archive observation, the batch input may be the observation,
+its `fits_images` directory or its `fits_images/lights` directory. All three
+scan only the canonical lights directory. Omit the output to infer
+`observation_NN/tiff_images/lights/`:
+
+``` bash
+seestar-toolkit convert-batch \
+  "/path/to/archive/Target/Home/20260915/observation_01"
+```
+
+Supplying an explicit batch output still resolves any of those three archive
+input levels to canonical lights. Outside a recognised current archive, both
+commands require their explicit output form. A missing canonical lights
+directory is an error; an empty one reports no eligible FIT/FITS files and a
+failed batch.
+
 The Toolkit creates **linear RGB TIFF** data. It does not automatically stretch
 the image or alter brightness, contrast or colour, so an astronomical TIFF can
 initially look very dark.
 
-Standalone `convert` and `convert-batch` outputs are not automatically added to
-an existing Toolkit archive. They do not infer an archive's
-`tiff_images/lights/` destination; choose an explicit output directory yourself.
+An inferred `tiff_images/lights/` directory is created only when a valid
+conversion needs it. Empty batches and invalid inputs do not create it.
+Existing TIFF destinations are never overwritten; batch conversion continues
+with independent inputs and reports `SUCCESS`, `PARTIAL SUCCESS` or `FAILED`.
+Complete success returns `0`; partial or failed processing and inference errors
+return `1`; malformed command usage returns `2`.
 
 Keep the original FITS file.
 

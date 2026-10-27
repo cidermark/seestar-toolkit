@@ -8,10 +8,18 @@ Commit identifiers were checked against repository Git history during the 23 Oct
 
 The original Stages 1–9 refer to the v1.1.0 development programme; the later S50 Pro qualification Stage 3 is a separate exercise.
 
+ENH-004c documentation and final implementation validation are in progress on
+27 October 2026. This work has no commit identifier yet and is not a claim of
+formal ENH-004 closure. Focused baseline validation accepted 195 passing tests
+covering ENH-004 recognition and CLI integration plus conversion, batch and
+`archive --convert-lights` regressions.
+
 ## Development commit history
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
+| ENH-004b | Integrate archive-aware single-file and batch conversion CLI | `cc3f86a` | 2026-10-27 |
+| ENH-004a | Establish safe current-archive recognition and destination inference | `ddde7c2` | 2026-10-27 |
 | S50 Pro qualification — Stage 3 | Technical qualification completion, independent closure-readiness PASS and T01–T06 user approval recorded; administrative closure approved subject to documentation and Git workflow completion | `1aac9ec` | 2026-10-26 |
 | DOC | Update roadmap with BUG-003 completion | `ff39cb1` | 2026-10-23 |
 | BUG-003 | Record BUG-003 closure documentation | `548a632` | 2026-10-21 |

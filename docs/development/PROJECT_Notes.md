@@ -1,6 +1,6 @@
 # Seestar Toolkit — Project Notes
 
-> **Status date:** 26 October 2026<br>
+> **Status date:** 27 October 2026<br>
 > **Purpose:** Current project state, architectural decisions, roadmap and outstanding work.<br>
 > **Historical detail:** The source notes contain a chronological development diary. The original notes are preserved in `docs/development/history/PROJECT_Notes_HISTORICAL_SNAPSHOT.md` to avoid losing prior checkpoint evidence.
 
@@ -33,6 +33,7 @@ The numbered Stages 1–9 below refer to the original development and release pr
 | ENH-002 | Configurable observing-night date policy | Complete |
 | ENH-003 | Optional archive light-TIFF conversion | Complete |
 | BUG-003 | S50 Pro telescope identity recognition | Complete |
+| ENH-004 | Archive-aware standalone conversion | ENH-004a and ENH-004b complete; ENH-004c documentation and validation in progress; formal closure pending review |
 | S50 Pro qualification — Stage 3 | Technical qualification T01–T06 | Technical PASS; closure readiness PASS; T01–T06 user acceptance APPROVED 26 October 2026; administrative closure APPROVED, subject to documentation and Git workflow completion |
 
 ## 3. Current behaviour and architectural decisions
@@ -43,7 +44,17 @@ The numbered Stages 1–9 below refer to the original development and release pr
 - Demosaicing supports `RGGB`, `GRBG`, `GBRG` and `BGGR` and produces `(height, width, 3)` RGB `uint16` data.
 - RGB layout normalisation preserves channel order, values and dtype. Seestar `uint16` and Siril `float32` are validated cases.
 - TIFF writing preserves linear `uint16` or `float32` data; it does not implicitly stretch, scale, clip or white-balance.
-- `convert INPUT_FITS OUTPUT_TIFF` converts one file; `convert-batch INPUT_DIR OUTPUT_DIR` processes a flat directory without recursive traversal.
+- `convert INPUT_FITS [OUTPUT_TIFF]` converts one file. An omitted output is
+  inferred only for a direct light under a recognised current
+  `observation_NN/fits_images/lights/` path.
+- `convert-batch INPUT_DIR [OUTPUT_DIR]` remains flat and non-recursive. Current
+  archive inputs at the observation, `fits_images` or canonical lights level
+  resolve to canonical lights with either inferred or explicit output; ordinary
+  directories require explicit output.
+- Inferred standalone derivatives use lazy
+  `observation_NN/tiff_images/lights/` creation and retain the conversion
+  writer's exclusive-create collision policy. This does not alter archive
+  execution or `archive --convert-lights`.
 
 ### 3.2 Archive organisation
 
@@ -94,6 +105,7 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 | ENH-002 | D01–D10 accepted; 568 pytest passes at closure |
 | ENH-003 | L01–L36 accepted; three implementation substages and documentation closure |
 | BUG-003 | Implementation and validation complete; 626 tests passed; mixed S50/S50 Pro 12-file archive verified; formally closed 21 October 2026 |
+| ENH-004 | ENH-004a archive recognition complete at `ddde7c2`; ENH-004b CLI integration complete at `cc3f86a`; ENH-004c documentation and final validation in progress, with formal closure pending ChatGPT/user review |
 
 ### 4.1 S50 Pro qualification — separate Stage 3
 
@@ -120,7 +132,6 @@ These are candidates, not approved implementations or commitments. Priorities an
 
 | Candidate | Description | Origin | Status |
 |---|---|---|---|
-| Archive-aware conversion | Infer `observation_NN/tiff_images/lights/` for standalone `convert` / `convert-batch` when a recognised archive observation is supplied | ENH-003 deferred follow-up | Deferred |
 | TIFF verification | Independently verify archived TIFF derivatives against authoritative FITS conversion output | ENH-003 deferred follow-up | Deferred |
 | Archive regeneration | Rebuild or reorganise existing archives safely when hierarchy or date policy changes | Post-release enhancement inventory; ENH-002 deferral | Deferred |
 | Telescope hierarchy token | Optional telescope model or device identity in archive paths | Archive hierarchy enhancement proposal | Deferred |
