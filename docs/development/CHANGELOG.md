@@ -15,7 +15,9 @@ tests passed. Ruff linting, changed-file formatting, root and conversion CLI-hel
 verification, and Git whitespace checks passed. No implementation defects remain
 outstanding. Real-world testing against the user's observing archive has not yet
 been performed; the recorded automated validation is not presented as field
-testing and is not a formal-closure blocker. Git integration remains pending.
+testing and is not a formal-closure blocker.
+
+Final closure: ENH-004 formally approved on 27 October 2026. Closure documentation committed as 51c7215. Enhancement merged into main using fast-forward integration; GitHub Actions passed. Local and remote enhancement branches deleted. Real-world observing-archive testing remains outstanding and is not a formal closure blocker.
 
 ## Development commit history
 
