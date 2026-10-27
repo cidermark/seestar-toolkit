@@ -23,3 +23,15 @@ class ArchiveExecutionError(Exception):
 
 class ArchiveConfigError(Exception):
     """Raised when archive TOML configuration cannot be loaded safely."""
+
+
+class ArchiveInferenceError(Exception):
+    """Raised when a path is not a recognised current archive input."""
+
+
+class ArchiveCanonicalLightsMissingError(ArchiveInferenceError):
+    """Raised when a recognised observation lacks its canonical lights directory."""
+
+
+class ArchivePathSafetyError(ArchiveInferenceError):
+    """Raised when symbolic-link resolution escapes a recognised observation."""

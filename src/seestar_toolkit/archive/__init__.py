@@ -9,9 +9,12 @@ from .config import (
 )
 from .discovery import discover_seestar_inputs
 from .exceptions import (
+    ArchiveCanonicalLightsMissingError,
     ArchiveConfigError,
     ArchiveDiscoveryError,
     ArchiveExecutionError,
+    ArchiveInferenceError,
+    ArchivePathSafetyError,
     ArchivePlanningCollisionError,
     ArchivePlanningConfigurationError,
     ArchivePlanningError,
@@ -65,6 +68,12 @@ from .planning_models import (
     PlannedFile,
     SavedLocation,
 )
+from .recognition import (
+    ArchiveBatchInference,
+    ArchivedLightInference,
+    infer_archived_light_destination,
+    resolve_archive_batch_input,
+)
 from .reconstruction import reconstruct_seestar_observations
 from .reconstruction_models import (
     ObservationCompatibility,
@@ -76,12 +85,17 @@ from .reconstruction_models import (
 
 __all__ = [
     "ArchiveDiscoveryError",
+    "ArchiveCanonicalLightsMissingError",
     "ArchiveConfig",
     "ArchiveConfigError",
     "ArchiveCollisionState",
     "ArchiveExecutionError",
     "ArchiveExecutionResult",
     "ArchiveExecutionStatus",
+    "ArchiveInferenceError",
+    "ArchivePathSafetyError",
+    "ArchiveBatchInference",
+    "ArchivedLightInference",
     "ArchiveIndexOutcome",
     "ArchiveIndexResult",
     "ArchiveFileExecutionResult",
@@ -128,11 +142,13 @@ __all__ = [
     "generate_archive_indexes",
     "finalise_archived_light_tiff",
     "is_light_tiff_eligible",
+    "infer_archived_light_destination",
     "normalize_archive_component",
     "plan_seestar_archive",
     "planned_index_paths",
     "prepare_seestar_archive",
     "reconstruct_seestar_observations",
+    "resolve_archive_batch_input",
     "session_end_date",
     "sha256_file",
 ]
