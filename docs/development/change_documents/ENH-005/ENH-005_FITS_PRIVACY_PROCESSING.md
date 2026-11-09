@@ -292,6 +292,13 @@ Overall ENH-005b is formally complete. ENH-005b.1 is formally complete under §8
 
 No unresolved defect or material ambiguity affects the completed ENH-005b `header-report` scope. The remaining technical clarifications in §9 are retained for subsequent implementation and validation stages; they do not reopen the completed ENH-005b scope. ENH-005c and ENH-005d remain not started and their boundaries are unchanged. The temporary development-only `--noscrub` option remains prohibited from production release and must be removed during ENH-005d.
 
+### 8.7 Git integration record
+
+- **Commit:** `f1de3eb` — `ENH-005b: implement privacy-safe FITS header reporting`
+- **Branch:** `enh/ENH-005-fits-privacy-processing`
+- **Push:** confirmed.
+- **Working tree:** clean after push.
+
 ## 9. Outstanding technical clarifications
 
 The following are explicitly open for user review; they do not authorise implementation changes.

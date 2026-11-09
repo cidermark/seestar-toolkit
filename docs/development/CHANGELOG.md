@@ -19,10 +19,19 @@ testing and is not a formal-closure blocker.
 
 Final closure: ENH-004 formally approved on 27 October 2026. Closure documentation committed as 51c7215. Enhancement merged into main using fast-forward integration; GitHub Actions passed. Local and remote enhancement branches deleted. Real-world observing-archive testing remains outstanding and is not a formal closure blocker.
 
+ENH-005b was completed on 9 November 2026 at `f1de3eb` on
+`enh/ENH-005-fits-privacy-processing`. It delivers the standalone,
+privacy-safe `header-report` command and its shared metadata policy. Its
+closure evidence records 56 focused tests, Ruff lint and formatting checks,
+and `git diff --check`; the full test suite was intentionally not run.
+Four representative real-world reports were reviewed and accepted. ENH-005c
+and ENH-005d remain separate, not-started stages; ENH-005 is not complete.
+
 ## Development commit history
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
+| ENH-005b | Implement privacy-safe FITS header reporting | `f1de3eb` | 2026-11-09 |
 | ENH-004c | Document and validate archive-aware conversion | `8a5b294` | 2026-10-27 |
 | ENH-004b | Integrate archive-aware single-file and batch conversion CLI | `cc3f86a` | 2026-10-27 |
 | ENH-004a | Establish safe current-archive recognition and destination inference | `ddde7c2` | 2026-10-27 |
@@ -137,6 +146,11 @@ Final closure: ENH-004 formally approved on 27 October 2026. Closure documentati
 - **v1.1.0:** release commit `b954d97` dated **23 September 2026**; annotated tag `v1.1.0` created **24 September 2026**. Subsequent development work is not represented here as a newly published release.
 - **BUG-001, BUG-002 and BUG-003:** completed and closed. BUG-003 implementation `ea69b99`, closure documentation `548a632`, and roadmap update `ff39cb1` are separate recorded events.
 - **ENH-001, ENH-002 and ENH-003:** completed and closed.
+- **ENH-005:** ENH-005a and ENH-005b are complete. ENH-005c and ENH-005d
+  remain not started; `pii-scrub`, `pii-scrub --verify`, integration and
+  release-readiness work remain outside the completed `header-report` scope.
+  The temporary development-only `--noscrub` option must be removed during
+  ENH-005d before a production release.
 - **S50 Pro qualification Stage 3:** technical PASS and independent
   closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
   October 2026. Administrative closure is approved subject to completion of
