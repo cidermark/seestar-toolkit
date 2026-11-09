@@ -7,6 +7,13 @@ from .exceptions import (
     InvalidFitsFileError,
     MissingImageDataError,
 )
+from .header_report import (
+    HeaderReportError,
+    HeaderReportResult,
+    generate_header_report,
+    infer_header_report_path,
+    offer_report_menu,
+)
 from .inspector import inspect_fits
 from .models import FitsImageClass, FitsImageData, FitsImageLayout, FitsInspection
 from .reader import read_fits_image
@@ -17,6 +24,11 @@ __all__ = [
     "FitsInspection",
     "InvalidFitsFileError",
     "MissingImageDataError",
+    "HeaderReportError",
+    "HeaderReportResult",
+    "generate_header_report",
+    "infer_header_report_path",
+    "offer_report_menu",
     "inspect_fits",
     "read_fits_image",
     "FitsImageLayout",

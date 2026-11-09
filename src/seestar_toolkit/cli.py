@@ -39,7 +39,7 @@ from seestar_toolkit.archive import (
 from seestar_toolkit.archive.orchestration import _reconcile_incremental_observations
 from seestar_toolkit.batch import convert_fits_directory
 from seestar_toolkit.conversion import convert_fits_to_tiff
-from seestar_toolkit.fits import FitsError
+from seestar_toolkit.fits import FitsError, generate_header_report, offer_report_menu
 from seestar_toolkit.tiff import TiffError
 
 
@@ -60,6 +60,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     subparsers = parser.add_subparsers(dest="command")
+
+    report_parser = subparsers.add_parser(
+        "header-report",
+        help="Create a privacy-processed text report of every FITS header.",
+        description="Read every HDU header without loading image pixels and create a new "
+        "privacy-processed text report.",
+    )
+    report_parser.add_argument("input_fits", metavar="INPUT", type=Path)
+    report_parser.add_argument(
+        "--output", type=Path, metavar="FILE", help="Exact report filename; never overwritten."
+    )
+    report_parser.add_argument(
+        "--noprompt", action="store_true", help="Do not offer View / Finder / Quit after success."
+    )
+    report_parser.add_argument("--noscrub", action="store_true", help=argparse.SUPPRESS)
 
     config_parser = subparsers.add_parser(
         "config",
@@ -249,6 +264,27 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command is None:
         parser.print_help()
+        return 0
+
+    if args.command == "header-report":
+        try:
+            result = generate_header_report(
+                args.input_fits,
+                args.output,
+                unscrubbed=args.noscrub,
+            )
+        except (FitsError, OSError, ValueError) as error:
+            print(f"Error: {error}", file=sys.stderr)
+            return 1
+        if result.unscrubbed:
+            print(
+                "PRIVACY WARNING: this UNSCRUBBED report contains original FITS metadata. "
+                "Do not share it without review.",
+                file=sys.stderr,
+            )
+        print(f"Created header report: {result.output_path}")
+        if not args.noprompt and sys.stdin.isatty() and sys.stdout.isatty():
+            offer_report_menu(result.output_path)
         return 0
 
     if args.command == "convert":
