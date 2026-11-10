@@ -36,7 +36,16 @@ the temporary option, integrated user and development documentation, passed 738
 full-suite tests and 74 focused ENH-005 regressions, passed Ruff lint and
 changed-file formatting, and validated both generated documentation PDFs. The
 repository-wide Ruff formatting check still identifies 16 pre-existing unrelated
-files. ENH-005d is complete; ENH-005 remains open pending formal closure.
+files. ENH-005d is complete.
+
+ENH-005 formal closure was approved on 10 November 2026 following the completed
+implementation, validation, final closure audit, and documentation remediation.
+ENH-005a, ENH-005b, ENH-005c.1, ENH-005c.2, ENH-005c.3, ENH-005c overall, and
+ENH-005d are complete. The delivered commands are `header-report`, `pii-scrub`,
+and `pii-scrub --verify`. Existing implementation and validation evidence,
+including commits `f1de3eb`, `c2f0226`, `f347677`, `c690248`, and `2e8c2e1`, is
+preserved below. No formal closure commit identifier is recorded; documentation
+commit, push, merge, and branch actions remain separate.
 
 ## Development commit history
 
@@ -162,9 +171,10 @@ files. ENH-005d is complete; ENH-005 remains open pending formal closure.
 - **v1.1.0:** release commit `b954d97` dated **23 September 2026**; annotated tag `v1.1.0` created **24 September 2026**. Subsequent development work is not represented here as a newly published release.
 - **BUG-001, BUG-002 and BUG-003:** completed and closed. BUG-003 implementation `ea69b99`, closure documentation `548a632`, and roadmap update `ff39cb1` are separate recorded events.
 - **ENH-001, ENH-002 and ENH-003:** completed and closed.
-- **ENH-005:** ENH-005a through ENH-005d are complete. The temporary
-  development-only `--noscrub` option has been removed. Overall ENH-005 remains
-  open pending ChatGPT review, explicit approval, and formal closure.
+- **ENH-005:** formally complete, with ChatGPT closure approval recorded on 10
+  November 2026. ENH-005a through ENH-005d are complete and the temporary
+  development-only `--noscrub` option has been removed. No formal closure commit
+  identifier is recorded; main-branch integration is not claimed.
 - **S50 Pro qualification Stage 3:** technical PASS and independent
   closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
   October 2026. Administrative closure is approved subject to completion of

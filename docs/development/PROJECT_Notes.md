@@ -37,7 +37,8 @@ The numbered Stages 1–9 below refer to the original development and release pr
 | ENH-005a | FITS privacy metadata reconnaissance | Complete |
 | ENH-005b | Shared privacy policy and FITS header reporting | Complete; implementation commit `f1de3eb` on `enh/ENH-005-fits-privacy-processing`. |
 | ENH-005c | FITS privacy processing and verification | Complete; implementation commits `c2f0226`, `f347677`, and `c690248`. |
-| ENH-005d | FITS privacy integration, regression, and release readiness | Complete; authorised at `aa905af` and implemented at `2e8c2e1`. Overall ENH-005 remains open pending formal closure. |
+| ENH-005d | FITS privacy integration, regression, and release readiness | Complete; authorised at `aa905af` and implemented at `2e8c2e1`. |
+| ENH-005 | FITS privacy processing | Complete; formal closure approved 10 November 2026. Delivered `header-report`, `pii-scrub`, and `pii-scrub --verify`; existing implementation and validation evidence is retained. |
 | S50 Pro qualification — Stage 3 | Technical qualification T01–T06 | Technical PASS; closure readiness PASS; T01–T06 user acceptance APPROVED 26 October 2026; administrative closure APPROVED, subject to documentation and Git workflow completion |
 
 ## 3. Current behaviour and architectural decisions
@@ -106,7 +107,7 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 - Default reports use archive-aware destination inference for recognised light and stacked FITS, otherwise a local `pii-scrubbed/` directory. Output publication is safe and does not overwrite an existing destination.
 - A TTY-only post-generation View / Finder / Quit menu is available. The temporary development-only `--noscrub` comparison path has been removed during ENH-005d.
 - ENH-005c provides `pii-scrub`, with occurrence-level interactive A/P/Q review and non-interactive anonymisation, plus read-only `pii-scrub --verify` PASS, FAIL, and REVIEW REQUIRED classification. FITS data blocks and source files remain unchanged; destinations use safe no-overwrite publication.
-- ENH-005d completed final integration, user and development documentation, and regression and safety validation at `2e8c2e1`, following authorisation at `aa905af`. ENH-005 remains open pending ChatGPT review, explicit approval, and formal closure; the enhancement branch must not be merged into `main` at this stage.
+- ENH-005d completed final integration, user and development documentation, and regression and safety validation at `2e8c2e1`, following authorisation at `aa905af`. ENH-005 formal closure was approved on 10 November 2026. The recorded closure does not claim main-branch integration; documentation commit, push, merge, and branch actions remain separate.
 
 ## 4. Validation and release history
 
@@ -121,7 +122,8 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 | ENH-004 | Formally approved and complete 27 October 2026. ENH-004a archive recognition completed at `ddde7c2`; ENH-004b CLI integration completed at `cc3f86a`; ENH-004c documentation and validation completed at `8a5b294`. T01–T32 coverage satisfied; 195 focused/regression tests and 664 full-suite tests passed; Ruff, changed-file formatting, CLI-help verification and Git whitespace checks passed. No implementation defects remain outstanding. Real-world testing against the user's observing archive has not yet been performed; automated validation is not presented as field testing. Git integration remains pending. |
 | ENH-005b | Shared policy and `header-report` implementation completed at `f1de3eb` on `enh/ENH-005-fits-privacy-processing`. The focused validation recorded 56 passing tests, Ruff lint and formatting checks, and `git diff --check`; the full suite was intentionally not run. Four representative real-world reports (S50/S50 Pro light and stacked) were reviewed and accepted. ENH-005b.1, ENH-005b.2, and overall ENH-005b closure are complete. |
 | ENH-005c | FITS privacy foundation, `pii-scrub`, and `pii-scrub --verify` completed at `c2f0226`, `f347677`, and `c690248`. Focused closure evidence records 11 foundation tests, 15 scrub CLI tests, and 14 verification tests, with relevant regressions and Ruff checks passing. Full-suite validation was deferred to ENH-005d. |
-| ENH-005d | Authorised at `aa905af` and implemented at `2e8c2e1`. The temporary option is removed, user/development documentation is integrated, 738 full-suite tests and 74 focused ENH-005 regressions pass, Ruff lint and changed-file formatting pass, and PDF validation passes. The repository-wide Ruff formatting check still reports 16 pre-existing unrelated files. ENH-005d is complete; ENH-005 remains open pending formal closure. |
+| ENH-005d | Authorised at `aa905af` and implemented at `2e8c2e1`. The temporary option is removed, user/development documentation is integrated, 738 full-suite tests and 74 focused ENH-005 regressions pass, Ruff lint and changed-file formatting pass, and PDF validation passes. The repository-wide Ruff formatting check still reports 16 pre-existing unrelated files. ENH-005d is complete. |
+| ENH-005 | Formal closure approved 10 November 2026 following completed implementation, validation, final closure audit, and documentation remediation. `header-report`, `pii-scrub`, and `pii-scrub --verify` are delivered; the implementation and validation evidence above is retained. No formal closure commit identifier is recorded. |
 
 ### 4.1 S50 Pro qualification — separate Stage 3
 
