@@ -48,6 +48,7 @@ from seestar_toolkit.fits import (
     offer_report_menu,
     safe_terminal_value,
     scrub_fits,
+    verify_fits_privacy,
 )
 from seestar_toolkit.tiff import TiffError
 
@@ -94,7 +95,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     scrub_parser.add_argument("input_fits", metavar="INPUT", type=Path)
     scrub_parser.add_argument(
-        "--output", type=Path, metavar="FILE", help="Exact FITS output filename; never overwritten."
+        "--output",
+        type=Path,
+        metavar="FILE",
+        help="Exact FITS output, or verification text report with --verify; never overwritten.",
+    )
+    scrub_parser.add_argument(
+        "--verify",
+        action="store_true",
+        help="Verify FITS metadata and optionally write a text report with --output.",
     )
 
     config_parser = subparsers.add_parser(
@@ -309,6 +318,26 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     if args.command == "pii-scrub":
+        if args.verify:
+            try:
+                result = verify_fits_privacy(args.input_fits, args.output)
+            except (FitsError, OSError, ValueError) as error:
+                print(f"Error: {error}", file=sys.stderr)
+                return 1
+            print(f"Verification: {result.status.value}")
+            print(f"HDUs inspected: {result.hdu_count}")
+            print("Safe keyword occurrences:")
+            if result.safe_keyword_counts:
+                for keyword, count in result.safe_keyword_counts.items():
+                    print(f"{keyword}: {count}")
+            else:
+                print("(none)")
+            print(f"Confirmed violations: {result.violation_count}")
+            print(f"Unknown metadata occurrences: {result.unknown_count}")
+            if result.output_path is not None:
+                rendered_path = safe_terminal_value(str(result.output_path))
+                print(f"Created verification report: {rendered_path}")
+            return 0 if result.status.value == "PASS" else 1
         interactive = sys.stdin.isatty() and sys.stdout.isatty()
         try:
             result = scrub_fits(

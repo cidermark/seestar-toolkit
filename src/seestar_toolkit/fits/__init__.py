@@ -35,6 +35,12 @@ from .privacy_processing import (
     transform_fits,
     validate_transformed_fits,
 )
+from .privacy_verification import (
+    FitsVerificationError,
+    FitsVerificationResult,
+    PrivacyVerificationStatus,
+    verify_fits_privacy,
+)
 from .reader import read_fits_image
 
 __all__ = [
@@ -67,4 +73,8 @@ __all__ = [
     "infer_pii_scrub_path",
     "safe_terminal_value",
     "scrub_fits",
+    "FitsVerificationError",
+    "FitsVerificationResult",
+    "PrivacyVerificationStatus",
+    "verify_fits_privacy",
 ]
