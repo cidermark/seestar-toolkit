@@ -16,12 +16,27 @@ from .header_report import (
 )
 from .inspector import inspect_fits
 from .models import FitsImageClass, FitsImageData, FitsImageLayout, FitsInspection
+from .privacy_processing import (
+    FitsHduStructure,
+    FitsProcessingError,
+    FitsStructure,
+    FitsTransformResult,
+    UnknownMetadataAction,
+    UnknownMetadataOccurrence,
+    inspect_fits_structure,
+    transform_fits,
+    validate_transformed_fits,
+)
 from .reader import read_fits_image
 
 __all__ = [
     "FitsError",
     "FitsImageData",
+    "FitsHduStructure",
     "FitsInspection",
+    "FitsProcessingError",
+    "FitsStructure",
+    "FitsTransformResult",
     "InvalidFitsFileError",
     "MissingImageDataError",
     "HeaderReportError",
@@ -30,7 +45,12 @@ __all__ = [
     "infer_header_report_path",
     "offer_report_menu",
     "inspect_fits",
+    "inspect_fits_structure",
     "read_fits_image",
+    "transform_fits",
+    "validate_transformed_fits",
+    "UnknownMetadataAction",
+    "UnknownMetadataOccurrence",
     "FitsImageLayout",
     "FitsImageClass",
 ]
