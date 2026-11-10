@@ -5,7 +5,7 @@
 **Repository path:** `docs/development/change_documents/ENH-005/ENH-005_FITS_PRIVACY_PROCESSING.md`
 **Baseline reviewed:** `main` / `origin/main` at `ebcf02ae09b0c2344598cda6b12b9da920abad8e`
 **Scope:** Standalone FITS header reporting, privacy processing, and verification
-**Version:** Draft 1.0 — 2026-11-09
+**Version:** Draft 1.2 — 2026-11-10
 
 > **Implementation authorisation:** No further implementation is authorised by this amendment. It records the agreed functional and privacy-policy design, acceptance evidence, and formal closure of ENH-005b.1, ENH-005b.2, and overall ENH-005b. ENH-005c and ENH-005d remain **NOT STARTED**. The temporary development-only `--noscrub` exception remains subject to its mandatory removal during ENH-005d. This amendment does not authorise implementation, branch creation, commit, push, or merge.
 
@@ -26,7 +26,7 @@ seestar-toolkit pii-scrub --verify [OPTIONS] INPUT
 - One FITS input per invocation; no batch or recursive mode.
 - Options are documented before `INPUT` and accepted on either side.
 - `--output` specifies an exact output filename, never an output directory.
-- `0` means successful operation or PASS verification; `1` means operational failure, FAIL verification, or REVIEW REQUIRED verification; `2` means CLI argument or usage error.
+- `0` means successful operation or PASS verification; `1` means operational failure, FAIL verification, or REVIEW REQUIRED verification; `2` means CLI argument or usage error. Malformed or unsupported FITS inputs are operational errors, not privacy classifications.
 
 ## 3. Agreed command behaviour
 
@@ -62,8 +62,8 @@ This exception does not alter the normal privacy-processed behaviour of `header-
 
 - It never modifies, moves, or deletes the input.
 - It inspects every HDU header and applies §4 while preserving all HDUs, their order, and their data under §6.
-- An interactive invocation presents A/P/Q review for each unique keyword/value combination that remains unknown or potentially sensitive: **(A)nonymise**, **(P)reserve**, or **(Q)uit**. The decision is reused only for an identical combination during that invocation. Empty input is not approval to preserve; decisions are not persisted.
-- A preserved unknown value makes the output **REVIEW REQUIRED**. The file may still be created and the scrub operation returns `0` with an explicit warning.
+- An interactive invocation presents A/P/Q review for every occurrence of an unknown metadata value: **(A)nonymise**, **(P)reserve**, or **(Q)uit**. An occurrence is specific to its HDU and card occurrence; duplicate keyword/value pairs, including those in separate HDUs, are reviewed separately. The prompt displays the keyword, current value, and proposed replacement. Empty input is not approval to preserve; decisions are not persisted.
+- A preserved unknown value makes the output **REVIEW REQUIRED**. The file may still be created and the scrub operation returns `0` with an explicit warning. Its intentional preservation remains visible to later verification as REVIEW REQUIRED; it is not silently treated as safe. No tracking marker or processing-history record is added; a P decision applies only to that occurrence in that scrub operation.
 - When either stdin or stdout is not a TTY, the command is non-interactive: it anonymises unresolved unknown metadata, emits warnings without original values, and does not prompt.
 - On quit or failure, it publishes no incomplete output file.
 
@@ -71,7 +71,7 @@ This exception does not alter the normal privacy-processed behaviour of `header-
 
 `pii-scrub --verify` is read-only and non-interactive. It reads headers without loading pixel arrays or requesting decisions.
 
-- It reports PASS, FAIL, or REVIEW REQUIRED to the terminal by default.
+- It reports PASS, FAIL, or REVIEW REQUIRED to the terminal by default. It distinguishes a confirmed privacy-policy violation (FAIL) from unresolved unknown metadata (REVIEW REQUIRED). A malformed or unsupported FITS input instead produces a privacy-safe operational diagnostic and exit code `1`.
 - `--output` additionally writes a text report.
 - PASS returns `0`; FAIL and REVIEW REQUIRED return `1`.
 - Output identifies safe keyword names, counts, and status only; it must not disclose sensitive original values.
@@ -160,25 +160,25 @@ For `header-report`, the default report destination is determined as follows:
 
 The normal default report filename is `<input_stem>_header.txt`. The temporary development-only `--noscrub` default report filename is `<input_stem>_header_UNSCRUBBED.txt`. An existing destination is refused without overwrite, returns exit code `1`, and produces a safe error; automatic numeric suffixes are not permitted. An explicit `--output` remains the exact supplied destination filename.
 
-Future scrubbed FITS outputs may use separate `lights/` and `seestar_stacked/` directories within `pii-scrubbed/`. Those directories are not part of the ENH-005b `header-report` implementation. The later `pii-scrub` destination classification must distinguish recognised archive lights and recognised archive stacked FITS using the applicable rules above; this does not authorise implementation of `pii-scrub`.
+For ENH-005c `pii-scrub`, default destination inference reuses the established archive-aware recognition and path-safety rules above for recognised archive inputs. Recognised archive light and stacked FITS outputs are written directly to the recognised observation's `pii-scrubbed/` directory; do not create `lights/` or `seestar_stacked/` subdirectories there. Ordinary inputs use a `pii-scrubbed/` directory alongside the input file. The output retains the original FITS filename. If two inputs select the same output filename, the no-overwrite rule applies; do not rename automatically. An explicit `--output` remains an exact destination filename and bypasses default inference. The later `pii-scrub` destination classification must distinguish recognised archive lights and recognised archive stacked FITS using the applicable rules above; this does not authorise implementation of `pii-scrub`.
 
-The implementation must apply ENH-004's path-safety requirements before accepting an archive default: reject unsafe dangling symlinks; resolve the observation, applicable canonical source directory, source, and inferred destination; and reject any resolved path that escapes the recognised observation. It must never turn a path-safety failure into ordinary-input fallback. Existing destination safety remains unchanged: never overwrite an existing destination; reject source/destination equivalence; create output directories only when required; publish atomically so failure or quit leaves no incomplete output; and avoid raw sensitive values in logs, exception messages, summaries, and generated filenames.
+The implementation must apply ENH-004's path-safety requirements before accepting an archive default: reject unsafe dangling symlinks; resolve the observation, applicable canonical source directory, source, and inferred destination; and reject any resolved path that escapes the recognised observation. It must never turn a path-safety failure into ordinary-input fallback. Existing destination safety remains unchanged: never overwrite an existing destination; reject source/destination equivalence; create output directories only when required; write to a temporary output beside the intended final destination on the same filesystem; validate the completed temporary FITS file before atomically publishing it without replacing an existing destination; remove temporary output after failure or cancellation; reject operations for which safe atomic no-overwrite publication cannot be guaranteed; and avoid raw sensitive values in logs, exception messages, summaries, generated filenames, and unsafe terminal rendering. Terminal rendering must escape control characters, neutralise terminal escape/control sequences, and truncate excessively long displayed metadata values. The local interactive A/P/Q prompt is the only approved exception to non-disclosure of an unknown value, and remains subject to those safe-rendering requirements.
 
 ## 6. FITS integrity requirements
 
 ### FITS-1 — Data preservation
 
-Image and other data bytes must be preserved exactly. `pii-scrub` must never decode, rescale, recompress, or otherwise change image data, and must not modify pixel-related technical metadata.
+Modify FITS headers only. Astronomical data blocks must be preserved byte-for-byte in every supported HDU. `pii-scrub` must never decode, rescale, recompress, or otherwise change image data, and must not modify pixel-related technical metadata. Header size may change when required; valid FITS 2880-byte block alignment and HDU ordering must be maintained, and original data offsets need not remain unchanged when header growth requires relocation. It must never modify the source FITS file.
 
 ### FITS-2 — HDU and header preservation
 
-Preserve all HDUs, their order, and their data. Inspect every HDU header. Modify only eligible privacy-related header values and comments; do not alter structural metadata.
+Preserve all supported HDUs, their order, and their data. Inspect every HDU header. Modify only eligible privacy-related header values and comments; do not alter structural metadata. Support valid `HIERARCH` keywords and `CONTINUE` long-string metadata when their complete logical keywords and values are safely interpretable, and classify those complete logical items under §4. Reject unsupported encodings safely. Valid compressed-image and binary-table structures must be supported where header processing and exact data-byte preservation can be guaranteed; do not decode, rescale, recompress, or rewrite their astronomical data blocks. Reject unsupported structures safely. Unfamiliar metadata keywords remain subject to the privacy policy; unfamiliar does not by itself mean malformed or unsupported.
 
 ### FITS-3 — Checksum handling
 
-Do not introduce `CHECKSUM` or `DATASUM` keywords. Preserve valid existing `DATASUM` values when underlying data is unchanged. Update an existing `CHECKSUM` where required, without changing image data to satisfy checksum handling.
+Do not introduce `CHECKSUM` or `DATASUM` keywords. Reject an input with an invalid existing `CHECKSUM` or `DATASUM`; do not silently repair invalid inputs. Preserve valid existing `DATASUM` values when underlying data is unchanged. Recalculate a valid existing `CHECKSUM` where header changes require it, without changing image data to satisfy checksum handling.
 
-If safe rewriting or integrity preservation cannot be guaranteed, issue a clear warning and produce no completed output file.
+If safe rewriting, FITS block alignment after header-size change, checksum integrity, or data preservation cannot be guaranteed, reject the file, issue a clear safe warning, and produce no completed output file. Malformed or unsupported structures must not produce partially processed output.
 
 ## 7. Verification policy
 
@@ -217,9 +217,9 @@ That historical fixture policy is not the ENH-005 policy: ENH-005 preserves comp
 | D11 | AGREED | `header-report` writes a text file. |
 | D12 | AGREED | Verification writes terminal results and optionally a text report. |
 | D13 | AGREED | Preserve capture dates and timestamps. |
-| D14 | AGREED | Interactive unknown-keyword review uses A/P/Q. |
+| D14 | REFINED by C03 | Interactive unknown-keyword review uses A/P/Q; C03 defines occurrence-level review and prompt content for ENH-005c. |
 | D15 | SUPERSEDED by B2 | The earlier shared-review treatment for free text and comments is replaced by the explicit description and standalone-comment policy in §4.4. |
-| D16 | AGREED | Reuse one decision for an identical keyword/value combination only within one run. |
+| D16 | SUPERSEDED by C03 | The earlier within-run decision-reuse proposal is replaced by occurrence-level review, including repeated keywords and separate HDUs. |
 | D17 | AGREED | Non-interactive scrubbing anonymises unresolved review items and warns. |
 | D18 | AGREED | A user-preserved unknown may be emitted with a REVIEW REQUIRED warning. |
 | D19 | AGREED | `header-report` never prompts during generation; it withholds unknown values and can succeed with review items. |
@@ -232,6 +232,20 @@ That historical fixture policy is not the ENH-005 policy: ENH-005 preserves comp
 | B2 | APPROVED | Preserve only explicitly recognised approved technical keyword descriptions; withhold all other descriptions and all standalone `COMMENT` and `HISTORY` contents. |
 | A1 | APPROVED | Report layout preserves card order, duplicates, and HDU boundaries, as confirmed by representative corrected real-world reports. |
 | A2 | APPROVED | Corrected real-world reports confirm the approved free-text treatment: standalone `COMMENT` contents are withheld and approved technical descriptions are preserved. |
+| C01 | APPROVED | FITS data integrity: modify headers only; preserve astronomical data blocks byte-for-byte in all supported HDUs; recalculate existing checksums when needed; reject files that cannot be processed safely; never modify the source FITS. |
+| C02 | APPROVED | Use conservative processing for unusual FITS structures: safely process valid supported structures and apply the privacy policy to unfamiliar metadata; reject malformed or unsupported structures when safe processing cannot be guaranteed; never publish partially processed output. |
+| C03 | APPROVED | Interactive privacy review is per unknown metadata occurrence: display keyword, current value, and proposed replacement; A anonymises, P preserves, and Q cancels without output. Non-interactive mode anonymises unknown values. |
+| C04 | APPROVED | `pii-scrub --verify` returns PASS/0 only with no violations or unresolved unknown metadata; confirmed violations are FAIL/1; unresolved unknown metadata is REVIEW REQUIRED/1; invalid CLI usage is 2. |
+| C05 | APPROVED | `pii-scrub` uses established archive-aware destination inference for recognised archive inputs and a sibling `pii-scrubbed/` directory for ordinary inputs; it preserves the input filename, supports exact explicit destinations, never overwrites, uses temporary output, validates before atomic publication, cleans temporary output on failure/cancellation, and never modifies the source. |
+| C06 | APPROVED | Support valid `HIERARCH` keywords and `CONTINUE` long-string metadata when complete logical keywords and values are safely interpretable and can be classified; reject unsupported encodings safely. |
+| C07 | APPROVED | Header size may change. Preserve all data blocks byte-for-byte, retain valid 2880-byte FITS block alignment and HDU order, and permit data relocation when header growth requires it. |
+| C08 | APPROVED | Reject inputs with invalid existing `CHECKSUM` or `DATASUM`; do not repair them silently. Recalculate a valid existing `CHECKSUM` when header changes require it, preserve valid `DATASUM` when data is unchanged, and do not add absent checksum keywords. |
+| C09 | APPROVED | Support valid compressed-image and binary-table structures only where header processing and exact data-byte preservation are guaranteed; otherwise reject safely. Never decode, rescale, recompress, or rewrite their astronomical data blocks. |
+| C10 | APPROVED | Malformed or unsupported FITS inputs are operational errors with exit code `1`, not privacy PASS, FAIL, or REVIEW REQUIRED results; diagnostics are privacy-safe. |
+| C11 | APPROVED | Escape control characters, neutralise terminal escape/control sequences, truncate excessively long displayed metadata values, and never disclose sensitive values in logs, errors, or non-interactive warnings. The local interactive A/P/Q prompt is the limited exception, subject to safe rendering. |
+| C12 | APPROVED | Remaining unknown metadata values are REVIEW REQUIRED in verification. Do not add tracking markers or processing history; an interactive P decision applies only to that occurrence during that scrub operation. |
+| C13 | APPROVED | Archive light and stacked FITS outputs are written directly to `observation_NN/pii-scrubbed/`, with original filenames and no automatic renaming; do not create `lights/` or `seestar_stacked/` subdirectories. Ordinary outputs remain `INPUT_PARENT/pii-scrubbed/`. |
+| C14 | APPROVED | Create temporary output beside the final destination on the same filesystem, validate it before atomically publishing without replacement, clean it after failure or cancellation, and reject operations lacking safe atomic no-overwrite publication. |
 
 ### 8.3 ENH-005b.2 review outcomes and acceptance evidence
 
@@ -290,7 +304,7 @@ This closure records the reviewed acceptance evidence; it does not regenerate re
 
 Overall ENH-005b is formally complete. ENH-005b.1 is formally complete under §8.4 and ENH-005b.2 is formally complete under §8.5. The specification consistently records the approved A1, A2, B1, B2, C1, D1, and D2 decisions. D1 and D2 implementation and focused validation evidence is retained in §8.4.
 
-No unresolved defect or material ambiguity affects the completed ENH-005b `header-report` scope. The remaining technical clarifications in §9 are retained for subsequent implementation and validation stages; they do not reopen the completed ENH-005b scope. ENH-005c and ENH-005d remain not started and their boundaries are unchanged. The temporary development-only `--noscrub` option remains prohibited from production release and must be removed during ENH-005d.
+No unresolved defect or material ambiguity affects the completed ENH-005b `header-report` scope. The §9 technical clarifications are resolved for subsequent implementation and validation stages; they do not reopen the completed ENH-005b scope or authorise ENH-005c implementation. ENH-005c and ENH-005d remain not started and their boundaries are unchanged. The temporary development-only `--noscrub` option remains prohibited from production release and must be removed during ENH-005d.
 
 ### 8.7 Git integration record
 
@@ -299,15 +313,21 @@ No unresolved defect or material ambiguity affects the completed ENH-005b `heade
 - **Push:** confirmed.
 - **Working tree:** clean after push.
 
-## 9. Outstanding technical clarifications
+## 9. Resolved technical clarifications
 
-The following are explicitly open for user review; they do not authorise implementation changes.
+The nine technical clarifications previously open for ENH-005c are resolved by C06–C14. They do not authorise implementation changes.
 
-1. Handling of long strings, `HIERARCH` keywords, and keyword names that may themselves be sensitive remains to be specified for subsequent implementation and validation stages.
-2. D1 refines C1 for header reports by approving the narrowly scoped ENH-005 canonical-stacked recognition extension and direct `pii-scrubbed/` report destination. D2 fixes default report filenames and collision handling. No additional ordinary-directory fallback location ambiguity is known: the existing ordinary-directory principle resolves reports to the input parent directory's `pii-scrubbed/`. Any later case in which that exact ordinary fallback cannot be determined must be recorded as a clarification rather than used to invent a destination rule.
-3. Detailed handling of malformed/nonstandard HDUs, compressed FITS, scaling, binary-table metadata, and individual cards that cannot safely be rewritten while meeting §6.
-4. Exact implementation mechanism for updating existing `CHECKSUM` values while preserving valid `DATASUM` and data bytes.
-5. Safe terminal rendering of hostile header values during interactive A/P/Q review.
+1. **Long strings and `HIERARCH` (C06):** Support valid forms when complete logical keywords and values are safely interpretable and classifiable; reject unsupported encodings safely.
+2. **Header rewriting and block alignment (C07):** Header growth is permitted, provided data blocks remain byte-for-byte preserved, FITS 2880-byte alignment and HDU ordering remain valid, and data relocation is allowed when required.
+3. **Checksums (C08):** Reject invalid existing `CHECKSUM` or `DATASUM`; preserve valid `DATASUM` where data is unchanged; recalculate valid existing `CHECKSUM` when header changes require it; do not add absent checksum keywords.
+4. **Compressed images and binary tables (C09):** Support valid structures only where header processing and exact data-byte preservation are guaranteed; otherwise reject safely without decoding, rescaling, recompressing, or rewriting astronomical data blocks.
+5. **Malformed and unsupported FITS (C10):** Treat these as privacy-safe operational errors with exit code `1`, distinct from PASS, FAIL, and REVIEW REQUIRED.
+6. **Safe A/P/Q terminal rendering (C11):** Escape control characters, neutralise terminal control sequences, truncate excessively long displayed values, and keep sensitive values out of logs, errors, and non-interactive warnings. The local A/P/Q prompt remains the limited, safely rendered exception.
+7. **Intentional P decisions (C12):** Do not add a marker or history record. Every remaining unknown value is REVIEW REQUIRED in verification; P applies only to its occurrence during the scrub operation.
+8. **Archive FITS-output layout (C13):** Use `observation_NN/pii-scrubbed/` directly for recognised archive lights and stacked FITS, retain the original filename, and do not create type-specific subdirectories. Ordinary inputs use `INPUT_PARENT/pii-scrubbed/`.
+9. **Temporary publication semantics (C14):** Create the temporary output beside the final destination on the same filesystem, validate it before atomic no-overwrite publication, clean it after failure or cancellation, and reject any operation for which those guarantees cannot be made.
+
+No genuine implementation-blocking ambiguity remains in these resolved areas. Capability boundaries remain deliberately conservative: where safe interpretation, exact data preservation, or safe publication cannot be guaranteed, the input or operation must be rejected as specified.
 
 ## 10. Stage boundaries
 
@@ -348,7 +368,27 @@ Overall ENH-005b closure evidence and rationale are recorded in §8.6. This clos
 
 ### ENH-005c — FITS processing and verification — NOT STARTED
 
-Proposed scope: `pii-scrub`, A/P/Q review, non-interactive defaults, safe FITS writing, independent verification, integrity validation, and focused tests.
+Approved design scope: `pii-scrub`, occurrence-level A/P/Q review, non-interactive anonymisation, safe FITS writing, independent verification, integrity validation, and focused tests. The §9 technical clarifications are resolved, but ENH-005c implementation remains unauthorised until this stage is explicitly approved.
+
+#### ENH-005c proposed acceptance criteria — NOT YET AUTHORISED FOR IMPLEMENTATION
+
+The following criteria are testable requirements for future ENH-005c approval and implementation:
+
+1. **C01:** A scrubbed output modifies eligible FITS headers only; for every supported HDU, its astronomical data block is byte-for-byte identical to the source, HDU order is preserved, and the source file is unchanged.
+2. **C02:** Every header card in every supported HDU is evaluated under §4, including duplicates and additional HDUs. Recognised sensitive metadata is replaced with the approved type-preserving value, recognised safe metadata is preserved, and unknown metadata receives the C03 handling; structures that cannot be safely processed are rejected without partial publication.
+3. **C03:** Interactive operation prompts separately for each unknown metadata occurrence, including identical keyword/value pairs and occurrences in separate HDUs. Each safely rendered prompt presents keyword, current value, and proposed replacement; A affects only that occurrence, P affects only that occurrence, and Q returns without a published output or remaining temporary file.
+4. **C04:** `--verify` reports PASS/0 only for a compliant file with no unresolved unknown metadata; it reports FAIL/1 for a confirmed policy violation and REVIEW REQUIRED/1 for an unknown value. Invalid CLI usage returns 2, and output does not disclose sensitive originals.
+5. **C05:** Default destinations use established archive-aware recognition and path-safety rules for recognised archive inputs and `INPUT_PARENT/pii-scrubbed/` for ordinary inputs; the output retains the original FITS filename. Exact `--output` destinations are supported, and an archive path-safety failure is rejected rather than treated as ordinary fallback.
+6. **C06:** Valid `HIERARCH` keywords and `CONTINUE` long-string metadata with safely interpretable complete logical keywords and values are classified under §4. Unsupported encodings are rejected safely.
+7. **C07:** Header-size changes preserve each data block byte-for-byte, retain valid 2880-byte FITS block alignment and HDU ordering, and permit data relocation when header growth requires it.
+8. **C08:** Inputs with invalid existing `CHECKSUM` or `DATASUM` are rejected without silent repair. Valid existing `CHECKSUM` values are recalculated when header changes require it; valid existing `DATASUM` values remain valid when data is unchanged; neither keyword is introduced when absent.
+9. **C09:** Valid compressed-image and binary-table structures are processed only where header processing and exact data-byte preservation can be guaranteed; their astronomical data blocks are not decoded, rescaled, recompressed, or rewritten. Unsupported structures are rejected safely.
+10. **C10:** Malformed or unsupported FITS inputs result in a privacy-safe operational diagnostic and exit code 1, never PASS, FAIL, or REVIEW REQUIRED.
+11. **C11:** Terminal rendering escapes control characters, neutralises terminal escape/control sequences, truncates excessively long displayed metadata values, and does not disclose sensitive values in logs, errors, or non-interactive warnings.
+12. **C12:** All remaining unknown metadata values produce REVIEW REQUIRED during verification. No tracking marker or processing-history record is introduced, and an interactive P decision applies only to that occurrence in that scrub operation.
+13. **C13:** Recognised archive light and stacked FITS outputs are written directly to `observation_NN/pii-scrubbed/`, without type-specific subdirectories or automatic filename changes. Ordinary outputs use `INPUT_PARENT/pii-scrubbed/`; filename collisions are refused by the no-overwrite rule.
+14. **C14:** Temporary output is created beside the intended final destination on the same filesystem, validated before atomic no-overwrite publication, and removed after failure or cancellation. An operation lacking those safe-publication guarantees is rejected.
+15. Focused tests cover every criterion above, including byte-level data comparisons for each supported HDU, repeated unknown occurrences, non-interactive behaviour, P followed by verification, checksums, destination safety, cancellation, temporary-file cleanup, safe terminal rendering, operational-error handling, and every approved unusual-structure capability boundary.
 
 ### ENH-005d — Integration, regression, and documentation — NOT STARTED
 
@@ -356,4 +396,4 @@ Proposed scope: approved end-to-end validation, CLI/help review, documentation, 
 
 ## 11. Approval gate
 
-Before any remaining or subsequent implementation, resolve the §9 clarifications that materially affect that work, review this specification with the user, mark the relevant scope approved, and explicitly authorise the relevant stage. A1, A2, B1, B2, C1, D1, and D2 are approved; ENH-005b is complete, while ENH-005c and ENH-005d remain separate future-stage gates. This draft does not authorise further implementation.
+Before any remaining or subsequent implementation, review this specification with the user, mark the relevant scope approved, and explicitly authorise the relevant stage. A1, A2, B1, B2, C1, D1, D2, and C01–C14 are approved design decisions; ENH-005b is complete, while ENH-005c and ENH-005d remain separate future-stage gates. This draft does not authorise further implementation.
