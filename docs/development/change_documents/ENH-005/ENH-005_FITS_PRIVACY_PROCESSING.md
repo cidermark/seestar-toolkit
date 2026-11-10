@@ -7,7 +7,7 @@
 **Scope:** Standalone FITS header reporting, privacy processing, and verification
 **Version:** Draft 1.2 — 2026-11-10
 
-> **Implementation authorisation:** No further implementation is authorised by this amendment. It records the agreed functional and privacy-policy design, acceptance evidence, and formal closure of ENH-005b.1, ENH-005b.2, and overall ENH-005b. ENH-005c and ENH-005d remain **NOT STARTED**. The temporary development-only `--noscrub` exception remains subject to its mandatory removal during ENH-005d. This amendment does not authorise implementation, branch creation, commit, push, or merge.
+> **Implementation authorisation:** ENH-005c.1 is authorised and **IN PROGRESS**. Its authorised scope is limited to the internal FITS processing foundation: FITS structure inspection, safe header transformation, byte-preserving FITS writing, FITS alignment and checksum handling, internal validation, and focused tests. It does not authorise `pii-scrub` CLI integration, `pii-scrub --verify`, interactive A/P/Q prompts, archive destination inference, final publication workflow, ENH-005c.2, ENH-005c.3, or ENH-005d. ENH-005c.2, ENH-005c.3, and ENH-005d remain **NOT STARTED**. The temporary development-only `--noscrub` exception remains subject to its mandatory removal during ENH-005d. This amendment does not authorise branch creation, commit, push, or merge.
 
 ## 1. Purpose and scope
 
@@ -304,7 +304,7 @@ This closure records the reviewed acceptance evidence; it does not regenerate re
 
 Overall ENH-005b is formally complete. ENH-005b.1 is formally complete under §8.4 and ENH-005b.2 is formally complete under §8.5. The specification consistently records the approved A1, A2, B1, B2, C1, D1, and D2 decisions. D1 and D2 implementation and focused validation evidence is retained in §8.4.
 
-No unresolved defect or material ambiguity affects the completed ENH-005b `header-report` scope. The §9 technical clarifications are resolved for subsequent implementation and validation stages; they do not reopen the completed ENH-005b scope or authorise ENH-005c implementation. ENH-005c and ENH-005d remain not started and their boundaries are unchanged. The temporary development-only `--noscrub` option remains prohibited from production release and must be removed during ENH-005d.
+No unresolved defect or material ambiguity affects the completed ENH-005b `header-report` scope. The §9 technical clarifications are resolved for subsequent implementation and validation stages; they do not reopen the completed ENH-005b scope and did not, by themselves, authorise ENH-005c implementation. At the time of ENH-005b closure, ENH-005c and ENH-005d remained not started. The later authorisation recorded by this amendment is limited to ENH-005c.1 and does not alter the completed ENH-005b evidence. The temporary development-only `--noscrub` option remains prohibited from production release and must be removed during ENH-005d.
 
 ### 8.7 Git integration record
 
@@ -315,7 +315,7 @@ No unresolved defect or material ambiguity affects the completed ENH-005b `heade
 
 ## 9. Resolved technical clarifications
 
-The nine technical clarifications previously open for ENH-005c are resolved by C06–C14. They do not authorise implementation changes.
+The nine technical clarifications previously open for ENH-005c are resolved by C06–C14. Those decisions did not, by themselves, authorise implementation changes; the separate implementation authorisation in this amendment applies only to ENH-005c.1.
 
 1. **Long strings and `HIERARCH` (C06):** Support valid forms when complete logical keywords and values are safely interpretable and classifiable; reject unsupported encodings safely.
 2. **Header rewriting and block alignment (C07):** Header growth is permitted, provided data blocks remain byte-for-byte preserved, FITS 2880-byte alignment and HDU ordering remain valid, and data relocation is allowed when required.
@@ -366,13 +366,33 @@ The real-world corrected S50 and S50 Pro report review passed. It confirms the a
 
 Overall ENH-005b closure evidence and rationale are recorded in §8.6. This closure is confined to the completed shared-policy and `header-report` scope; it does not authorise later-stage implementation.
 
-### ENH-005c — FITS processing and verification — NOT STARTED
+### ENH-005c — FITS processing and verification — IN PROGRESS
 
-Approved design scope: `pii-scrub`, occurrence-level A/P/Q review, non-interactive anonymisation, safe FITS writing, independent verification, integrity validation, and focused tests. The §9 technical clarifications are resolved, but ENH-005c implementation remains unauthorised until this stage is explicitly approved.
+Approved design scope: `pii-scrub`, occurrence-level A/P/Q review, non-interactive anonymisation, safe FITS writing, independent verification, integrity validation, and focused tests. The §9 technical clarifications are resolved. Implementation authorisation is currently limited to ENH-005c.1 as defined below; later ENH-005c sub-stages remain unauthorised.
 
-#### ENH-005c proposed acceptance criteria — NOT YET AUTHORISED FOR IMPLEMENTATION
+#### ENH-005c.1 — FITS processing foundation — IN PROGRESS
 
-The following criteria are testable requirements for future ENH-005c approval and implementation:
+ENH-005c.1 is authorised to implement and validate only the internal FITS processing foundation required by later stages:
+
+- internal inspection of every HDU, supported FITS structures, valid `HIERARCH` and `CONTINUE` metadata, and conservative rejection of malformed or unsupported inputs;
+- safe header transformation using the approved privacy policy, including type-preserving sensitive replacements, recognised-safe technical metadata, descriptions, standalone `COMMENT` and `HISTORY`, duplicate occurrences, and internal unknown-metadata handling without A/P/Q prompts;
+- header-only transformation with byte-for-byte preservation of every supported HDU data block, valid 2880-byte alignment, preserved HDU order and structural metadata, and permitted header growth;
+- validation and handling of existing `CHECKSUM` and `DATASUM` under C08, without introducing absent checksum keywords; and
+- internal output validation and focused tests covering the authorised foundation.
+
+ENH-005c.1 does not authorise `pii-scrub` CLI integration, `pii-scrub --verify`, interactive A/P/Q prompts, archive destination inference, final publication workflow, or any ENH-005c.2, ENH-005c.3, or ENH-005d work.
+
+#### ENH-005c.2 — CLI privacy-processing integration — NOT STARTED
+
+This sub-stage remains unauthorised. Its future scope includes `pii-scrub` CLI integration, interactive A/P/Q decisions, non-interactive command behaviour, destination inference, and final publication workflow.
+
+#### ENH-005c.3 — Independent verification — NOT STARTED
+
+This sub-stage remains unauthorised. Its future scope includes `pii-scrub --verify` integration and its user-facing PASS, FAIL, and REVIEW REQUIRED behaviour.
+
+#### ENH-005c acceptance criteria — APPROVED DESIGN REQUIREMENTS
+
+The following criteria are approved testable requirements for ENH-005c. Only the portions needed for the internal foundation described under ENH-005c.1 are currently authorised for implementation; criteria belonging to ENH-005c.2 or ENH-005c.3 remain future requirements and are not authorised by this amendment:
 
 1. **C01:** A scrubbed output modifies eligible FITS headers only; for every supported HDU, its astronomical data block is byte-for-byte identical to the source, HDU order is preserved, and the source file is unchanged.
 2. **C02:** Every header card in every supported HDU is evaluated under §4, including duplicates and additional HDUs. Recognised sensitive metadata is replaced with the approved type-preserving value, recognised safe metadata is preserved, and unknown metadata receives the C03 handling; structures that cannot be safely processed are rejected without partial publication.
@@ -396,4 +416,4 @@ Proposed scope: approved end-to-end validation, CLI/help review, documentation, 
 
 ## 11. Approval gate
 
-Before any remaining or subsequent implementation, review this specification with the user, mark the relevant scope approved, and explicitly authorise the relevant stage. A1, A2, B1, B2, C1, D1, D2, and C01–C14 are approved design decisions; ENH-005b is complete, while ENH-005c and ENH-005d remain separate future-stage gates. This draft does not authorise further implementation.
+ENH-005c.1 is explicitly authorised by this amendment and is **IN PROGRESS**, limited to the internal foundation defined in §10. Before any remaining or subsequent implementation, review this specification with the user, mark the relevant scope approved, and explicitly authorise the relevant sub-stage or stage. A1, A2, B1, B2, C1, D1, D2, and C01–C14 remain approved design decisions; those decisions do not independently authorise work beyond ENH-005c.1. ENH-005c.2, ENH-005c.3, and ENH-005d remain **NOT STARTED** and unauthorised.
