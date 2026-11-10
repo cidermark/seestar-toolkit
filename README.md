@@ -92,7 +92,11 @@ whole-workflow rollback.
 
 FITS files, configuration, archive indexes and diagnostics can contain observing
 coordinates, timestamps, device identifiers and other private metadata. Review
-them before sharing. The audited v1.1.0 Toolkit runtime has no telemetry,
+them before sharing. The unreleased ENH-005 development workflow provides
+`header-report`, `pii-scrub`, and `pii-scrub --verify` for conservative FITS
+privacy processing without modifying the source. These commands do not
+guarantee anonymity; preserved technical metadata and image data may still
+permit correlation. The audited v1.1.0 Toolkit runtime has no telemetry,
 analytics, update checking or online geocoder; mounted network storage still
 uses the network as normal filesystem storage.
 

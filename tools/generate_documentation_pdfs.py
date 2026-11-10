@@ -17,10 +17,10 @@ ROOT = Path(__file__).resolve().parents[1]
 USER_DOCS = ROOT / "docs" / "user"
 HEADER = ROOT / "tools" / "documentation_pdf_header.tex"
 FILTER = ROOT / "tools" / "documentation_pdf_filter.lua"
-DOCUMENT_LABEL = "Development — ENH-003 (unreleased)"
-DOCUMENT_DATE = "2026-10-13"
+DOCUMENT_LABEL = "Development — ENH-005 (unreleased)"
+DOCUMENT_DATE = "2026-11-10"
 DOCUMENT_SUBJECT = f"Seestar Toolkit {DOCUMENT_LABEL} documentation"
-DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-003, unreleased, documentation"
+DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-005, unreleased, documentation"
 
 
 @dataclass(frozen=True)
@@ -37,14 +37,14 @@ DOCUMENTS = (
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.md",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.sha256",
-        "0df3be3151b4e31d6ed07093bdfb9454ad9cdb2cd29192907560f190e9f73ed8",
+        "d51e67dff0574b7b3d386034d9471a226d0c09822d169db5864218a8b1ae4069",
         "Seestar Toolkit User Guide",
     ),
     Document(
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.md",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.sha256",
-        "e6c912726606a400563d1e354804fb5dfdb445511b189d617324bdd3d9c2ffec",
+        "c323090684059cc4b2d090d65546ac9011a4c4e4e69ea26449eec50e84cd87b3",
         "Seestar Toolkit Quick Start",
     ),
 )

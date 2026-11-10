@@ -235,7 +235,6 @@ class HeaderReportResult:
     card_count: int
     withheld_count: int
     replacement_count: int
-    unscrubbed: bool
 
 
 def _is_safe(keyword: str) -> bool:
@@ -274,12 +273,11 @@ def _safe_stem(path: Path) -> str:
     return stem or "FITS"
 
 
-def infer_header_report_path(input_path: str | Path, *, unscrubbed: bool = False) -> Path:
+def infer_header_report_path(input_path: str | Path) -> Path:
     """Infer the separate report hierarchy without creating it."""
     source = Path(input_path)
     owner = _archive_report_owner(source) or source.parent
-    suffix = "_header_UNSCRUBBED.txt" if unscrubbed else "_header.txt"
-    return owner / "pii-scrubbed" / f"{_safe_stem(source)}{suffix}"
+    return owner / "pii-scrubbed" / f"{_safe_stem(source)}_header.txt"
 
 
 def _archive_report_owner(source: Path) -> Path | None:
@@ -375,7 +373,7 @@ def _validate_paths(source: Path, destination: Path) -> None:
         raise HeaderReportError("Output already exists; refusing to overwrite it")
 
 
-def _report_text(source: Path, *, unscrubbed: bool) -> tuple[str, int, int, int, int]:
+def _report_text(source: Path) -> tuple[str, int, int, int, int]:
     sections: list[str] = []
     card_count = withheld_count = replacement_count = 0
     try:
@@ -393,9 +391,7 @@ def _report_text(source: Path, *, unscrubbed: bool) -> tuple[str, int, int, int,
                     for card in hdu.header.cards:
                         card_count += 1
                         keyword = card.keyword
-                        if unscrubbed:
-                            value, comment = card.value, card.comment
-                        elif keyword in {"COMMENT", "HISTORY", ""}:
+                        if keyword in {"COMMENT", "HISTORY", ""}:
                             value, comment = "WITHHELD", ""
                             withheld_count += 1
                         elif keyword in _SENSITIVE:
@@ -423,20 +419,14 @@ def _report_text(source: Path, *, unscrubbed: bool) -> tuple[str, int, int, int,
     except (OSError, ValueError, TypeError, VerifyError, AstropyWarning) as error:
         raise HeaderReportError("Unable to read FITS headers") from error
 
-    mode = "ORIGINAL HEADER — UNSCRUBBED" if unscrubbed else "PRIVACY-PROCESSED"
     summary = [
         "Seestar Toolkit FITS Header Report",
-        f"Mode: {mode}",
+        "Mode: PRIVACY-PROCESSED",
         f"HDUs: {hdu_count}",
         f"Header cards: {card_count}",
+        f"Sensitive values replaced: {replacement_count}",
+        f"Unknown values/comments withheld: {withheld_count}",
     ]
-    if not unscrubbed:
-        summary.extend(
-            [
-                f"Sensitive values replaced: {replacement_count}",
-                f"Unknown values/comments withheld: {withheld_count}",
-            ]
-        )
     return (
         "\n".join((*summary, "", *sections, "")),
         hdu_count,
@@ -469,27 +459,21 @@ def _publish_text(destination: Path, content: str) -> None:
 def generate_header_report(
     input_path: str | Path,
     output_path: str | Path | None = None,
-    *,
-    unscrubbed: bool = False,
 ) -> HeaderReportResult:
     """Read every FITS header and atomically publish one new text report."""
     source = Path(input_path)
-    destination = (
-        Path(output_path)
-        if output_path is not None
-        else _infer_safe_report_path(source, unscrubbed=unscrubbed)
-    )
+    destination = Path(output_path) if output_path is not None else _infer_safe_report_path(source)
     _validate_paths(source, destination)
-    content, hdus, cards, withheld, replacements = _report_text(source, unscrubbed=unscrubbed)
+    content, hdus, cards, withheld, replacements = _report_text(source)
     _publish_text(destination, content)
-    return HeaderReportResult(destination, hdus, cards, withheld, replacements, unscrubbed)
+    return HeaderReportResult(destination, hdus, cards, withheld, replacements)
 
 
-def _infer_safe_report_path(source: Path, *, unscrubbed: bool) -> Path:
+def _infer_safe_report_path(source: Path) -> Path:
     from seestar_toolkit.archive import ArchivePathSafetyError
 
     try:
-        return infer_header_report_path(source, unscrubbed=unscrubbed)
+        return infer_header_report_path(source)
     except ArchivePathSafetyError as error:
         raise HeaderReportError("Unsafe archive path; refusing report destination") from error
 

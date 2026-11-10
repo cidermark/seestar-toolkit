@@ -1,6 +1,6 @@
 # Seestar Toolkit — Project Notes
 
-> **Status date:** 27 October 2026<br>
+> **Status date:** 10 November 2026<br>
 > **Purpose:** Current project state, architectural decisions, roadmap and outstanding work.<br>
 > **Historical detail:** The source notes contain a chronological development diary. The original notes are preserved in `docs/development/history/PROJECT_Notes_HISTORICAL_SNAPSHOT.md` to avoid losing prior checkpoint evidence.
 
@@ -36,8 +36,8 @@ The numbered Stages 1–9 below refer to the original development and release pr
 | ENH-004 | Archive-aware standalone conversion | Formally approved and complete 27 October 2026; Git integration pending. Real-world archive testing has not yet been performed. |
 | ENH-005a | FITS privacy metadata reconnaissance | Complete |
 | ENH-005b | Shared privacy policy and FITS header reporting | Complete; implementation commit `f1de3eb` on `enh/ENH-005-fits-privacy-processing`. |
-| ENH-005c | FITS privacy processing and verification | Not started; will implement `pii-scrub` and `pii-scrub --verify` after specification review and resolution of material technical questions. |
-| ENH-005d | FITS privacy integration, regression, and release readiness | Not started; includes removal of development-only `--noscrub` before production release. |
+| ENH-005c | FITS privacy processing and verification | Complete; implementation commits `c2f0226`, `f347677`, and `c690248`. |
+| ENH-005d | FITS privacy integration, regression, and release readiness | In progress; authorised at `aa905af`. Overall ENH-005 remains open pending final validation review and formal closure. |
 | S50 Pro qualification — Stage 3 | Technical qualification T01–T06 | Technical PASS; closure readiness PASS; T01–T06 user acceptance APPROVED 26 October 2026; administrative closure APPROVED, subject to documentation and Git workflow completion |
 
 ## 3. Current behaviour and architectural decisions
@@ -104,8 +104,9 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 - ENH-005b provides `header-report`, a standalone, read-only, header-only FITS reporting command. It supports every HDU and preserves approved technical metadata while withholding sensitive and unknown values.
 - Its shared policy uses approved metadata classifications and replacements, preserves only approved technical descriptions, and withholds standalone `COMMENT` and `HISTORY` contents and unapproved descriptions.
 - Default reports use archive-aware destination inference for recognised light and stacked FITS, otherwise a local `pii-scrubbed/` directory. Output publication is safe and does not overwrite an existing destination.
-- A TTY-only post-generation View / Finder / Quit menu is available. The temporary development-only `--noscrub` comparison option remains excluded from public documentation and must be removed during ENH-005d before production release.
-- ENH-005c, which will implement `pii-scrub` and `pii-scrub --verify`, requires specification review and resolution of the material technical questions recorded in its authoritative change document. ENH-005d will perform integration, regression, documentation, and release-readiness work. ENH-005 is not yet complete, and its enhancement branch must not be merged into `main` at this stage.
+- A TTY-only post-generation View / Finder / Quit menu is available. The temporary development-only `--noscrub` comparison path has been removed during ENH-005d.
+- ENH-005c provides `pii-scrub`, with occurrence-level interactive A/P/Q review and non-interactive anonymisation, plus read-only `pii-scrub --verify` PASS, FAIL, and REVIEW REQUIRED classification. FITS data blocks and source files remain unchanged; destinations use safe no-overwrite publication.
+- ENH-005d integrates the three interfaces, user and development documentation, and final regression and safety validation. ENH-005 remains open pending review of that validation and formal closure; the enhancement branch must not be merged into `main` at this stage.
 
 ## 4. Validation and release history
 
@@ -119,6 +120,8 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 | BUG-003 | Implementation and validation complete; 626 tests passed; mixed S50/S50 Pro 12-file archive verified; formally closed 21 October 2026 |
 | ENH-004 | Formally approved and complete 27 October 2026. ENH-004a archive recognition completed at `ddde7c2`; ENH-004b CLI integration completed at `cc3f86a`; ENH-004c documentation and validation completed at `8a5b294`. T01–T32 coverage satisfied; 195 focused/regression tests and 664 full-suite tests passed; Ruff, changed-file formatting, CLI-help verification and Git whitespace checks passed. No implementation defects remain outstanding. Real-world testing against the user's observing archive has not yet been performed; automated validation is not presented as field testing. Git integration remains pending. |
 | ENH-005b | Shared policy and `header-report` implementation completed at `f1de3eb` on `enh/ENH-005-fits-privacy-processing`. The focused validation recorded 56 passing tests, Ruff lint and formatting checks, and `git diff --check`; the full suite was intentionally not run. Four representative real-world reports (S50/S50 Pro light and stacked) were reviewed and accepted. ENH-005b.1, ENH-005b.2, and overall ENH-005b closure are complete. |
+| ENH-005c | FITS privacy foundation, `pii-scrub`, and `pii-scrub --verify` completed at `c2f0226`, `f347677`, and `c690248`. Focused closure evidence records 11 foundation tests, 15 scrub CLI tests, and 14 verification tests, with relevant regressions and Ruff checks passing. Full-suite validation was deferred to ENH-005d. |
+| ENH-005d | In progress at `aa905af`; the temporary option is removed, user/development documentation is integrated, 738 full-suite tests and 74 focused ENH-005 regressions pass, Ruff lint and changed-file formatting pass, and PDF validation passes. The repository-wide Ruff formatting check still reports 16 pre-existing unrelated files, so ENH-005 is not formally closed. |
 
 ### 4.1 S50 Pro qualification — separate Stage 3
 
@@ -148,7 +151,6 @@ These are candidates, not approved implementations or commitments. Priorities an
 | TIFF verification | Independently verify archived TIFF derivatives against authoritative FITS conversion output | ENH-003 deferred follow-up | Deferred |
 | Archive regeneration | Rebuild or reorganise existing archives safely when hierarchy or date policy changes | Post-release enhancement inventory; ENH-002 deferral | Deferred |
 | Telescope hierarchy token | Optional telescope model or device identity in archive paths | Archive hierarchy enhancement proposal | Deferred |
-| FITS privacy processing | ENH-005c: produce privacy-sanitised FITS copies and provide `pii-scrub --verify` without modifying originals | ENH-005 authoritative specification | Not started; requires specification review and resolution of material technical questions before implementation |
 | Dry-run summary | Concise observation-level archive plan by default, detailed per-file output via an optional verbose mode | S50 Pro qualification follow-up | Deferred |
 | Configuration prompt clarity | Make Enter-to-skip and `y`-to-save behaviour clearer; preserve existing accepted responses | Configuration usability observation | Deferred |
 | Additional telescope qualification | S30/S30 Pro and other firmware or capture configurations, subject to representative evidence | S50 Pro qualification scope boundary | Deferred |

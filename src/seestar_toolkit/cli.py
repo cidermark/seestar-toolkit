@@ -84,8 +84,6 @@ def build_parser() -> argparse.ArgumentParser:
     report_parser.add_argument(
         "--noprompt", action="store_true", help="Do not offer View / Finder / Quit after success."
     )
-    report_parser.add_argument("--noscrub", action="store_true", help=argparse.SUPPRESS)
-
     scrub_parser = subparsers.add_parser(
         "pii-scrub",
         help="Create a separate privacy-processed FITS file.",
@@ -298,20 +296,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "header-report":
         try:
-            result = generate_header_report(
-                args.input_fits,
-                args.output,
-                unscrubbed=args.noscrub,
-            )
+            result = generate_header_report(args.input_fits, args.output)
         except (FitsError, OSError, ValueError) as error:
             print(f"Error: {error}", file=sys.stderr)
             return 1
-        if result.unscrubbed:
-            print(
-                "PRIVACY WARNING: this UNSCRUBBED report contains original FITS metadata. "
-                "Do not share it without review.",
-                file=sys.stderr,
-            )
         print(f"Created header report: {result.output_path}")
         if not args.noprompt and sys.stdin.isatty() and sys.stdout.isatty():
             offer_report_menu(result.output_path)

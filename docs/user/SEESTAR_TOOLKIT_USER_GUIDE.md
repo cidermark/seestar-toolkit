@@ -1,14 +1,14 @@
 # Seestar Toolkit User Guide
 
-**Development — ENH-003 (unreleased)**
+**Development — ENH-005 (unreleased)**
 
-**Document updated:** 2026-10-13
+**Document updated:** 2026-11-10
 
 This development edition includes the unreleased ENH-001 configuration commands,
-ENH-002 observing-night date policy and ENH-003 archive light-TIFF option. They
-are not included in the published v1.1.0 wheel. The released installation
-instructions and support boundaries remain as described below. No new release
-number has been assigned.
+ENH-002 observing-night date policy, ENH-003 archive light-TIFF option, and
+ENH-005 FITS privacy commands. They are not included in the published v1.1.0
+wheel. The released installation instructions and support boundaries remain as
+described below. No new release number has been assigned.
 
 ## Contents
 
@@ -81,6 +81,10 @@ number has been assigned.
   - [macOS privacy and permissions](#macos-privacy-and-permissions)
 - [Privacy](#privacy)
   - [Information stored locally](#information-stored-locally)
+  - [Create a privacy-processed header report](#create-a-privacy-processed-header-report)
+  - [Create a privacy-processed FITS copy](#create-a-privacy-processed-fits-copy)
+  - [Verify FITS privacy processing](#verify-fits-privacy-processing)
+  - [FITS privacy boundaries](#fits-privacy-boundaries)
   - [Network storage is different from telemetry](#network-storage-is-different-from-telemetry)
 - [Diagnostics and troubleshooting](#diagnostics-and-troubleshooting)
   - [Confirm that the Toolkit environment is active](#confirm-that-the-toolkit-environment-is-active)
@@ -104,6 +108,8 @@ number has been assigned.
   - [`convert-batch`](#convert-batch)
   - [`archive`](#archive)
   - [`config`](#config)
+  - [`header-report`](#header-report)
+  - [`pii-scrub`](#pii-scrub)
   - [Exit codes](#exit-codes)
 - [Uninstalling Seestar Toolkit](#uninstalling-seestar-toolkit)
   - [Deactivate the environment](#deactivate-the-environment)
@@ -1159,9 +1165,10 @@ nothing. If saved values are invalid, inspection identifies the problem and
 returns an error status. See [hierarchy repair](#a-saved-hierarchy-contains-an-unmatched-brace)
 for an example of correcting an invalid saved value.
 
-`--saved`, `--defaults` and `--extract` are alternative inspection modes; choose
-one at a time. `--defaults` cannot be combined with `--config` because built-in
-defaults are independent of a saved file.
+Choose only one of the saved-values, built-in-defaults, or FITS-extraction
+inspection modes at a time. The built-in-defaults mode cannot be combined with
+an explicit configuration path because those defaults are independent of a
+saved file.
 
 ## Save or remove an archive preference
 
@@ -1664,8 +1671,12 @@ seestar-toolkit convert \
 The input and output filenames are explicit, so you decide where the TIFF is
 created and what it is called.
 
-When the input is a `.fit` or `.fits` file directly under a recognised current
-`observation_NN/fits_images/lights/` directory, you may omit `OUTPUT_TIFF`:
+When the input is a `.fit` or `.fits` file directly inside the recognised
+current archive lights directory, you may omit `OUTPUT_TIFF`. That directory is:
+
+``` text
+observation_NN/fits_images/lights/
+```
 
 ``` bash
 seestar-toolkit convert \
@@ -1929,7 +1940,83 @@ want to publish. In particular, consider FITS headers and capture metadata, your
 files, and diagnostic output copied into an issue or support request.
 
 The Toolkit does not automatically remove private metadata simply because a file
-has been placed in an archive.
+has been placed in an archive. The ENH-005 development commands below provide
+explicit reporting, copying, and verification workflows.
+
+## Create a privacy-processed header report
+
+`header-report` reads every HDU header without loading image pixels and creates a
+text report. Recognised sensitive values are replaced, unknown values and
+unapproved descriptions are shown as `WITHHELD`, and standalone `COMMENT` and
+`HISTORY` contents are withheld. Recognised technical metadata, including
+telescope identifiers, timestamps, and astronomical coordinates, can remain.
+
+``` bash
+seestar-toolkit header-report --noprompt "/path/to/capture.fit"
+seestar-toolkit header-report --output "/path/to/report.txt" \
+  "/path/to/capture.fit"
+```
+
+Without `--output`, an archive light or stack is reported to its observation's
+`pii-scrubbed/` directory. An ordinary FITS uses a `pii-scrubbed/` directory
+beside the input. The default filename is `<input_stem>_header.txt`. An
+interactive Terminal can offer View / Finder / Quit after success; `--noprompt`
+suppresses this convenience menu.
+
+## Create a privacy-processed FITS copy
+
+`pii-scrub` creates a separate FITS file and never modifies, moves, or deletes
+the source. In an interactive Terminal, every unknown metadata occurrence asks:
+
+``` text
+(A)nonymise  (P)reserve  (Q)uit
+```
+
+`A` replaces that occurrence, `P` keeps it and produces an explicit REVIEW
+REQUIRED warning, and `Q` cancels without publishing an output. When either
+standard input or standard output is not a TTY, the command does not prompt and
+anonymises unresolved unknown metadata.
+
+``` bash
+seestar-toolkit pii-scrub "/path/to/capture.fit"
+seestar-toolkit pii-scrub --output "/path/to/shared-copy.fit" \
+  "/path/to/capture.fit"
+```
+
+By default, recognised archive lights and stacks are copied directly to their
+observation's `pii-scrubbed/` directory with the original filename. Ordinary
+inputs use `pii-scrubbed/` beside the input. `--output` is always an exact
+filename, not a directory.
+
+## Verify FITS privacy processing
+
+Verification is read-only and never prompts:
+
+``` bash
+seestar-toolkit pii-scrub --verify "/path/to/shared-copy.fit"
+seestar-toolkit pii-scrub --verify --output "/path/to/verification.txt" \
+  "/path/to/shared-copy.fit"
+```
+
+The result is `PASS` when no violation or unresolved item remains, `FAIL` when a
+recognised sensitive field is non-compliant, and `REVIEW REQUIRED` when unknown
+metadata remains. `PASS` returns exit code `0`; `FAIL` and `REVIEW REQUIRED`
+return `1`. The optional report contains safe keyword names, counts, and status,
+not sensitive original values.
+
+## FITS privacy boundaries
+
+These commands implement the Toolkit's conservative privacy policy; they do not
+guarantee anonymity. Preserved device identifiers, timestamps, astronomical
+coordinates, image data, and other technical metadata may still allow
+correlation. Review any result before sharing it.
+
+Processing is limited to one supported `.fit` or `.fits` file per invocation;
+there is no batch or recursive mode. Supported HDUs and data blocks are
+preserved, malformed or unsupported structures are rejected, and an existing
+destination is never overwritten. Output is validated before publication and
+temporary output is removed after failure or cancellation. Keep the source FITS
+and an independent backup.
 
 ## Network storage is different from telemetry
 
@@ -2347,6 +2434,28 @@ seestar-toolkit config set --help
 seestar-toolkit config unset --help
 ```
 
+## `header-report`
+
+``` text
+seestar-toolkit header-report [--output FILE] [--noprompt] INPUT
+```
+
+Options may appear before or after `INPUT`. The command creates a
+privacy-processed text report, never overwrites an existing destination, and
+returns `0` after successful report creation even when unknown metadata was
+withheld.
+
+## `pii-scrub`
+
+``` text
+seestar-toolkit pii-scrub [--output FILE] INPUT
+seestar-toolkit pii-scrub --verify [--output FILE] INPUT
+```
+
+Options may appear before or after `INPUT`. Without `--verify`, `--output` is an
+exact FITS-copy filename. With `--verify`, it is an exact optional text-report
+filename. Existing destinations are refused in both modes.
+
 ## Exit codes
 
 ``` text
@@ -2366,6 +2475,13 @@ not usage error `2`.
 
 An exit code of `2` normally means the command itself was not formed correctly,
 such as missing required arguments or an unrecognised option.
+
+For `header-report`, successful report publication returns `0`; an input,
+destination, FITS, or publication failure returns `1`. For `pii-scrub`, a
+successfully created copy returns `0`, including a copy with an explicit REVIEW
+REQUIRED warning after interactive preservation; cancellation and operational
+failure return `1`. For `pii-scrub --verify`, PASS returns `0`, while FAIL,
+REVIEW REQUIRED, and operational failure return `1`.
 
 For `config`, successful Skip and valid no-op operations also return `0`.
 Handled configuration, extraction, write and unattended-authorisation failures
@@ -2529,7 +2645,7 @@ making decisions about removing source files.
 
 ------------------------------------------------------------------------
 
-This development guide retains the released v1.1.0 workflows and adds
-ENH-001 configuration management. Final ENH-001 closure validation remains
-pending. For a shorter installation and first-use path, see the
+This development guide retains the released v1.1.0 workflows and documents the
+unreleased enhancements through ENH-005. ENH-005 remains open pending final
+validation and formal closure. For a shorter installation and first-use path, see the
 [Seestar Toolkit Quick Start](SEESTAR_TOOLKIT_QUICK_START.md).

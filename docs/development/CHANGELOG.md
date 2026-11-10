@@ -24,13 +24,28 @@ ENH-005b was completed on 9 November 2026 at `f1de3eb` on
 privacy-safe `header-report` command and its shared metadata policy. Its
 closure evidence records 56 focused tests, Ruff lint and formatting checks,
 and `git diff --check`; the full test suite was intentionally not run.
-Four representative real-world reports were reviewed and accepted. ENH-005c
-and ENH-005d remain separate, not-started stages; ENH-005 is not complete.
+Four representative real-world reports were reviewed and accepted.
+
+ENH-005c was completed on 10 November 2026 through the FITS processing
+foundation (`c2f0226`), `pii-scrub` CLI integration (`f347677`), and independent
+verification (`c690248`). Its focused and regression checks passed; the full
+application suite was intentionally deferred to ENH-005d. ENH-005d was
+authorised at `aa905af` for temporary-option removal, documentation integration,
+and final validation. The uncommitted ENH-005d integration session removed the
+temporary option, integrated user and development documentation, passed 738
+full-suite tests and 74 focused ENH-005 regressions, passed Ruff lint and
+changed-file formatting, and validated both generated documentation PDFs. The
+repository-wide Ruff formatting check still identifies 16 pre-existing
+unrelated files. ENH-005 remains open pending review and formal closure.
 
 ## Development commit history
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
+| ENH-005d | Close ENH-005c and authorise final integration and validation | `aa905af` | 2026-11-10 |
+| ENH-005c.3 | Add independent FITS privacy verification | `c690248` | 2026-11-10 |
+| ENH-005c.2 | Integrate `pii-scrub` CLI and safe publication | `f347677` | 2026-11-10 |
+| ENH-005c.1 | Implement FITS privacy processing foundation | `c2f0226` | 2026-11-10 |
 | ENH-005b | Implement privacy-safe FITS header reporting | `f1de3eb` | 2026-11-09 |
 | ENH-004c | Document and validate archive-aware conversion | `8a5b294` | 2026-10-27 |
 | ENH-004b | Integrate archive-aware single-file and batch conversion CLI | `cc3f86a` | 2026-10-27 |
@@ -146,11 +161,10 @@ and ENH-005d remain separate, not-started stages; ENH-005 is not complete.
 - **v1.1.0:** release commit `b954d97` dated **23 September 2026**; annotated tag `v1.1.0` created **24 September 2026**. Subsequent development work is not represented here as a newly published release.
 - **BUG-001, BUG-002 and BUG-003:** completed and closed. BUG-003 implementation `ea69b99`, closure documentation `548a632`, and roadmap update `ff39cb1` are separate recorded events.
 - **ENH-001, ENH-002 and ENH-003:** completed and closed.
-- **ENH-005:** ENH-005a and ENH-005b are complete. ENH-005c and ENH-005d
-  remain not started; `pii-scrub`, `pii-scrub --verify`, integration and
-  release-readiness work remain outside the completed `header-report` scope.
-  The temporary development-only `--noscrub` option must be removed during
-  ENH-005d before a production release.
+- **ENH-005:** ENH-005a, ENH-005b, and ENH-005c are complete. ENH-005d is in
+  progress for integration, documentation, and final validation. The temporary
+  development-only `--noscrub` option has been removed. Overall ENH-005 remains
+  open pending final validation review and formal closure.
 - **S50 Pro qualification Stage 3:** technical PASS and independent
   closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
   October 2026. Administrative closure is approved subject to completion of

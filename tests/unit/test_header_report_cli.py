@@ -24,7 +24,7 @@ def test_header_report_parser_accepts_options_on_either_side() -> None:
     assert before.input_fits == Path("image.fit")
 
 
-def test_noscrub_is_hidden_from_help(capsys: pytest.CaptureFixture[str]) -> None:
+def test_noscrub_is_not_available(capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit, match="0"):
         cli.main(["header-report", "--help"])
 
@@ -33,11 +33,16 @@ def test_noscrub_is_hidden_from_help(capsys: pytest.CaptureFixture[str]) -> None
     assert "--noprompt" in output
     assert "--noscrub" not in output
 
+    with pytest.raises(SystemExit) as raised:
+        cli.main(["header-report", "image.fit", "--noscrub"])
+
+    assert raised.value.code == 2
+
 
 def test_success_and_noprompt_suppress_menu(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    result = SimpleNamespace(output_path=Path("report.txt"), unscrubbed=False)
+    result = SimpleNamespace(output_path=Path("report.txt"))
     generate = Mock(return_value=result)
     menu = Mock()
     monkeypatch.setattr(cli, "generate_header_report", generate)
@@ -53,7 +58,7 @@ def test_success_and_noprompt_suppress_menu(
 def test_noninteractive_stream_suppresses_menu(
     monkeypatch: pytest.MonkeyPatch, stdin_tty: bool, stdout_tty: bool
 ) -> None:
-    result = SimpleNamespace(output_path=Path("report.txt"), unscrubbed=False)
+    result = SimpleNamespace(output_path=Path("report.txt"))
     monkeypatch.setattr(cli, "generate_header_report", Mock(return_value=result))
     menu = Mock()
     monkeypatch.setattr(cli, "offer_report_menu", menu)
@@ -67,7 +72,7 @@ def test_noninteractive_stream_suppresses_menu(
 def test_both_tty_streams_offer_menu(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    result = SimpleNamespace(output_path=Path("report.txt"), unscrubbed=False)
+    result = SimpleNamespace(output_path=Path("report.txt"))
     monkeypatch.setattr(cli, "generate_header_report", Mock(return_value=result))
     menu = Mock()
     monkeypatch.setattr(cli, "offer_report_menu", menu)
@@ -97,19 +102,6 @@ def test_viewer_and_finder_failures_are_warnings(
     assert "Warning: unable to open" in capsys.readouterr().err
     expected = ["open", "report.txt"] if answer == "v" else ["open", "-R", "report.txt"]
     run.assert_called_once_with(expected, check=True, capture_output=True)
-
-
-def test_unscrubbed_success_emits_privacy_warning(
-    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
-) -> None:
-    result = SimpleNamespace(output_path=Path("comparison.txt"), unscrubbed=True)
-    generate = Mock(return_value=result)
-    monkeypatch.setattr(cli, "generate_header_report", generate)
-
-    assert cli.main(["header-report", "image.fit", "--noscrub", "--noprompt"]) == 0
-
-    generate.assert_called_once_with(Path("image.fit"), None, unscrubbed=True)
-    assert "PRIVACY WARNING" in capsys.readouterr().err
 
 
 def test_operational_failure_returns_one_without_sensitive_exception_details(

@@ -256,23 +256,6 @@ def test_all_sensitive_keywords_and_replacement_types(tmp_path: Path) -> None:
     assert "private" not in report
 
 
-def test_unscrubbed_report_preserves_original_values_comments_and_duplicates(
-    tmp_path: Path,
-) -> None:
-    source = tmp_path / "capture.fit"
-    output = tmp_path / "comparison.txt"
-    _write_fits(source)
-
-    result = generate_header_report(source, output, unscrubbed=True)
-
-    report = output.read_text()
-    assert result.unscrubbed
-    assert "Private Person" in report
-    assert "secret unknown" in report
-    assert "private history" in report
-    assert report.index("GAIN = 80") < report.index("GAIN = 90")
-
-
 def test_long_safe_string_is_readable_and_unknown_hierarch_value_is_withheld(
     tmp_path: Path,
 ) -> None:
@@ -302,9 +285,6 @@ def test_default_ordinary_and_archive_owned_paths(tmp_path: Path) -> None:
 
     assert infer_header_report_path(ordinary) == (
         ordinary.parent / "pii-scrubbed/Light 001_header.txt"
-    )
-    assert infer_header_report_path(ordinary, unscrubbed=True).name == (
-        "Light 001_header_UNSCRUBBED.txt"
     )
     assert infer_header_report_path(light) == (light.parents[2] / "pii-scrubbed/Light_header.txt")
     assert infer_header_report_path(stacked) == (
@@ -381,9 +361,8 @@ def test_resolved_source_destination_alias_is_rejected(tmp_path: Path, alias_kin
         generate_header_report(source, alias)
 
 
-@pytest.mark.parametrize("unscrubbed", (False, True))
 def test_headers_are_read_without_accessing_hdu_data(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, unscrubbed: bool
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     source = tmp_path / "capture.fit"
     output = tmp_path / "report.txt"
@@ -406,7 +385,7 @@ def test_headers_are_read_without_accessing_hdu_data(
     opened = Mock(return_value=HeaderOnlyList([HeaderOnlyHdu(), HeaderOnlyHdu()]))
     monkeypatch.setattr("seestar_toolkit.fits.header_report.fits.open", opened)
 
-    result = generate_header_report(source, output, unscrubbed=unscrubbed)
+    result = generate_header_report(source, output)
 
     assert result.hdu_count == 2
     opened.assert_called_once_with(
