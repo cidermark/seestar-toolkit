@@ -39,7 +39,16 @@ from seestar_toolkit.archive import (
 from seestar_toolkit.archive.orchestration import _reconcile_incremental_observations
 from seestar_toolkit.batch import convert_fits_directory
 from seestar_toolkit.conversion import convert_fits_to_tiff
-from seestar_toolkit.fits import FitsError, generate_header_report, offer_report_menu
+from seestar_toolkit.fits import (
+    FitsError,
+    PiiScrubCancelled,
+    UnknownMetadataAction,
+    UnknownMetadataOccurrence,
+    generate_header_report,
+    offer_report_menu,
+    safe_terminal_value,
+    scrub_fits,
+)
 from seestar_toolkit.tiff import TiffError
 
 
@@ -75,6 +84,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--noprompt", action="store_true", help="Do not offer View / Finder / Quit after success."
     )
     report_parser.add_argument("--noscrub", action="store_true", help=argparse.SUPPRESS)
+
+    scrub_parser = subparsers.add_parser(
+        "pii-scrub",
+        help="Create a separate privacy-processed FITS file.",
+        description=(
+            "Review unknown metadata when interactive and safely publish one scrubbed FITS."
+        ),
+    )
+    scrub_parser.add_argument("input_fits", metavar="INPUT", type=Path)
+    scrub_parser.add_argument(
+        "--output", type=Path, metavar="FILE", help="Exact FITS output filename; never overwritten."
+    )
 
     config_parser = subparsers.add_parser(
         "config",
@@ -287,6 +308,33 @@ def main(argv: Sequence[str] | None = None) -> int:
             offer_report_menu(result.output_path)
         return 0
 
+    if args.command == "pii-scrub":
+        interactive = sys.stdin.isatty() and sys.stdout.isatty()
+        try:
+            result = scrub_fits(
+                args.input_fits,
+                args.output,
+                reviewer=_review_unknown_metadata if interactive else None,
+            )
+        except PiiScrubCancelled:
+            print("Cancelled; no privacy-processed FITS was created", file=sys.stderr)
+            return 1
+        except (FitsError, OSError, ValueError) as error:
+            print(f"Error: {error}", file=sys.stderr)
+            return 1
+        if result.preserved_unknown_count:
+            print(
+                "WARNING: REVIEW REQUIRED: unknown metadata was intentionally preserved",
+                file=sys.stderr,
+            )
+        elif not interactive and result.anonymized_unknown_count:
+            print(
+                "Warning: unknown metadata was anonymised in non-interactive mode",
+                file=sys.stderr,
+            )
+        print(f"Created privacy-processed FITS: {result.output_path}")
+        return 0
+
     if args.command == "convert":
         output_tiff = args.output_tiff
         inferred = output_tiff is None
@@ -375,6 +423,27 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     parser.error(f"Unknown command: {args.command}")
     return 2
+
+
+def _review_unknown_metadata(
+    occurrence: UnknownMetadataOccurrence, replacement: object
+) -> UnknownMetadataAction:
+    print(f"Unknown metadata in HDU {occurrence.hdu_index}, card {occurrence.card_index}:")
+    print(f"  Keyword: {safe_terminal_value(occurrence.keyword)}")
+    print(f"  Current value: {safe_terminal_value(occurrence.value)}")
+    print(f"  Proposed replacement: {safe_terminal_value(replacement)}")
+    while True:
+        try:
+            answer = input("(A)nonymise, (P)reserve, or (Q)uit? ").strip().casefold()
+        except EOFError:
+            answer = "q"
+        if answer in {"a", "anonymise", "anonymize"}:
+            return UnknownMetadataAction.ANONYMIZE
+        if answer in {"p", "preserve"}:
+            return UnknownMetadataAction.PRESERVE
+        if answer in {"q", "quit"}:
+            raise PiiScrubCancelled("Privacy-processing review cancelled")
+        print("Choose A, P, or Q; empty input does not preserve metadata")
 
 
 def _convert_single(

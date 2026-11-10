@@ -16,6 +16,14 @@ from .header_report import (
 )
 from .inspector import inspect_fits
 from .models import FitsImageClass, FitsImageData, FitsImageLayout, FitsInspection
+from .pii_scrub import (
+    PiiScrubCancelled,
+    PiiScrubError,
+    PiiScrubResult,
+    infer_pii_scrub_path,
+    safe_terminal_value,
+    scrub_fits,
+)
 from .privacy_processing import (
     FitsHduStructure,
     FitsProcessingError,
@@ -53,4 +61,10 @@ __all__ = [
     "UnknownMetadataOccurrence",
     "FitsImageLayout",
     "FitsImageClass",
+    "PiiScrubCancelled",
+    "PiiScrubError",
+    "PiiScrubResult",
+    "infer_pii_scrub_path",
+    "safe_terminal_value",
+    "scrub_fits",
 ]
