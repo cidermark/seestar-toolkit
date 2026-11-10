@@ -31,18 +31,19 @@ foundation (`c2f0226`), `pii-scrub` CLI integration (`f347677`), and independent
 verification (`c690248`). Its focused and regression checks passed; the full
 application suite was intentionally deferred to ENH-005d. ENH-005d was
 authorised at `aa905af` for temporary-option removal, documentation integration,
-and final validation. The uncommitted ENH-005d integration session removed the
-temporary option, integrated user and development documentation, passed 738
+and final validation. Its implementation was completed at `2e8c2e1`: it removed
+the temporary option, integrated user and development documentation, passed 738
 full-suite tests and 74 focused ENH-005 regressions, passed Ruff lint and
 changed-file formatting, and validated both generated documentation PDFs. The
-repository-wide Ruff formatting check still identifies 16 pre-existing
-unrelated files. ENH-005 remains open pending review and formal closure.
+repository-wide Ruff formatting check still identifies 16 pre-existing unrelated
+files. ENH-005d is complete; ENH-005 remains open pending formal closure.
 
 ## Development commit history
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
-| ENH-005d | Close ENH-005c and authorise final integration and validation | `aa905af` | 2026-11-10 |
+| ENH-005d | Finalise FITS privacy processing integration | `2e8c2e1` | 2026-11-10 |
+| ENH-005d | Authorise final integration and validation | `aa905af` | 2026-11-10 |
 | ENH-005c.3 | Add independent FITS privacy verification | `c690248` | 2026-11-10 |
 | ENH-005c.2 | Integrate `pii-scrub` CLI and safe publication | `f347677` | 2026-11-10 |
 | ENH-005c.1 | Implement FITS privacy processing foundation | `c2f0226` | 2026-11-10 |
@@ -161,10 +162,9 @@ unrelated files. ENH-005 remains open pending review and formal closure.
 - **v1.1.0:** release commit `b954d97` dated **23 September 2026**; annotated tag `v1.1.0` created **24 September 2026**. Subsequent development work is not represented here as a newly published release.
 - **BUG-001, BUG-002 and BUG-003:** completed and closed. BUG-003 implementation `ea69b99`, closure documentation `548a632`, and roadmap update `ff39cb1` are separate recorded events.
 - **ENH-001, ENH-002 and ENH-003:** completed and closed.
-- **ENH-005:** ENH-005a, ENH-005b, and ENH-005c are complete. ENH-005d is in
-  progress for integration, documentation, and final validation. The temporary
+- **ENH-005:** ENH-005a through ENH-005d are complete. The temporary
   development-only `--noscrub` option has been removed. Overall ENH-005 remains
-  open pending final validation review and formal closure.
+  open pending ChatGPT review, explicit approval, and formal closure.
 - **S50 Pro qualification Stage 3:** technical PASS and independent
   closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
   October 2026. Administrative closure is approved subject to completion of

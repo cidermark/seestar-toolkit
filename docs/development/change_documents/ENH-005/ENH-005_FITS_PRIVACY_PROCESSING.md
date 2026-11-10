@@ -7,7 +7,7 @@
 **Scope:** Standalone FITS header reporting, privacy processing, and verification
 **Version:** Draft 1.5 — 2026-11-10
 
-> **Implementation authorisation:** ENH-005c.1, ENH-005c.2, and ENH-005c.3 are **COMPLETE**; their closure evidence is recorded in §§8.8–8.10. ENH-005c is therefore **COMPLETE**. ENH-005d is explicitly authorised and **IN PROGRESS**, limited to removal of the temporary development-only `header-report --noscrub` functionality and its references; final CLI integration review of `header-report`, `pii-scrub`, and `pii-scrub --verify`; applicable user-facing and development-documentation integration; and the final validation defined in §10. It does not authorise new privacy-policy decisions, new FITS-format support, batch or recursive processing, changes to `archive`, `convert`, or `convert-batch`, unrelated refactoring, or dependency additions. ENH-005 overall remains **OPEN** pending ENH-005d final validation and formal review. This amendment does not authorise branch creation, commit, push, or merge.
+> **Implementation status:** ENH-005c.1, ENH-005c.2, and ENH-005c.3 are **COMPLETE**; their closure evidence is recorded in §§8.8–8.10. ENH-005c is therefore **COMPLETE**. ENH-005d is **COMPLETE** at implementation commit `2e8c2e1`; its authorisation is `aa905af` and its implementation and validation evidence is recorded in §8.12. ENH-005d was limited to removal of the temporary development-only `header-report --noscrub` functionality and its references; final CLI integration review of `header-report`, `pii-scrub`, and `pii-scrub --verify`; applicable user-facing and development-documentation integration; and the final validation defined in §10. It did not authorise new privacy-policy decisions, new FITS-format support, batch or recursive processing, changes to `archive`, `convert`, or `convert-batch`, unrelated refactoring, or dependency additions. ENH-005 overall remains **OPEN** pending ChatGPT review and explicit formal-closure approval. This record does not authorise branch creation, commit, push, or merge.
 
 ## 1. Purpose and scope
 
@@ -400,6 +400,44 @@ The full application suite was intentionally not run. The implementation commit 
 
 Overall ENH-005c is formally complete. ENH-005c.1 and ENH-005c.2 are formally complete under §§8.8–8.9, and ENH-005c.3 is formally complete under §8.10. The ENH-005c closure retains all approved C01–C14 decisions and the established FITS safety boundaries. It does not close ENH-005 overall; ENH-005d is authorised separately for integration, documentation, and final validation.
 
+### 8.12 ENH-005d implementation and validation evidence
+
+ENH-005d is complete. It was authorised by `aa905af` and implemented by
+`2e8c2e1` — `ENH-005d: finalise FITS privacy processing integration`. The
+implementation commit was confirmed pushed to
+`origin/enh/ENH-005-fits-privacy-processing`.
+
+The recorded implementation evidence is:
+
+- removal of the temporary development-only `header-report --noscrub`
+  functionality and its public-facing references;
+- final CLI integration of `header-report`, `pii-scrub`, and
+  `pii-scrub --verify`;
+- user documentation updates, generated PDF updates, and PDF validation;
+- reconciliation of the relevant development documentation;
+- retention of source preservation and established privacy safeguards; and
+- no unauthorised scope expansion beyond the ENH-005d authorisation.
+
+The recorded validation evidence is:
+
+- full application suite: 738 passed;
+- focused ENH-005 tests: 74 passed;
+- Ruff lint: PASS;
+- changed Python formatting: PASS;
+- CLI smoke tests: PASS;
+- PDF validation: PASS; and
+- `git diff --check`: PASS.
+
+The repository-wide Ruff formatting check reported 16 pre-existing unrelated
+formatting failures. The targeted baseline comparison used Ruff 0.16.0 and
+confirmed the same failure set at baseline `aa905af` and the ENH-005d validation
+working tree, with no new ENH-005 formatting regressions.
+
+This records completed implementation and validation evidence only. ENH-005d is
+**COMPLETE**; ENH-005 overall remains **OPEN** pending ChatGPT review and
+explicit formal-closure approval. No overall ENH-005 closure date or closure
+commit is recorded here.
+
 ## 9. Resolved technical clarifications
 
 The nine technical clarifications previously open for ENH-005c are resolved by C06–C14. Those decisions did not, by themselves, authorise implementation changes; their implementation and ENH-005c closure are recorded in §§8.8–8.11.
@@ -516,7 +554,7 @@ The following criteria are approved testable requirements for ENH-005c. ENH-005c
 14. **C14:** Temporary output is created beside the intended final destination on the same filesystem, validated before atomic no-overwrite publication, and removed after failure or cancellation. An operation lacking those safe-publication guarantees is rejected.
 15. Focused tests cover every criterion above, including byte-level data comparisons for each supported HDU, repeated unknown occurrences, non-interactive behaviour, P followed by verification, checksums, destination safety, cancellation, temporary-file cleanup, safe terminal rendering, operational-error handling, and every approved unusual-structure capability boundary.
 
-### ENH-005d — Integration, regression, and documentation — IN PROGRESS
+### ENH-005d — Integration, regression, and documentation — COMPLETE
 
 ENH-005d is explicitly authorised to implement, integrate, document, and final-validate only the following scope:
 
@@ -525,8 +563,8 @@ ENH-005d is explicitly authorised to implement, integrate, document, and final-v
 - update applicable user-facing documentation, including command examples, privacy behaviour, output destinations, and verification results; reconcile `docs/development/PROJECT_Notes.md` and `docs/development/CHANGELOG.md` so ENH-005 progress and implementation history are consistent; and
 - perform final validation: full application test suite; Ruff lint and formatting; CLI help and command smoke tests; FITS transformation and verification regression coverage; no-overwrite and source-preservation checks; documentation consistency; `git diff --check`; and scope and Git-status review.
 
-This authorisation excludes new privacy-policy decisions, FITS-format support beyond the approved scope, batch or recursive processing, changes to `archive`, `convert`, or `convert-batch`, unrelated refactoring, new features, and dependency additions without approval. Production release remains blocked until the temporary option is removed. ENH-005 overall remains **OPEN** until ENH-005d final validation evidence has been reviewed and formal closure is approved. Commit, push, and merge remain separate explicit actions.
+This authorisation excluded new privacy-policy decisions, FITS-format support beyond the approved scope, batch or recursive processing, changes to `archive`, `convert`, or `convert-batch`, unrelated refactoring, new features, and dependency additions without approval. The implementation and validation evidence is recorded in §8.12. The temporary option has been removed. ENH-005 overall remains **OPEN** until ChatGPT review and explicit formal closure approval. Commit, push, and merge remain separate explicit actions.
 
 ## 11. Approval gate
 
-ENH-005c.1, ENH-005c.2, and ENH-005c.3 are complete; ENH-005c overall is complete. ENH-005d is explicitly authorised by this amendment and is **IN PROGRESS**, limited to the scope defined in §10. A1, A2, B1, B2, C1, D1, D2, and C01–C14 remain approved design decisions; no new privacy-policy decision is authorised. ENH-005 overall remains **OPEN** until ENH-005d final validation evidence has been reviewed and formal closure is approved.
+ENH-005c.1, ENH-005c.2, and ENH-005c.3 are complete; ENH-005c overall is complete. ENH-005d is **COMPLETE** under the evidence recorded in §8.12. A1, A2, B1, B2, C1, D1, D2, and C01–C14 remain approved design decisions; no new privacy-policy decision is authorised. ENH-005 overall remains **OPEN** until ChatGPT review and explicit formal-closure approval.
