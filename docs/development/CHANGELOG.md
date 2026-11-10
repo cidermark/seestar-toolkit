@@ -38,19 +38,22 @@ changed-file formatting, and validated both generated documentation PDFs. The
 repository-wide Ruff formatting check still identifies 16 pre-existing unrelated
 files. ENH-005d is complete.
 
+Formal closure documentation was committed as 4262886 and pushed to the enhancement branch. Integration into main remains pending.
+
 ENH-005 formal closure was approved on 10 November 2026 following the completed
 implementation, validation, final closure audit, and documentation remediation.
 ENH-005a, ENH-005b, ENH-005c.1, ENH-005c.2, ENH-005c.3, ENH-005c overall, and
 ENH-005d are complete. The delivered commands are `header-report`, `pii-scrub`,
 and `pii-scrub --verify`. Existing implementation and validation evidence,
 including commits `f1de3eb`, `c2f0226`, `f347677`, `c690248`, and `2e8c2e1`, is
-preserved below. No formal closure commit identifier is recorded; documentation
-commit, push, merge, and branch actions remain separate.
+preserved below. Formal closure documentation was committed as 4262886 and pushed
+to the enhancement branch. Integration into main remains pending.
 
 ## Development commit history
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
+| ENH-005 | Record formal ENH-005 closure | `4262886` | 2026-11-10 |
 | ENH-005d | Finalise FITS privacy processing integration | `2e8c2e1` | 2026-11-10 |
 | ENH-005d | Authorise final integration and validation | `aa905af` | 2026-11-10 |
 | ENH-005c.3 | Add independent FITS privacy verification | `c690248` | 2026-11-10 |
@@ -173,8 +176,8 @@ commit, push, merge, and branch actions remain separate.
 - **ENH-001, ENH-002 and ENH-003:** completed and closed.
 - **ENH-005:** formally complete, with ChatGPT closure approval recorded on 10
   November 2026. ENH-005a through ENH-005d are complete and the temporary
-  development-only `--noscrub` option has been removed. No formal closure commit
-  identifier is recorded; main-branch integration is not claimed.
+  development-only `--noscrub` option has been removed. Formal closure documentation
+  commit: `4262886`. Main-branch integration remains pending.
 - **S50 Pro qualification Stage 3:** technical PASS and independent
   closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
   October 2026. Administrative closure is approved subject to completion of
