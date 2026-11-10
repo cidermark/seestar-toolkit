@@ -5,9 +5,9 @@
 **Repository path:** `docs/development/change_documents/ENH-005/ENH-005_FITS_PRIVACY_PROCESSING.md`
 **Baseline reviewed:** `main` / `origin/main` at `ebcf02ae09b0c2344598cda6b12b9da920abad8e`
 **Scope:** Standalone FITS header reporting, privacy processing, and verification
-**Version:** Draft 1.4 — 2026-11-10
+**Version:** Draft 1.5 — 2026-11-10
 
-> **Implementation authorisation:** ENH-005c.1 and ENH-005c.2 are **COMPLETE**; their closure evidence is recorded in §§8.8–8.9. ENH-005c.3 is explicitly authorised and **IN PROGRESS**, limited to the read-only, non-interactive `pii-scrub --verify` command, its approved PASS/FAIL/REVIEW REQUIRED classifications and safe optional text report, and focused validation using the completed ENH-005c.1 and ENH-005c.2 foundations. It does not authorise ENH-005d, removal of temporary `header-report --noscrub`, batch or recursive processing, or changes to `archive`, `convert`, or `convert-batch`. The temporary development-only `--noscrub` exception remains subject to its mandatory removal during ENH-005d. This amendment does not authorise branch creation, commit, push, or merge.
+> **Implementation authorisation:** ENH-005c.1, ENH-005c.2, and ENH-005c.3 are **COMPLETE**; their closure evidence is recorded in §§8.8–8.10. ENH-005c is therefore **COMPLETE**. ENH-005d is explicitly authorised and **IN PROGRESS**, limited to removal of the temporary development-only `header-report --noscrub` functionality and its references; final CLI integration review of `header-report`, `pii-scrub`, and `pii-scrub --verify`; applicable user-facing and development-documentation integration; and the final validation defined in §10. It does not authorise new privacy-policy decisions, new FITS-format support, batch or recursive processing, changes to `archive`, `convert`, or `convert-batch`, unrelated refactoring, or dependency additions. ENH-005 overall remains **OPEN** pending ENH-005d final validation and formal review. This amendment does not authorise branch creation, commit, push, or merge.
 
 ## 1. Purpose and scope
 
@@ -304,7 +304,7 @@ This closure records the reviewed acceptance evidence; it does not regenerate re
 
 Overall ENH-005b is formally complete. ENH-005b.1 is formally complete under §8.4 and ENH-005b.2 is formally complete under §8.5. The specification consistently records the approved A1, A2, B1, B2, C1, D1, and D2 decisions. D1 and D2 implementation and focused validation evidence is retained in §8.4.
 
-No unresolved defect or material ambiguity affects the completed ENH-005b `header-report` scope. The §9 technical clarifications are resolved for subsequent implementation and validation stages; they do not reopen the completed ENH-005b scope and did not, by themselves, authorise ENH-005c implementation. At the time of ENH-005b closure, ENH-005c and ENH-005d remained not started. The later authorisation recorded by this amendment is limited to ENH-005c.1 and does not alter the completed ENH-005b evidence. The temporary development-only `--noscrub` option remains prohibited from production release and must be removed during ENH-005d.
+No unresolved defect or material ambiguity affects the completed ENH-005b `header-report` scope. The §9 technical clarifications are resolved for subsequent implementation and validation stages; they do not reopen the completed ENH-005b scope and did not, by themselves, authorise ENH-005c implementation. At the time of ENH-005b closure, ENH-005c and ENH-005d remained not started. Subsequent authorisations and closures do not alter the completed ENH-005b evidence. The temporary development-only `--noscrub` option remains prohibited from production release and must be removed during ENH-005d.
 
 ### 8.7 Git integration record
 
@@ -368,9 +368,41 @@ The reviewed validation evidence records:
 
 The full application suite was intentionally not run. The implementation commit is `f347677`, and its Git push to `origin/enh/ENH-005-fits-privacy-processing` was confirmed.
 
+### 8.10 ENH-005c.3 formal closure evidence
+
+ENH-005c.3 is formally complete. ChatGPT approved formal closure after reviewing Codex's completion report. This records reviewed reported evidence and does not claim that an independent source-code audit was performed.
+
+The reviewed implementation evidence records:
+
+- the independent `pii-scrub --verify` command;
+- single-file, non-interactive operation;
+- read-only FITS header inspection;
+- shared privacy-policy classification;
+- PASS, FAIL, and REVIEW REQUIRED results, with FAIL precedence over REVIEW REQUIRED;
+- approved exit codes;
+- privacy-safe terminal output;
+- optional safe text-report publication;
+- source preservation; and
+- retention of the existing FITS safety boundaries.
+
+The reviewed validation evidence records:
+
+- 14 focused tests passed;
+- 63 relevant ENH-005 regression tests passed;
+- 146 broader FITS/CLI regression tests passed;
+- Ruff lint passed;
+- Ruff formatting passed; and
+- `git diff --check` passed.
+
+The full application suite was intentionally not run. The implementation commit is `c690248`, and its push to `origin/enh/ENH-005-fits-privacy-processing` was confirmed.
+
+### 8.11 Overall ENH-005c closure evidence
+
+Overall ENH-005c is formally complete. ENH-005c.1 and ENH-005c.2 are formally complete under §§8.8–8.9, and ENH-005c.3 is formally complete under §8.10. The ENH-005c closure retains all approved C01–C14 decisions and the established FITS safety boundaries. It does not close ENH-005 overall; ENH-005d is authorised separately for integration, documentation, and final validation.
+
 ## 9. Resolved technical clarifications
 
-The nine technical clarifications previously open for ENH-005c are resolved by C06–C14. Those decisions did not, by themselves, authorise implementation changes; the separate implementation authorisation in this amendment is limited to ENH-005c.3.
+The nine technical clarifications previously open for ENH-005c are resolved by C06–C14. Those decisions did not, by themselves, authorise implementation changes; their implementation and ENH-005c closure are recorded in §§8.8–8.11.
 
 1. **Long strings and `HIERARCH` (C06):** Support valid forms when complete logical keywords and values are safely interpretable and classifiable; reject unsupported encodings safely.
 2. **Header rewriting and block alignment (C07):** Header growth is permitted, provided data blocks remain byte-for-byte preserved, FITS 2880-byte alignment and HDU ordering remain valid, and data relocation is allowed when required.
@@ -421,9 +453,9 @@ The real-world corrected S50 and S50 Pro report review passed. It confirms the a
 
 Overall ENH-005b closure evidence and rationale are recorded in §8.6. This closure is confined to the completed shared-policy and `header-report` scope; it does not authorise later-stage implementation.
 
-### ENH-005c — FITS processing and verification — IN PROGRESS
+### ENH-005c — FITS processing and verification — COMPLETE
 
-Approved design scope: `pii-scrub`, occurrence-level A/P/Q review, non-interactive anonymisation, safe FITS writing, independent verification, integrity validation, and focused tests. The §9 technical clarifications are resolved. ENH-005c.1 and ENH-005c.2 are complete. Implementation authorisation is currently limited to ENH-005c.3 as defined below.
+Completed scope: `pii-scrub`, occurrence-level A/P/Q review, non-interactive anonymisation, safe FITS writing, independent verification, integrity validation, and focused tests. The §9 technical clarifications are resolved. ENH-005c.1, ENH-005c.2, and ENH-005c.3 are complete; their closure evidence is retained in §§8.8–8.11.
 
 #### ENH-005c.1 — FITS processing foundation — COMPLETE
 
@@ -450,9 +482,9 @@ ENH-005c.2 implemented and focus-validated the standalone `pii-scrub` command us
 
 Its formal closure evidence and reviewed validation results are recorded in §8.9. It did not include `pii-scrub --verify`, user-facing PASS/FAIL/REVIEW REQUIRED verification behaviour, ENH-005c.3, ENH-005d integration or documentation work, removal of temporary `header-report --noscrub`, changes to `archive`, `convert`, or `convert-batch`, or batch or recursive `pii-scrub` processing.
 
-#### ENH-005c.3 — Independent verification — IN PROGRESS
+#### ENH-005c.3 — Independent verification — COMPLETE
 
-ENH-005c.3 is explicitly authorised to implement and focus-validate only `seestar-toolkit pii-scrub --verify [OPTIONS] INPUT` using the completed ENH-005c.1 and ENH-005c.2 foundations:
+ENH-005c.3 implemented and focus-validated only `seestar-toolkit pii-scrub --verify [OPTIONS] INPUT` using the completed ENH-005c.1 and ENH-005c.2 foundations:
 
 - operate read-only on one FITS input per invocation, without prompts or pixel-array loading, and inspect every HDU header using the approved shared privacy policy;
 - report PASS when there is no recognised privacy-policy violation and no unresolved unknown metadata; report FAIL for a confirmed privacy-policy violation; and report REVIEW REQUIRED when unknown metadata remains outside the approved recognised-safe policy, including a value previously preserved during `pii-scrub`;
@@ -462,11 +494,11 @@ ENH-005c.3 is explicitly authorised to implement and focus-validate only `seesta
 - apply the existing safe-output rules to the optional report and never modify the source FITS; and
 - add focused tests for PASS, FAIL, and REVIEW REQUIRED; sensitive and unknown metadata detection; preserved unknown followed by verification; multi-HDU and duplicate-card coverage; descriptions and `COMMENT`/`HISTORY` policy; malformed and unsupported FITS handling; output-report safety and no-overwrite; exit codes and CLI option placement; source preservation; and existing ENH-005 regressions.
 
-This authorisation excludes ENH-005d integration or documentation work, removal of temporary `header-report --noscrub`, batch or recursive processing, changes to `archive`, `convert`, or `convert-batch`, unrelated refactoring, and new features outside this verification scope.
+Its formal closure evidence is recorded in §8.10. Its completed scope excluded ENH-005d integration or documentation work, removal of temporary `header-report --noscrub`, batch or recursive processing, changes to `archive`, `convert`, or `convert-batch`, unrelated refactoring, and new features outside this verification scope.
 
-#### ENH-005c acceptance criteria — APPROVED DESIGN REQUIREMENTS
+#### ENH-005c acceptance criteria — COMPLETE
 
-The following criteria are approved testable requirements for ENH-005c. ENH-005c.1 and ENH-005c.2 are complete. ENH-005c.3 is authorised only for the applicable independent-verification, safe-output, source-preservation, and focused-validation portions:
+The following criteria are approved testable requirements for ENH-005c. ENH-005c.1, ENH-005c.2, and ENH-005c.3 are complete. Their closure evidence is recorded in §§8.8–8.10:
 
 1. **C01:** A scrubbed output modifies eligible FITS headers only; for every supported HDU, its astronomical data block is byte-for-byte identical to the source, HDU order is preserved, and the source file is unchanged.
 2. **C02:** Every header card in every supported HDU is evaluated under §4, including duplicates and additional HDUs. Recognised sensitive metadata is replaced with the approved type-preserving value, recognised safe metadata is preserved, and unknown metadata receives the C03 handling; structures that cannot be safely processed are rejected without partial publication.
@@ -484,10 +516,17 @@ The following criteria are approved testable requirements for ENH-005c. ENH-005c
 14. **C14:** Temporary output is created beside the intended final destination on the same filesystem, validated before atomic no-overwrite publication, and removed after failure or cancellation. An operation lacking those safe-publication guarantees is rejected.
 15. Focused tests cover every criterion above, including byte-level data comparisons for each supported HDU, repeated unknown occurrences, non-interactive behaviour, P followed by verification, checksums, destination safety, cancellation, temporary-file cleanup, safe terminal rendering, operational-error handling, and every approved unusual-structure capability boundary.
 
-### ENH-005d — Integration, regression, and documentation — NOT STARTED
+### ENH-005d — Integration, regression, and documentation — IN PROGRESS
 
-Proposed scope: approved end-to-end validation, CLI/help review, documentation, compatibility review, removal of the temporary `header-report --noscrub` option, and formal ENH-005 closure evidence. Production release is blocked until that option is removed. Commit, push, and merge remain separate explicit actions.
+ENH-005d is explicitly authorised to implement, integrate, document, and final-validate only the following scope:
+
+- remove the temporary development-only `header-report --noscrub` functionality, its CLI help, and its documentation references; remove or update tests specific to that option while preserving normal `header-report` behaviour;
+- review `header-report`, `pii-scrub`, and `pii-scrub --verify` for consistent command help and usage, approved exit-code behaviour, and option placement; correct only defects directly within approved ENH-005 functionality;
+- update applicable user-facing documentation, including command examples, privacy behaviour, output destinations, and verification results; reconcile `docs/development/PROJECT_Notes.md` and `docs/development/CHANGELOG.md` so ENH-005 progress and implementation history are consistent; and
+- perform final validation: full application test suite; Ruff lint and formatting; CLI help and command smoke tests; FITS transformation and verification regression coverage; no-overwrite and source-preservation checks; documentation consistency; `git diff --check`; and scope and Git-status review.
+
+This authorisation excludes new privacy-policy decisions, FITS-format support beyond the approved scope, batch or recursive processing, changes to `archive`, `convert`, or `convert-batch`, unrelated refactoring, new features, and dependency additions without approval. Production release remains blocked until the temporary option is removed. ENH-005 overall remains **OPEN** until ENH-005d final validation evidence has been reviewed and formal closure is approved. Commit, push, and merge remain separate explicit actions.
 
 ## 11. Approval gate
 
-ENH-005c.1 and ENH-005c.2 are complete. ENH-005c.3 is explicitly authorised by this amendment and is **IN PROGRESS**, limited to the scope defined in §10. Before any remaining or subsequent implementation, review this specification with the user, mark the relevant scope approved, and explicitly authorise the relevant sub-stage or stage. A1, A2, B1, B2, C1, D1, D2, and C01–C14 remain approved design decisions; those decisions do not independently authorise work beyond ENH-005c.3. ENH-005d remains **NOT STARTED** and unauthorised.
+ENH-005c.1, ENH-005c.2, and ENH-005c.3 are complete; ENH-005c overall is complete. ENH-005d is explicitly authorised by this amendment and is **IN PROGRESS**, limited to the scope defined in §10. A1, A2, B1, B2, C1, D1, D2, and C01–C14 remain approved design decisions; no new privacy-policy decision is authorised. ENH-005 overall remains **OPEN** until ENH-005d final validation evidence has been reviewed and formal closure is approved.
