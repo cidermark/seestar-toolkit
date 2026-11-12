@@ -178,7 +178,15 @@ seestar-toolkit archive --dry-run --source-action copy \
   --non-interactive "/path/to/My Works" "/path/to/archive"
 ```
 
-`--dry-run` previews the proposed archive without writing archive outputs.
+`--dry-run` previews the proposed archive without writing archive outputs. Its
+normal report gives one compact block per planned observation, including the
+resolved destination, telescope metadata and planned light/stack FITS counts.
+Use global `--verbose` before `archive` when you also need the detailed
+source-to-destination FITS mappings:
+
+```bash
+seestar-toolkit --verbose archive --dry-run SOURCE_ROOT ARCHIVE_ROOT
+```
 
 Before continuing, check that the preview has the expected:
 

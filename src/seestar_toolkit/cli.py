@@ -689,7 +689,9 @@ def _run_archive(args: argparse.Namespace) -> int:
         if interactive and explicit_location is None:
             prepared = _resolve_interactive_location(prepared, config.saved_locations)
         if args.dry_run:
-            _print_archive_plan(prepared, action, collision_policy, args.convert_lights)
+            _print_archive_plan(
+                prepared, action, collision_policy, args.convert_lights, verbose=args.verbose
+            )
             return 1 if prepared.has_operational_problems else 0
         result = execute_prepared_seestar_archive(
             prepared,
@@ -776,23 +778,48 @@ def _print_archive_plan(
     action: SourceAction,
     collision_policy: CollisionPolicy,
     convert_lights: bool = False,
+    *,
+    verbose: bool = False,
 ) -> None:
+    observations = prepared.plan.observations
+    light_count = sum(len(observation.lights) for observation in observations)
+    stack_count = sum(observation.stack is not None for observation in observations)
     print(
-        f"Dry run: {len(prepared.plan.observations)} observation(s); "
-        f"action={action.name.lower()}; collision={collision_policy.name.lower()}"
+        "Archive dry run\n"
+        f"Summary: {len(observations)} observations; {light_count} light FITS; "
+        f"{stack_count} stacked FITS; action={action.name.lower()}; "
+        f"collision={collision_policy.name.lower()}"
     )
-    for observation in prepared.plan.observations:
+    print(f"Hierarchy: {prepared.plan.config.hierarchy_template}")
+    for observation in observations:
         metadata = observation.metadata
+        print(f"\nObservation {observation.observation_name}")
+        print(f"  Target: {metadata.logical_target}")
+        print(f"  Location: {metadata.logical_location}")
+        print(f"  Session end: {metadata.session_end_date}")
+        print(f"  Telescope: {metadata.telescope or 'unknown'}")
+        print(f"  Destination: {observation.observation_directory}")
         print(
-            f"Plan {observation.observation_name}: target={metadata.logical_target}; "
-            f"location={metadata.logical_location}; date={metadata.session_end_date}; "
-            f"destination={observation.observation_directory}"
+            f"  Files: {len(observation.lights)} light FITS; "
+            f"{int(observation.stack is not None)} stacked FITS"
         )
-        for planned in (*observation.lights, *((observation.stack,) if observation.stack else ())):
-            message = f"  FITS {planned.source_path} -> {planned.fits_destination}"
-            if planned.tiff_destination is not None:
-                message += f"; TIFF -> {planned.tiff_destination}"
-            print(message)
+        if metadata.diagnostics:
+            print(
+                f"  Warnings: {len(metadata.diagnostics)} "
+                f"(details reported below for {observation.observation_name})"
+            )
+        if verbose:
+            print("  Planned mappings:")
+            for planned in observation.lights:
+                print(f"    FITS {planned.source_path} -> {planned.fits_destination}")
+            if observation.stack is not None:
+                message = (
+                    f"    FITS {observation.stack.source_path} -> "
+                    f"{observation.stack.fits_destination}"
+                )
+                if observation.stack.tiff_destination is not None:
+                    message += f"; TIFF -> {observation.stack.tiff_destination}"
+                print(message)
     for problem in prepared.plan.problems:
         print(f"Planning problem: {'; '.join(problem.messages)}", file=sys.stderr)
     for item in prepared.discovery.items:
@@ -802,11 +829,28 @@ def _print_archive_plan(
         print(f"Index: {index_path}")
     if convert_lights:
         create, compare, existing = light_tiff_dry_run_counts(prepared, collision_policy)
-        print("Light TIFFs:")
-        print(f"  {create} would be created")
-        print(f"  {compare} existing TIFFs require comparison during conversion")
-        if existing:
-            print(f"{existing} previously archived light FITS were found.")
+        print("Light TIFF candidates")
+        print(f"  Candidates with no existing destination TIFF: {create}")
+        print(
+            "  Existing TIFF destinations requiring comparison during real conversion: "
+            f"{compare}"
+        )
+        print(f"  Previously archived light FITS reliably identified: {existing}")
+    metadata_diagnostics = sum(len(item.metadata.diagnostics) for item in observations)
+    planning_problems = len(prepared.plan.problems)
+    discovery_problems = sum(item.problem is not None for item in prepared.discovery.items)
+    warning_total = metadata_diagnostics + planning_problems + discovery_problems
+    warning_label = f"{warning_total} total" if warning_total else "none"
+    print(
+        f"Warnings: {warning_label} ({metadata_diagnostics} observation metadata, "
+        f"{planning_problems} planning, {discovery_problems} discovery)"
+    )
+    for observation in observations:
+        for diagnostic in observation.metadata.diagnostics:
+            print(
+                f"Observation warning — {observation.observation_name}: {diagnostic}",
+                file=sys.stderr,
+            )
 
 
 def _prompt_process_existing_lights(total: int, create: int, compare: int) -> bool:

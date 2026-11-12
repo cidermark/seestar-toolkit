@@ -216,7 +216,9 @@ def test_archive_config_defaults_and_cli_overrides_pass_through(
         collision_policy=CollisionPolicy.ERROR,
     )
     prepared = SimpleNamespace(
-        plan=SimpleNamespace(observations=(), problems=()),
+        plan=SimpleNamespace(
+            observations=(), problems=(), config=SimpleNamespace(hierarchy_template="{target}")
+        ),
         discovery=SimpleNamespace(items=()),
         has_operational_problems=False,
     )
@@ -253,7 +255,11 @@ def test_archive_config_defaults_and_cli_overrides_pass_through(
 
 def test_archive_non_interactive_never_prompts(monkeypatch: pytest.MonkeyPatch) -> None:
     prepared = SimpleNamespace(
-        plan=SimpleNamespace(observations=(), problems=()),
+        plan=SimpleNamespace(
+            observations=(),
+            problems=(),
+            config=SimpleNamespace(hierarchy_template="{target}/{location}/{session_end_date}"),
+        ),
         discovery=SimpleNamespace(items=()),
         has_operational_problems=False,
     )

@@ -19,6 +19,7 @@ from seestar_toolkit.archive import (
     ArchiveConfig,
     ArchiveFileOutcome,
     ArchiveIndexOutcome,
+    ArchivePlanningProblem,
     ArchiveTiffOutcome,
     CollisionPolicy,
     LightTiffCollisionDecision,
@@ -458,9 +459,10 @@ def test_convert_lights_dry_run_reports_plan_without_converter_or_mutation(
     assert not archive_root.exists()
     converter.assert_not_called()
     output = capsys.readouterr().out
-    assert "Light TIFFs:" in output
-    assert "1 would be created" in output
-    assert "0 existing TIFFs require comparison during conversion" in output
+    assert "Light TIFF candidates" in output
+    assert "Candidates with no existing destination TIFF: 1" in output
+    assert "Existing TIFF destinations requiring comparison during real conversion: 0" in output
+    assert "Previously archived light FITS reliably identified: 0" in output
 
 
 def test_convert_lights_dry_run_existing_primary_requires_later_comparison(
@@ -502,8 +504,8 @@ def test_convert_lights_dry_run_existing_primary_requires_later_comparison(
     } == before
     assert not (primary.parents[2] / "tmp").exists()
     output = capsys.readouterr().out
-    assert "0 would be created" in output
-    assert "1 existing TIFFs require comparison during conversion" in output
+    assert "Candidates with no existing destination TIFF: 0" in output
+    assert "Existing TIFF destinations requiring comparison during real conversion: 1" in output
 
 
 def test_light_derivative_failure_composes_with_original_collision(
@@ -765,16 +767,168 @@ def test_archive_cli_dry_run_plans_without_any_filesystem_mutation(
     assert not tuple(tmp_path.rglob("*.tmp"))
     assert not tuple(tmp_path.rglob("INDEX.md"))
     output = capsys.readouterr().out
-    assert "Plan observation_01" in output
-    assert "target=Target" in output
-    assert "location=unknown" in output
-    light_line = next(line for line in output.splitlines() if "Light_1_Target" in line)
-    stack_line = next(line for line in output.splitlines() if "Stacked_1_Target" in line)
-    assert "FITS" in light_line and "TIFF" not in light_line
-    assert "fits_images/lights" in light_line
-    assert "/observation_01/lights/" not in light_line
-    assert "FITS" in stack_line and "TIFF" in stack_line
+    assert "Archive dry run" in output
+    assert "Summary: 1 observations; 1 light FITS; 1 stacked FITS; action=copy; " in output
+    assert output.count("Hierarchy: {target}/{location}/{session_end_date}") == 1
+    assert "Observation observation_01" in output
+    assert "Target: Target" in output
+    assert "Location: unknown" in output
+    assert "Session end: " in output
+    assert "Telescope: S50_12345678" in output
+    assert "Files: 1 light FITS; 1 stacked FITS" in output
+    assert "Warnings: none (0 observation metadata, 0 planning, 0 discovery)" in output
+    assert "FITS " not in output
     assert f"Index: {archive_root / 'Target/INDEX.md'}" in output
+
+
+def test_archive_cli_verbose_dry_run_groups_complete_mappings_by_observation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, lights, stack = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        [
+            "--verbose",
+            "archive",
+            str(root),
+            str(archive_root),
+            "--dry-run",
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 0
+    output = capsys.readouterr().out
+    observation = output.index("Observation observation_01")
+    mappings = output.index("Planned mappings:", observation)
+    assert mappings > observation
+    assert f"FITS {lights[0]} ->" in output[mappings:]
+    assert f"FITS {stack} ->" in output[mappings:]
+    assert "; TIFF ->" in output[mappings:]
+
+
+def test_archive_cli_dry_run_retains_raw_telescope_without_inference(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    _set_device(root, "Unrecognised Scope_42")
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    assert (
+        cli.main(
+            ["archive", str(root), str(tmp_path / "archive"), "--dry-run", "--non-interactive"]
+        )
+        == 0
+    )
+
+    output = capsys.readouterr().out
+    assert "Telescope: Unrecognised Scope_42" in output
+
+
+@pytest.mark.parametrize(
+    ("diagnostic", "logical_target"),
+    [
+        ("Conflicting FITS target evidence: ('Target A', 'Target B')", "Target A"),
+        ("Conflicting source GPS evidence: [(51.4, -0.7), (52.0, -1.0)]", "Target"),
+        ("No target evidence; using explicit unknown fallback", "unknown"),
+    ],
+)
+def test_archive_cli_dry_run_preserves_observation_metadata_diagnostics(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    diagnostic: str,
+    logical_target: str,
+) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    prepared = orchestration.prepare_seestar_archive(root, archive_root=archive_root)
+    observation = prepared.plan.observations[0]
+    metadata = replace(
+        observation.metadata,
+        logical_target=logical_target,
+        target_component=logical_target,
+        diagnostics=(diagnostic,),
+    )
+    prepared = replace(
+        prepared,
+        plan=replace(
+            prepared.plan,
+            observations=(replace(observation, metadata=metadata),),
+        ),
+    )
+    prepare = Mock(return_value=prepared)
+    monkeypatch.setattr(cli, "prepare_seestar_archive", prepare)
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        ["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"]
+    )
+
+    assert status == 0
+    prepare.assert_called_once()
+    captured = capsys.readouterr()
+    assert f"Target: {logical_target}" in captured.out
+    assert "Warnings: 1 (details reported below for observation_01)" in captured.out
+    assert "Warnings: 1 total (1 observation metadata, 0 planning, 0 discovery)" in captured.out
+    assert diagnostic not in captured.out
+    assert captured.err.splitlines() == [
+        f"Observation warning — observation_01: {diagnostic}"
+    ]
+
+
+def test_archive_cli_dry_run_reports_all_warning_categories_once_without_mutation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, lights, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    before = {path: (_fingerprint(path), path.stat().st_mtime_ns) for path in lights}
+    prepared = orchestration.prepare_seestar_archive(root, archive_root=archive_root)
+    observation = prepared.plan.observations[0]
+    metadata_diagnostic = "retained observation metadata diagnostic"
+    planning_diagnostic = "retained planning diagnostic"
+    discovery_diagnostic = "retained discovery diagnostic"
+    planned_observation = replace(
+        observation,
+        metadata=replace(observation.metadata, diagnostics=(metadata_diagnostic,)),
+    )
+    discovery_item = replace(prepared.discovery.items[0], problem=discovery_diagnostic)
+    prepared = replace(
+        prepared,
+        discovery=replace(
+            prepared.discovery,
+            items=(discovery_item, *prepared.discovery.items[1:]),
+        ),
+        plan=replace(
+            prepared.plan,
+            observations=(planned_observation,),
+            problems=(
+                ArchivePlanningProblem(
+                    observation=observation.reconstructed,
+                    messages=(planning_diagnostic,),
+                ),
+            ),
+        ),
+    )
+    monkeypatch.setattr(cli, "prepare_seestar_archive", Mock(return_value=prepared))
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        ["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"]
+    )
+
+    assert status == 1
+    assert not archive_root.exists()
+    assert {path: (_fingerprint(path), path.stat().st_mtime_ns) for path in lights} == before
+    captured = capsys.readouterr()
+    assert "Warnings: 3 total (1 observation metadata, 1 planning, 1 discovery)" in captured.out
+    assert captured.err.splitlines() == [
+        f"Planning problem: {planning_diagnostic}",
+        f"Discovery problem: {discovery_item.source_path}: {discovery_diagnostic}",
+        f"Observation warning — observation_01: {metadata_diagnostic}",
+    ]
 
 
 @pytest.mark.parametrize(
@@ -827,7 +981,7 @@ def test_archive_cli_interactive_saved_match_accept_reject_or_unknown(
     status = cli.main(["archive", str(root), str(tmp_path / "archive"), "--dry-run"])
 
     assert status == 0
-    assert f"location={expected_location}" in capsys.readouterr().out
+    assert f"Location: {expected_location}" in capsys.readouterr().out
     assert prompt.call_count == len(answers)
 
 
@@ -860,7 +1014,7 @@ def test_archive_cli_noninteractive_saved_match_and_explicit_precedence(
     )
 
     assert status == 0
-    assert f"location={expected_location}" in capsys.readouterr().out
+    assert f"Location: {expected_location}" in capsys.readouterr().out
     prompt.assert_not_called()
 
 
@@ -914,12 +1068,20 @@ radius_m = 100
     explicit_output = capsys.readouterr().out
 
     assert saved_status == explicit_status == 0
-    assert "location=GPS Home" in saved_output
-    assert "saved-archive/GPS Home/20260903/Target" in saved_output
+    assert saved_output.count("Hierarchy: {location}/{session_end_date}/{target}") == 1
+    assert "Location: GPS Home" in saved_output
+    assert (
+        f"Destination: {tmp_path / 'saved-archive/GPS Home/20260903/Target/observation_01'}"
+        in saved_output
+    )
     assert "action=move" in saved_output
     assert "collision=error" in saved_output
-    assert "location=CLI Place" in explicit_output
-    assert "explicit-archive/CLI Place/20260903/Target" in explicit_output
+    assert explicit_output.count("Hierarchy: {location}/{session_end_date}/{target}") == 1
+    assert "Location: CLI Place" in explicit_output
+    assert (
+        f"Destination: {tmp_path / 'explicit-archive/CLI Place/20260903/Target/observation_01'}"
+        in explicit_output
+    )
     assert "collision=skip_identical" in explicit_output
 
 
@@ -1499,7 +1661,7 @@ def test_interactive_location_preserves_sequential_device_reconciliation(
 
     dry = interactive("--dry-run")
     assert dry == explicit
-    assert "Plan observation_02:" in dry
+    assert "Observation observation_02" in dry
     assert _tree_fingerprint(archive_root) == before
     output = interactive()
     assert "16 copied" in output
