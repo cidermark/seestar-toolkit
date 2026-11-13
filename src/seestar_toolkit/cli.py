@@ -832,8 +832,7 @@ def _print_archive_plan(
         print("Light TIFF candidates")
         print(f"  Candidates with no existing destination TIFF: {create}")
         print(
-            "  Existing TIFF destinations requiring comparison during real conversion: "
-            f"{compare}"
+            f"  Existing TIFF destinations requiring comparison during real conversion: {compare}"
         )
         print(f"  Previously archived light FITS reliably identified: {existing}")
     metadata_diagnostics = sum(len(item.metadata.diagnostics) for item in observations)

@@ -841,9 +841,7 @@ def test_archive_cli_dry_run_keeps_multiple_observation_details_separate(
     monkeypatch.setattr(cli, "prepare_seestar_archive", Mock(return_value=prepared))
     monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
 
-    status = cli.main(
-        ["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"]
-    )
+    status = cli.main(["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"])
 
     assert status == 0
     captured = capsys.readouterr()
@@ -851,9 +849,7 @@ def test_archive_cli_dry_run_keeps_multiple_observation_details_separate(
     assert "Observation warning — observation_02:" in captured.err
     blocks = captured.out.split("\nObservation ")[1:]
     assert len(blocks) == 2
-    for block, observation, device in zip(
-        blocks, prepared.plan.observations, devices, strict=True
-    ):
+    for block, observation, device in zip(blocks, prepared.plan.observations, devices, strict=True):
         assert block.startswith(observation.observation_name)
         assert f"Telescope: {device}" in block
         assert f"Destination: {observation.observation_directory}" in block
@@ -1002,12 +998,10 @@ def test_archive_cli_dry_run_reports_only_reliably_identified_archived_lights(
     captured = capsys.readouterr()
     assert f"Candidates with no existing destination TIFF: {expected_create}" in captured.out
     assert (
-        "Existing TIFF destinations requiring comparison during real conversion: 0"
-        in captured.out
+        "Existing TIFF destinations requiring comparison during real conversion: 0" in captured.out
     )
     assert (
-        f"Previously archived light FITS reliably identified: {expected_existing}"
-        in captured.out
+        f"Previously archived light FITS reliably identified: {expected_existing}" in captured.out
     )
     assert "would be created" not in captured.out
     assert "converted" not in captured.out
@@ -1030,9 +1024,7 @@ def test_archive_cli_dry_run_reports_one_prepared_result_without_reprocessing(
     monkeypatch.setattr(orchestration, "plan_seestar_archive", plan)
     monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
 
-    status = cli.main(
-        ["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"]
-    )
+    status = cli.main(["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"])
 
     assert status == 0
     assert "Observation observation_01" in capsys.readouterr().out
@@ -1078,9 +1070,7 @@ def test_archive_cli_dry_run_preserves_observation_metadata_diagnostics(
     monkeypatch.setattr(cli, "prepare_seestar_archive", prepare)
     monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
 
-    status = cli.main(
-        ["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"]
-    )
+    status = cli.main(["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"])
 
     assert status == 0
     prepare.assert_called_once()
@@ -1089,9 +1079,7 @@ def test_archive_cli_dry_run_preserves_observation_metadata_diagnostics(
     assert "Warnings: 1 (details reported below for observation_01)" in captured.out
     assert "Warnings: 1 total (1 observation metadata, 0 planning, 0 discovery)" in captured.out
     assert diagnostic not in captured.out
-    assert captured.err.splitlines() == [
-        f"Observation warning — observation_01: {diagnostic}"
-    ]
+    assert captured.err.splitlines() == [f"Observation warning — observation_01: {diagnostic}"]
 
 
 def test_archive_cli_dry_run_reports_all_warning_categories_once_without_mutation(
@@ -1130,9 +1118,7 @@ def test_archive_cli_dry_run_reports_all_warning_categories_once_without_mutatio
     monkeypatch.setattr(cli, "prepare_seestar_archive", Mock(return_value=prepared))
     monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
 
-    status = cli.main(
-        ["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"]
-    )
+    status = cli.main(["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"])
 
     assert status == 1
     assert not archive_root.exists()
