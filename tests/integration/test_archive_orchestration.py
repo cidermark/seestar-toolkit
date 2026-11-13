@@ -827,6 +827,221 @@ def test_archive_cli_dry_run_retains_raw_telescope_without_inference(
     assert "Telescope: Unrecognised Scope_42" in output
 
 
+def test_archive_cli_dry_run_keeps_multiple_observation_details_separate(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, lights, _ = _source_tree(tmp_path, light_count=2, include_stack=False)
+    devices = ("S50_99643794", "S50 Pro_edfe7fb2")
+    for path, device in zip(lights, devices, strict=True):
+        with fits.open(path, mode="update") as hdus:
+            hdus[0].header["TELESCOP"] = device
+    archive_root = tmp_path / "archive"
+    prepared = orchestration.prepare_seestar_archive(root, archive_root=archive_root)
+    assert len(prepared.plan.observations) == 2
+    monkeypatch.setattr(cli, "prepare_seestar_archive", Mock(return_value=prepared))
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        ["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"]
+    )
+
+    assert status == 0
+    captured = capsys.readouterr()
+    assert "Observation warning — observation_01:" in captured.err
+    assert "Observation warning — observation_02:" in captured.err
+    blocks = captured.out.split("\nObservation ")[1:]
+    assert len(blocks) == 2
+    for block, observation, device in zip(
+        blocks, prepared.plan.observations, devices, strict=True
+    ):
+        assert block.startswith(observation.observation_name)
+        assert f"Telescope: {device}" in block
+        assert f"Destination: {observation.observation_directory}" in block
+        assert "Files: 1 light FITS; 0 stacked FITS" in block
+        assert all(other not in block for other in devices if other != device)
+
+
+def test_archive_cli_dry_run_displays_unknown_for_missing_telescope(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    _set_device(root, None)
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        [
+            "archive",
+            str(root),
+            str(tmp_path / "archive"),
+            "--dry-run",
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 0
+    captured = capsys.readouterr()
+    telescope_lines = [
+        line.strip() for line in captured.out.splitlines() if line.strip().startswith("Telescope:")
+    ]
+    assert telescope_lines == ["Telescope: unknown"]
+
+
+@pytest.mark.parametrize(
+    ("include_stack", "expected_summary", "expected_files"),
+    [
+        (False, "1 light FITS; 0 stacked FITS", "Files: 1 light FITS; 0 stacked FITS"),
+        (True, "1 light FITS; 1 stacked FITS", "Files: 1 light FITS; 1 stacked FITS"),
+    ],
+)
+def test_archive_cli_dry_run_counts_planned_lights_and_stack_files(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    include_stack: bool,
+    expected_summary: str,
+    expected_files: str,
+) -> None:
+    root, _, stack = _source_tree(tmp_path, include_stack=include_stack)
+    if stack is not None:
+        stack.rename(stack.with_name(stack.name.replace("Stacked_1_", "Stacked_195_")))
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        [
+            "archive",
+            str(root),
+            str(tmp_path / "archive"),
+            "--dry-run",
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 0
+    captured = capsys.readouterr()
+    assert expected_summary in captured.out
+    assert expected_files in captured.out
+    if include_stack:
+        assert "195 stacked FITS" not in captured.out
+
+
+def test_archive_cli_empty_dry_run_reports_clean_zero_plan_without_mutation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    source_root = tmp_path / "empty"
+    source_root.mkdir()
+    archive_root = tmp_path / "archive"
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        [
+            "archive",
+            str(source_root),
+            str(archive_root),
+            "--dry-run",
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 0
+    assert tuple(source_root.iterdir()) == ()
+    assert not archive_root.exists()
+    captured = capsys.readouterr()
+    assert "Summary: 0 observations; 0 light FITS; 0 stacked FITS" in captured.out
+    assert captured.out.count("Hierarchy: {target}/{location}/{session_end_date}") == 1
+    assert "Warnings: none (0 observation metadata, 0 planning, 0 discovery)" in captured.out
+    assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    ("policy", "expected_create", "expected_existing"),
+    [
+        ("skip-identical", 1, 1),
+        ("overwrite", 1, 1),
+        ("error", 0, 0),
+    ],
+)
+def test_archive_cli_dry_run_reports_only_reliably_identified_archived_lights(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    policy: str,
+    expected_create: int,
+    expected_existing: int,
+) -> None:
+    root, _, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    first = archive_seestar_session(root, archive_root=archive_root)
+    assert first.status is SeestarArchiveStatus.COMPLETE
+    before = _tree_fingerprint(archive_root)
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+    converter = Mock(side_effect=AssertionError("converter called during dry run"))
+    collision_prompt = Mock(side_effect=AssertionError("TIFF collision prompt issued"))
+    existing_prompt = Mock(side_effect=AssertionError("existing-FITS prompt issued"))
+    monkeypatch.setattr(light_tiff, "convert_fits_to_tiff", converter)
+    monkeypatch.setattr(cli, "_prompt_light_tiff_collision", collision_prompt)
+    monkeypatch.setattr(cli, "_prompt_process_existing_lights", existing_prompt)
+
+    status = cli.main(
+        [
+            "archive",
+            str(root),
+            str(archive_root),
+            "--dry-run",
+            "--convert-lights",
+            "--collision-policy",
+            policy,
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 0
+    assert _tree_fingerprint(archive_root) == before
+    converter.assert_not_called()
+    collision_prompt.assert_not_called()
+    existing_prompt.assert_not_called()
+    captured = capsys.readouterr()
+    assert f"Candidates with no existing destination TIFF: {expected_create}" in captured.out
+    assert (
+        "Existing TIFF destinations requiring comparison during real conversion: 0"
+        in captured.out
+    )
+    assert (
+        f"Previously archived light FITS reliably identified: {expected_existing}"
+        in captured.out
+    )
+    assert "would be created" not in captured.out
+    assert "converted" not in captured.out
+
+
+def test_archive_cli_dry_run_reports_one_prepared_result_without_reprocessing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, _, _ = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+    prepared = orchestration.prepare_seestar_archive(root, archive_root=archive_root)
+    prepare = Mock(return_value=prepared)
+    discover = Mock(side_effect=AssertionError("reporting rediscovered inputs"))
+    reconstruct = Mock(side_effect=AssertionError("reporting reconstructed observations"))
+    plan = Mock(side_effect=AssertionError("reporting replanned destinations"))
+    monkeypatch.setattr(cli, "prepare_seestar_archive", prepare)
+    monkeypatch.setattr(cli, "plan_seestar_archive", plan)
+    monkeypatch.setattr(orchestration, "discover_seestar_inputs", discover)
+    monkeypatch.setattr(orchestration, "reconstruct_seestar_observations", reconstruct)
+    monkeypatch.setattr(orchestration, "plan_seestar_archive", plan)
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        ["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"]
+    )
+
+    assert status == 0
+    assert "Observation observation_01" in capsys.readouterr().out
+    prepare.assert_called_once()
+    discover.assert_not_called()
+    reconstruct.assert_not_called()
+    plan.assert_not_called()
+
+
 @pytest.mark.parametrize(
     ("diagnostic", "logical_target"),
     [
@@ -958,6 +1173,42 @@ def test_archive_cli_real_copy_and_move_workflows(
     assert summary in output
     assert tuple(archive_root.rglob("INDEX.md")) == (archive_root / "Target/INDEX.md",)
     assert "Indexes: 1 created" in output
+
+
+def test_archive_cli_verbose_does_not_change_normal_archive_output(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    plain_root, _, _ = _source_tree(tmp_path / "plain")
+    verbose_root, _, _ = _source_tree(tmp_path / "verbose")
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    plain_status = cli.main(
+        [
+            "archive",
+            str(plain_root),
+            str(tmp_path / "plain-archive"),
+            "--non-interactive",
+        ]
+    )
+    plain = capsys.readouterr()
+    verbose_status = cli.main(
+        [
+            "--verbose",
+            "archive",
+            str(verbose_root),
+            str(tmp_path / "verbose-archive"),
+            "--non-interactive",
+        ]
+    )
+    verbose = capsys.readouterr()
+
+    assert plain_status == verbose_status == 0
+    assert plain.out == verbose.out
+    assert "Archive complete: 2 copied" in plain.out
+    assert "Indexes: 1 created" in plain.out
+    assert "Archive dry run" not in plain.out
+    assert "Planned mappings:" not in plain.out
+    assert plain.err == verbose.err == ""
 
 
 @pytest.mark.parametrize(
