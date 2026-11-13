@@ -39,6 +39,7 @@ The numbered Stages 1–9 below refer to the original development and release pr
 | ENH-005c | FITS privacy processing and verification | Complete; implementation commits `c2f0226`, `f347677`, and `c690248`. |
 | ENH-005d | FITS privacy integration, regression, and release readiness | Complete; authorised at `aa905af` and implemented at `2e8c2e1`. |
 | ENH-005 | FITS privacy processing | Complete; formal closure approved 10 November 2026. Delivered `header-report`, `pii-scrub`, and `pii-scrub --verify`; existing implementation and validation evidence is retained. |
+| ENH-006 | Archive dry-run reporting | Implementation and validation complete: concise observation-level dry-run summary by default, with detailed per-file mappings in global `--verbose`. Formal closure and Git integration remain pending. |
 | S50 Pro qualification — Stage 3 | Technical qualification T01–T06 | Technical PASS; closure readiness PASS; T01–T06 user acceptance APPROVED 26 October 2026; administrative closure APPROVED, subject to documentation and Git workflow completion |
 
 ## 3. Current behaviour and architectural decisions
@@ -153,7 +154,6 @@ These are candidates, not approved implementations or commitments. Priorities an
 | TIFF verification | Independently verify archived TIFF derivatives against authoritative FITS conversion output | ENH-003 deferred follow-up | Deferred |
 | Archive regeneration | Rebuild or reorganise existing archives safely when hierarchy or date policy changes | Post-release enhancement inventory; ENH-002 deferral | Deferred |
 | Telescope hierarchy token | Optional telescope model or device identity in archive paths | Archive hierarchy enhancement proposal | Deferred |
-| Dry-run summary | Concise observation-level archive plan by default, detailed per-file output via an optional verbose mode | S50 Pro qualification follow-up | Deferred |
 | Configuration prompt clarity | Make Enter-to-skip and `y`-to-save behaviour clearer; preserve existing accepted responses | Configuration usability observation | Deferred |
 | Additional telescope qualification | S30/S30 Pro and other firmware or capture configurations, subject to representative evidence | S50 Pro qualification scope boundary | Deferred |
 | Additional capture formats | Solar, Lunar, planetary video; DSLR/conventional-camera ingestion | Longer-term roadmap | Deferred |
