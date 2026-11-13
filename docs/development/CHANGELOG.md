@@ -56,13 +56,20 @@ reporting at the observation level, detailed per-file source-to-destination
 mappings with global `--verbose`, and conservative light-TIFF dry-run facts
 only. Focused validation covered the reporting contract. Formal closure was
 approved on 13 November 2026 following the final closure and documentation
-audit. No formal-closure commit identifier is recorded; Git integration remains
-separate and pending.
+audit. Formal closure documentation was committed as `a0f4ce3` and
+fast-forwarded into `main`. GitHub Actions run `43430158866` failed only its
+scoped Ruff formatter gate. Corrective commit `25911b4` is strictly
+formatter-only, with no user-visible behaviour change; it was fast-forwarded
+into and pushed to `main`. GitHub Actions run `43433956734` passed the complete
+Distribution validation matrix on `main`, including all four macOS ARM64 Python
+jobs. No release activity or enhancement-branch deletion is recorded.
 
 ## Development commit history
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
+| ENH-006 | Apply CI-required Ruff formatting | `25911b4` | 2026-11-13 |
+| ENH-006 | Record formal ENH-006 closure | `a0f4ce3` | 2026-11-13 |
 | ENH-006 | Complete dry-run reporting test coverage | `a9f0938` | 2026-11-13 |
 | ENH-006 | Improve archive dry-run reporting | `96bfa75` | 2026-11-12 |
 | ENH-006 | Approve archive dry-run reporting specification | `85e95c8` | 2026-11-12 |
@@ -191,6 +198,12 @@ separate and pending.
   November 2026. ENH-005a through ENH-005d are complete and the temporary
   development-only `--noscrub` option has been removed. Formal closure documentation
   commit: `4262886`. Main-branch integration remains pending.
+- **ENH-006:** formally complete and integrated into `main`. Formal-closure
+  documentation commit: `a0f4ce3`; strictly formatter-only follow-up commit:
+  `25911b4`. GitHub Actions run `43430158866` failed only the scoped Ruff
+  formatter gate, and run `43433956734` passed the complete Distribution matrix
+  on `main`, including all four macOS ARM64 Python jobs. This records neither a
+  release nor enhancement-branch deletion.
 - **S50 Pro qualification Stage 3:** technical PASS and independent
   closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
   October 2026. Administrative closure is approved subject to completion of
