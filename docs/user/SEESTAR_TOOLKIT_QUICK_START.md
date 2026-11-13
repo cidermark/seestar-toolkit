@@ -1,14 +1,15 @@
 # Seestar Toolkit Quick Start
 
-**Development — ENH-005 (unreleased)**
+**Development — ENH-006 (unreleased)**
 
-**Document updated:** 2026-11-10
+**Document updated:** 2026-11-13
 
 This development edition includes the unreleased ENH-001 configuration commands,
 ENH-002 observing-night date policy, ENH-003 archive light-TIFF option, and
-ENH-005 FITS privacy commands. They are not included in the published v1.1.0
-wheel. The released installation instructions and support boundaries remain as
-described below. No new release number has been assigned.
+ENH-005 FITS privacy commands, and ENH-006 archive dry-run reporting. They are
+not included in the published v1.1.0 wheel. The released installation
+instructions and support boundaries remain as described below. No new release
+number has been assigned.
 
 This Quick Start gets you from installation to a **safe first archive** and,
 optionally, a FITS-to-TIFF conversion.

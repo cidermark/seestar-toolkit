@@ -1,6 +1,6 @@
 # Seestar Toolkit — Project Notes
 
-> **Status date:** 10 November 2026<br>
+> **Status date:** 13 November 2026<br>
 > **Purpose:** Current project state, architectural decisions, roadmap and outstanding work.<br>
 > **Historical detail:** The source notes contain a chronological development diary. The original notes are preserved in `docs/development/history/PROJECT_Notes_HISTORICAL_SNAPSHOT.md` to avoid losing prior checkpoint evidence.
 
@@ -39,7 +39,7 @@ The numbered Stages 1–9 below refer to the original development and release pr
 | ENH-005c | FITS privacy processing and verification | Complete; implementation commits `c2f0226`, `f347677`, and `c690248`. |
 | ENH-005d | FITS privacy integration, regression, and release readiness | Complete; authorised at `aa905af` and implemented at `2e8c2e1`. |
 | ENH-005 | FITS privacy processing | Complete; formal closure approved 10 November 2026. Delivered `header-report`, `pii-scrub`, and `pii-scrub --verify`; existing implementation and validation evidence is retained. |
-| ENH-006 | Archive dry-run reporting | Implementation and validation complete: concise observation-level dry-run summary by default, with detailed per-file mappings in global `--verbose`. Formal closure and Git integration remain pending. |
+| ENH-006 | Archive dry-run reporting | Implementation and validation complete at `96bfa75` and `a9f0938`: concise observation-level dry-run summary by default, with detailed per-file mappings in global `--verbose`. Formal closure and Git integration remain pending. |
 | S50 Pro qualification — Stage 3 | Technical qualification T01–T06 | Technical PASS; closure readiness PASS; T01–T06 user acceptance APPROVED 26 October 2026; administrative closure APPROVED, subject to documentation and Git workflow completion |
 
 ## 3. Current behaviour and architectural decisions
@@ -84,6 +84,11 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 - Copy is the safe default. Move requires explicit selection and verified file operations.
 - Identical content and differing-content filename collisions are handled conservatively; no silent overwrite.
 - Archive dry-run uses the planning path without mutating source or destination.
+  Normal output gives a concise summary and separate per-observation blocks with
+  the effective hierarchy, resolved destination, retained telescope metadata,
+  and planned light/stack FITS counts. Global `--verbose` adds planned
+  source-to-destination mappings. With `--convert-lights`, dry-run reports only
+  conservative established facts; it does not claim conversion outcomes.
 - The target-level `INDEX.md` is a derived convenience index, not authoritative input for reconstruction.
 - Location handling supports configured saved locations, GPS matching and interactive workflows where applicable.
 
@@ -125,6 +130,7 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 | ENH-005c | FITS privacy foundation, `pii-scrub`, and `pii-scrub --verify` completed at `c2f0226`, `f347677`, and `c690248`. Focused closure evidence records 11 foundation tests, 15 scrub CLI tests, and 14 verification tests, with relevant regressions and Ruff checks passing. Full-suite validation was deferred to ENH-005d. |
 | ENH-005d | Authorised at `aa905af` and implemented at `2e8c2e1`. The temporary option is removed, user/development documentation is integrated, 738 full-suite tests and 74 focused ENH-005 regressions pass, Ruff lint and changed-file formatting pass, and PDF validation passes. The repository-wide Ruff formatting check still reports 16 pre-existing unrelated files. ENH-005d is complete. |
 | ENH-005 | Formal closure approved 10 November 2026 following completed implementation, validation, final closure audit, and documentation remediation. `header-report`, `pii-scrub`, and `pii-scrub --verify` are delivered; the implementation and validation evidence above is retained. No formal closure commit identifier is recorded. |
+| ENH-006 | Implemented at `96bfa75` and reporting-focused test coverage completed at `a9f0938`. Nineteen reporting-focused tests and 754 full-suite tests passed, with two expected duplicate-ZIP warnings; Ruff and changed-file whitespace checks passed. Manual acceptance covered C 27, NGC 6888, their combined input, and two separately reconstructed M 42 observations. Formal closure and Git integration remain pending. |
 
 ### 4.1 S50 Pro qualification — separate Stage 3
 

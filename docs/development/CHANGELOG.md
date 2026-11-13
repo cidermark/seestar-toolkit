@@ -49,10 +49,21 @@ including commits `f1de3eb`, `c2f0226`, `f347677`, `c690248`, and `2e8c2e1`, is
 preserved below. Formal closure documentation was committed as 4262886 and pushed
 to the enhancement branch. Integration into main remains pending.
 
+ENH-006 was approved at `85e95c8` on 12 November 2026, implemented at
+`96bfa75` on 12 November 2026, and completed its reporting-focused test
+coverage at `a9f0938` on 13 November 2026. It adds concise normal dry-run
+reporting at the observation level, detailed per-file source-to-destination
+mappings with global `--verbose`, and conservative light-TIFF dry-run facts
+only. Focused validation covered the reporting contract; formal closure and Git
+integration remain pending.
+
 ## Development commit history
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
+| ENH-006 | Complete dry-run reporting test coverage | `a9f0938` | 2026-11-13 |
+| ENH-006 | Improve archive dry-run reporting | `96bfa75` | 2026-11-12 |
+| ENH-006 | Approve archive dry-run reporting specification | `85e95c8` | 2026-11-12 |
 | ENH-005 | Record formal ENH-005 closure | `4262886` | 2026-11-10 |
 | ENH-005d | Finalise FITS privacy processing integration | `2e8c2e1` | 2026-11-10 |
 | ENH-005d | Authorise final integration and validation | `aa905af` | 2026-11-10 |

@@ -1,14 +1,15 @@
 # Seestar Toolkit User Guide
 
-**Development — ENH-005 (unreleased)**
+**Development — ENH-006 (unreleased)**
 
-**Document updated:** 2026-11-10
+**Document updated:** 2026-11-13
 
 This development edition includes the unreleased ENH-001 configuration commands,
 ENH-002 observing-night date policy, ENH-003 archive light-TIFF option, and
-ENH-005 FITS privacy commands. They are not included in the published v1.1.0
-wheel. The released installation instructions and support boundaries remain as
-described below. No new release number has been assigned.
+ENH-005 FITS privacy commands, and ENH-006 archive dry-run reporting. They are
+not included in the published v1.1.0 wheel. The released installation
+instructions and support boundaries remain as described below. No new release
+number has been assigned.
 
 ## Contents
 
@@ -614,6 +615,17 @@ There is a lot in that command, but the important parts for now are:
 
 The collision option will make more sense once we discuss existing archives. For
 this first backed-up example, keep it exactly as shown.
+
+Normal dry-run output starts with a concise summary, then gives one clearly
+separated planned-observation block for each observation. Each block shows the
+effective hierarchy, resolved destination, retained telescope value, planned
+light/stack FITS counts, and any warnings. Normal dry-run intentionally omits
+per-file mappings to keep the preview readable. To include planned
+source-to-destination mappings, put global `--verbose` before `archive`:
+
+``` bash
+seestar-toolkit --verbose archive --dry-run SOURCE_ROOT ARCHIVE_ROOT
+```
 
 ## Inspect the proposed archive
 
@@ -2646,6 +2658,6 @@ making decisions about removing source files.
 ------------------------------------------------------------------------
 
 This development guide retains the released v1.1.0 workflows and documents the
-unreleased enhancements through ENH-005. ENH-005 remains open pending final
-validation and formal closure. For a shorter installation and first-use path, see the
-[Seestar Toolkit Quick Start](SEESTAR_TOOLKIT_QUICK_START.md).
+unreleased enhancements through ENH-006. ENH-006 implementation and validation
+are complete; formal closure and Git integration remain pending. For a shorter
+installation and first-use path, see the [Seestar Toolkit Quick Start](SEESTAR_TOOLKIT_QUICK_START.md).
