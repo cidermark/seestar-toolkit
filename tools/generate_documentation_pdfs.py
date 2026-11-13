@@ -37,7 +37,7 @@ DOCUMENTS = (
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.md",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.sha256",
-        "9e17d696749c8b1217cfc7158015063b2759d18ca938fd9a81176cb8aa2b6fab",
+        "5afa8ae4e73c579a03a13a60ca477966f1ab5db74d614801962fcce41be96670",
         "Seestar Toolkit User Guide",
     ),
     Document(

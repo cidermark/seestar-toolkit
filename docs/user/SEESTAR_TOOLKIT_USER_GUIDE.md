@@ -2658,6 +2658,6 @@ making decisions about removing source files.
 ------------------------------------------------------------------------
 
 This development guide retains the released v1.1.0 workflows and documents the
-unreleased enhancements through ENH-006. ENH-006 implementation and validation
-are complete; formal closure and Git integration remain pending. For a shorter
+unreleased enhancements through ENH-006. ENH-006 formal closure is approved and
+complete; Git integration remains pending. For a shorter
 installation and first-use path, see the [Seestar Toolkit Quick Start](SEESTAR_TOOLKIT_QUICK_START.md).

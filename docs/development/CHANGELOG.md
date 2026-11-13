@@ -54,8 +54,10 @@ ENH-006 was approved at `85e95c8` on 12 November 2026, implemented at
 coverage at `a9f0938` on 13 November 2026. It adds concise normal dry-run
 reporting at the observation level, detailed per-file source-to-destination
 mappings with global `--verbose`, and conservative light-TIFF dry-run facts
-only. Focused validation covered the reporting contract; formal closure and Git
-integration remain pending.
+only. Focused validation covered the reporting contract. Formal closure was
+approved on 13 November 2026 following the final closure and documentation
+audit. No formal-closure commit identifier is recorded; Git integration remains
+separate and pending.
 
 ## Development commit history
 
