@@ -64,16 +64,12 @@ SEESTAR TOOLKIT — [ENH-xxx / BUG-xxx]
 1. AUTHORITATIVE SPECIFICATION
 ==================================================
 Read [exact repository path] first and treat it as controlling.
-Use [revision and sections]. Stop if this launcher conflicts with it or a
-material decision remains unresolved for this stage.
+Use [revision and sections]. Stop if this launcher conflicts with it or a material decision remains unresolved for this stage.
 
 ==================================================
 2. BASELINE AND SAFETY CHECKS
 ==================================================
-Verify [repository], [branch], [expected HEAD], [expected upstream or its
-absence], and [expected staged, unstaged and untracked state]. Preserve
-[known pending files and intended changes]. Stop and report the exact
-difference if the baseline, specification or working tree is unexpected.
+Verify [repository], [branch], [expected HEAD], [expected upstream or its absence], and [expected staged, unstaged and untracked state]. Preserve [known pending files and intended changes]. Stop and report the exact difference if the baseline, specification or working tree is unexpected.
 
 ==================================================
 3. AUTHORISED SCOPE
@@ -89,25 +85,17 @@ Preserve [existing contracts]. Exclude [named behaviour and later stages].
 ==================================================
 5. VALIDATION AND CLOSURE CRITERIA
 ==================================================
-[Name the applicable checks, regression boundaries, manual evidence and
-criterion IDs.] Report each outcome with supporting evidence. Stop on a
-material defect and report it with the affected criterion.
+[Name the applicable checks, regression boundaries, manual evidence and criterion IDs.] Report each outcome with supporting evidence. Stop on a material defect and report it with the affected criterion.
 
 ==================================================
 6. RESTRICTIONS AND GIT BOUNDARIES
 ==================================================
-Use only the authorised session scope. Preserve pre-existing work.
-Do not stage, commit, push, merge, switch/create/delete branches, fetch,
-pull, reset, rebase, stash or clean unless this exact operation is authorised.
-Stop at the requested report. Formal closure is a coordinator decision.
+Use only the authorised session scope. Preserve pre-existing work. Do not stage, commit, push, merge, switch/create/delete branches, fetch, pull, reset, rebase, stash or clean unless this exact operation is authorised. Stop at the requested report. Formal closure is a coordinator decision.
 
 ==================================================
 7. COMPLETION REPORT
 ==================================================
-Return the repository baseline and final status, actual changed files and
-their purpose, criterion-by-criterion evidence, commands and results,
-counts or representative output where relevant, failures, open items and
-any deviations. State what the evidence establishes for this stage.
+Return the repository baseline and final status, actual changed files and their purpose, criterion-by-criterion evidence, commands and results, counts or representative output where relevant, failures, open items and any deviations. State what the evidence establishes for this stage.
 ```
 
 For an initial draft or read-only investigation, adapt sections 1 and 3 to the approved brief and expected document state. Keep configuration and coordinator commentary outside the fenced block.
