@@ -1,4 +1,4 @@
-"""Derived, deterministic target-level archive index generation."""
+"""Derived, deterministic archive index generation."""
 
 from __future__ import annotations
 
@@ -30,6 +30,7 @@ _MARKDOWN_SPECIAL = re.compile(r"([\\`*_[\]<>#|])")
 @dataclass(frozen=True, slots=True)
 class _IndexObservation:
     target: str
+    archive_path: str
     location: str
     session_date: str
     observation_name: str
@@ -46,9 +47,69 @@ class _IndexObservation:
     longitude: float | None
 
 
+class _HistoricalTargetLookup:
+    """Recover one historical target from the generated root-index record format."""
+
+    def __init__(self, index_path: Path) -> None:
+        self._index_path = index_path
+        self._content: str | None = None
+
+    def target_for(self, archive_path: str) -> str:
+        content = self._read(archive_path)
+        if not content.startswith("# Archive\n"):
+            self._fail(archive_path, "index is malformed: missing archive heading")
+        headings = tuple(re.finditer(r"^### Observation .+$", content, re.MULTILINE))
+        if not headings:
+            self._fail(archive_path, "index is malformed: no observation records")
+
+        records: dict[str, list[str]] = {}
+        for position, heading in enumerate(headings):
+            end = headings[position + 1].start() if position + 1 < len(headings) else len(content)
+            lines = content[heading.end() : end].splitlines()
+            targets = [
+                line.removeprefix("- Target: ") for line in lines if line.startswith("- Target: ")
+            ]
+            paths = [
+                line.removeprefix("- Archive path: ")
+                for line in lines
+                if line.startswith("- Archive path: ")
+            ]
+            if len(paths) != 1 or len(targets) != 1 or not targets[0].strip():
+                self._fail(archive_path, "index is malformed: incomplete observation record")
+            records.setdefault(paths[0], []).append(targets[0])
+
+        matches = records.get(archive_path, [])
+        if not matches:
+            self._fail(archive_path, "index has no exact matching record")
+        unique_targets = set(matches)
+        if len(matches) > 1:
+            reason = (
+                "index has ambiguous duplicate records"
+                if len(unique_targets) == 1
+                else "index has inconsistent targets for the same archive path"
+            )
+            self._fail(archive_path, reason)
+        return matches[0]
+
+    def _read(self, archive_path: str) -> str:
+        if self._content is not None:
+            return self._content
+        try:
+            self._content = self._index_path.read_text()
+        except FileNotFoundError:
+            self._fail(archive_path, "archive-root INDEX.md is missing")
+        except (OSError, UnicodeError) as error:
+            self._fail(archive_path, f"archive-root INDEX.md is unreadable: {error}")
+        return self._content
+
+    @staticmethod
+    def _fail(archive_path: str, reason: str) -> None:
+        raise ValueError(f"Historical target recovery failed for {archive_path}: {reason}")
+
+
 def planned_index_paths(plan: ArchivePlan) -> tuple[Path, ...]:
-    """Return deterministic concrete target-level index paths without I/O."""
-    paths = {_target_directory(plan, observation) / "INDEX.md" for observation in plan.observations}
+    """Return deterministic target-level or archive-root index paths without I/O."""
+    paths = {_index_directory(plan, observation) / "INDEX.md" for observation in plan.observations}
     return tuple(sorted(paths, key=lambda path: path.as_posix()))
 
 
@@ -63,7 +124,10 @@ def generate_archive_indexes(
             records = _records_for_index(plan, index_path, outcomes)
             if not records:
                 continue
-            rendered = _render(records)
+            rendered = _render(
+                records,
+                archive_root_index="{target}" not in plan.config.hierarchy_template.split("/"),
+            )
             results.append(_write_index(plan.config.archive_root, index_path, rendered))
         except (FitsError, OSError, ValueError) as error:
             results.append(
@@ -76,13 +140,16 @@ def generate_archive_indexes(
     return tuple(results)
 
 
-def _target_directory(plan: ArchivePlan, observation: PlannedArchiveObservation) -> Path:
+def _index_directory(plan: ArchivePlan, observation: PlannedArchiveObservation) -> Path:
     tokens = plan.config.hierarchy_template.split("/")
-    target_position = tokens.index("{target}")
-    relative = observation.hierarchy_directory.relative_to(plan.config.archive_root)
-    target_directory = plan.config.archive_root.joinpath(*relative.parts[: target_position + 1])
-    _require_safe_path(plan.config.archive_root, target_directory / "INDEX.md")
-    return target_directory
+    if "{target}" not in tokens:
+        index_directory = plan.config.archive_root
+    else:
+        target_position = tokens.index("{target}")
+        relative = observation.hierarchy_directory.relative_to(plan.config.archive_root)
+        index_directory = plan.config.archive_root.joinpath(*relative.parts[: target_position + 1])
+    _require_safe_path(plan.config.archive_root, index_directory / "INDEX.md")
+    return index_directory
 
 
 def _records_for_index(
@@ -90,37 +157,51 @@ def _records_for_index(
     index_path: Path,
     current_outcomes: dict[Path, ArchiveFileOutcome],
 ) -> tuple[_IndexObservation, ...]:
-    target_directory = index_path.parent
-    if not target_directory.exists():
+    index_directory = index_path.parent
+    if not index_directory.exists():
         return ()
+    archive_root_index = "{target}" not in plan.config.hierarchy_template.split("/")
+    historical_targets = _HistoricalTargetLookup(index_path) if archive_root_index else None
     records = []
     for observation_directory in sorted(
         (
             path
-            for path in target_directory.rglob("observation_*")
+            for path in index_directory.rglob("observation_*")
             if path.is_dir()
             and ((path / "fits_images" / "lights").is_dir() or (path / "seestar_stacked").is_dir())
         ),
         key=lambda path: path.as_posix(),
     ):
         record = _record_from_directory(
-            plan, target_directory, observation_directory, current_outcomes
+            plan,
+            index_directory,
+            observation_directory,
+            current_outcomes,
+            historical_targets=historical_targets,
         )
         if record is not None:
             records.append(record)
     return tuple(
         sorted(
             records,
-            key=lambda item: (item.location.casefold(), item.session_date, item.observation_name),
+            key=lambda item: (
+                *((item.target.casefold(),) if archive_root_index else ()),
+                item.location.casefold(),
+                item.session_date,
+                item.observation_name,
+                *((item.archive_path,) if archive_root_index else ()),
+            ),
         )
     )
 
 
 def _record_from_directory(
     plan: ArchivePlan,
-    target_directory: Path,
+    index_directory: Path,
     observation_directory: Path,
     current_outcomes: dict[Path, ArchiveFileOutcome],
+    *,
+    historical_targets: _HistoricalTargetLookup | None = None,
 ) -> _IndexObservation | None:
     hierarchy_directory = observation_directory.parent
     relative = hierarchy_directory.relative_to(plan.config.archive_root)
@@ -128,10 +209,22 @@ def _record_from_directory(
     if len(relative.parts) != len(tokens):
         return None
     values = dict(zip(tokens, relative.parts, strict=True))
-    if target_directory != plan.config.archive_root.joinpath(
-        *relative.parts[: tokens.index("{target}") + 1]
-    ):
+    if "{target}" in tokens:
+        expected_index_directory = plan.config.archive_root.joinpath(
+            *relative.parts[: tokens.index("{target}") + 1]
+        )
+    else:
+        expected_index_directory = plan.config.archive_root
+    if index_directory != expected_index_directory:
         return None
+    archive_path = observation_directory.relative_to(plan.config.archive_root).as_posix()
+    if historical_targets is not None and _has_current_collision(
+        observation_directory, current_outcomes
+    ):
+        raise ValueError(
+            f"Root index publication is unsafe for {archive_path}: "
+            "a current archive collision prevents reliable record regeneration"
+        )
     light_paths = _established_fits(
         observation_directory / "fits_images" / "lights", current_outcomes
     )
@@ -142,13 +235,31 @@ def _record_from_directory(
     stack_path = stack_paths[0] if stack_paths else None
     stack_inspection = inspect_fits(stack_path) if stack_path else None
     evidence = (*light_inspections, *((stack_inspection,) if stack_inspection else ()))
-    representative = evidence[0]
     first_light = _minimum(item.captured_at for item in light_inspections)
     last_light = _maximum(item.captured_at for item in light_inspections)
+    planned = next(
+        (item for item in plan.observations if item.observation_directory == observation_directory),
+        None,
+    )
+    target = planned.metadata.logical_target if planned is not None else _fits_target(evidence)
+    if target is None:
+        target = values.get("{target}")
+    if target is None:
+        if historical_targets is None:
+            target = "unknown"
+        else:
+            target = historical_targets.target_for(archive_path)
     return _IndexObservation(
-        target=representative.object_name or values["{target}"],
-        location=values["{location}"],
-        session_date=values["{session_end_date}"],
+        target=target,
+        archive_path=archive_path,
+        location=(
+            values.get("{location}")
+            or (planned.metadata.logical_location if planned is not None else "unknown")
+        ),
+        session_date=(
+            values.get("{session_end_date}")
+            or (planned.metadata.session_end_date if planned is not None else "unknown")
+        ),
         observation_name=observation_directory.name,
         telescope=_first(item.telescope for item in evidence),
         first_light=first_light,
@@ -162,6 +273,27 @@ def _record_from_directory(
         latitude=_first(item.site_latitude for item in evidence),
         longitude=_first(item.site_longitude for item in evidence),
     )
+
+
+def _has_current_collision(
+    observation_directory: Path,
+    current_outcomes: dict[Path, ArchiveFileOutcome],
+) -> bool:
+    return any(
+        outcome is ArchiveFileOutcome.COLLISION
+        and destination.is_relative_to(observation_directory)
+        for destination, outcome in current_outcomes.items()
+    )
+
+
+def _fits_target(inspections) -> str | None:
+    """Return the planner-compatible deterministic target from all FITS evidence."""
+    unique: dict[str, str] = {}
+    for inspection in inspections:
+        value = inspection.object_name
+        if value is not None and value.strip():
+            unique.setdefault(value.strip().casefold(), value)
+    return unique[min(unique)] if unique else None
 
 
 def _established_fits(
@@ -178,21 +310,34 @@ def _established_fits(
     )
 
 
-def _render(records: tuple[_IndexObservation, ...]) -> str:
-    lines = [f"# {_escape(records[0].target)}", ""]
+def _render(records: tuple[_IndexObservation, ...], *, archive_root_index: bool = False) -> str:
+    lines = ["# Archive" if archive_root_index else f"# {_escape(records[0].target)}", ""]
     current_group = None
     for record in records:
-        group = (record.location, record.session_date)
+        group = (
+            (record.target, record.location, record.session_date)
+            if archive_root_index
+            else (record.location, record.session_date)
+        )
         if group != current_group:
-            lines.extend(
-                [f"## {_escape(record.location)} — {_display_date(record.session_date)}", ""]
+            heading = (
+                f"## {_escape(record.target)} — {_escape(record.location)} — "
+                f"{_display_date(record.session_date)}"
+                if archive_root_index
+                else f"## {_escape(record.location)} — {_display_date(record.session_date)}"
             )
+            lines.extend([heading, ""])
             current_group = group
         number = record.observation_name.removeprefix("observation_")
-        lines.extend(
+        details = [
+            f"### Observation {_escape(number)}",
+            "",
+        ]
+        if archive_root_index:
+            details.append(f"- Target: {_value(record.target)}")
+            details.append(f"- Archive path: {record.archive_path}")
+        details.extend(
             [
-                f"### Observation {_escape(number)}",
-                "",
                 f"- Telescope: {_value(record.telescope)}",
                 f"- First light: {_datetime(record.first_light)}",
                 f"- Last light: {_datetime(record.last_light)}",
@@ -206,6 +351,7 @@ def _render(records: tuple[_IndexObservation, ...]) -> str:
                 "",
             ]
         )
+        lines.extend(details)
     return "\n".join(lines)
 
 

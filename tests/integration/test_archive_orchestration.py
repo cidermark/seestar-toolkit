@@ -24,6 +24,7 @@ from seestar_toolkit.archive import (
     CollisionPolicy,
     LightTiffCollisionDecision,
     LightTiffOutcome,
+    ObservationReconstructionResult,
     ObservationStatus,
     SavedLocation,
     SeestarArchiveStatus,
@@ -245,6 +246,41 @@ def test_library_convert_lights_uses_archived_fits_after_move(
     assert inputs == [result.execution.files[0].destination_path]
     assert not lights[0].exists()
     assert result.execution.files[0].destination_path.exists()
+
+
+def test_telescope_hierarchy_light_conversion_uses_archived_fits_and_observation_path(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root, lights, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    converted_inputs = []
+    real_convert = light_tiff.convert_fits_to_tiff
+
+    def record(input_path, output_path):
+        converted_inputs.append(Path(input_path))
+        real_convert(input_path, output_path)
+
+    monkeypatch.setattr(light_tiff, "convert_fits_to_tiff", record)
+    result = archive_seestar_session(
+        root,
+        archive_root=archive_root,
+        hierarchy_template="{telescope}/{target}",
+        source_action=SourceAction.MOVE,
+        convert_lights=True,
+    )
+
+    observation = result.plan.observations[0]
+    assert result.status is SeestarArchiveStatus.COMPLETE
+    assert observation.observation_directory == (
+        archive_root / "S50_12345678/Target/observation_01"
+    )
+    assert converted_inputs == [observation.lights[0].fits_destination]
+    assert result.light_tiffs[0].tiff_destination == (
+        observation.observation_directory
+        / "tiff_images/lights"
+        / observation.lights[0].source_path.with_suffix(".tiff").name
+    )
+    assert not lights[0].exists()
 
 
 def test_repeat_identical_lights_use_one_aggregate_decision_and_verify_tiff(
@@ -779,6 +815,34 @@ def test_archive_cli_dry_run_plans_without_any_filesystem_mutation(
     assert "Warnings: none (0 observation metadata, 0 planning, 0 discovery)" in output
     assert "FITS " not in output
     assert f"Index: {archive_root / 'Target/INDEX.md'}" in output
+
+
+def test_archive_cli_dry_run_reports_telescope_hierarchy_and_resolved_destination(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root, _, _ = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+    hierarchy = "{telescope}/{target}/{session_end_date}"
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        [
+            "archive",
+            str(root),
+            str(archive_root),
+            "--hierarchy",
+            hierarchy,
+            "--dry-run",
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 0
+    assert not archive_root.exists()
+    output = capsys.readouterr().out
+    assert f"Hierarchy: {hierarchy}" in output
+    assert f"Destination: {archive_root / 'S50_12345678/Target/20260903/observation_01'}" in output
+    assert f"Index: {archive_root / 'S50_12345678/Target/INDEX.md'}" in output
 
 
 def test_archive_cli_verbose_dry_run_groups_complete_mappings_by_observation(
@@ -1615,6 +1679,161 @@ def test_source_policies_are_passed_through_to_execution(tmp_path: Path) -> None
     assert second.tiffs == ()
 
 
+def test_telescope_hierarchy_preserves_copy_collision_and_source_safety(tmp_path: Path) -> None:
+    root, lights, _ = _source_tree(tmp_path, include_stack=False)
+    archive_root = tmp_path / "archive"
+    hierarchy = "{target}/{telescope}"
+    first = archive_seestar_session(root, archive_root=archive_root, hierarchy_template=hierarchy)
+    destination = first.execution.files[0].destination_path
+    archived_before = destination.read_bytes()
+    with fits.open(lights[0], mode="update") as hdus:
+        hdus[0].data[0, 0] += 1
+    source_after = lights[0].read_bytes()
+
+    second = archive_seestar_session(root, archive_root=archive_root, hierarchy_template=hierarchy)
+
+    assert second.status is SeestarArchiveStatus.FAILED
+    assert second.plan.observations[0].observation_name == "observation_01"
+    assert second.execution.files[0].outcome is ArchiveFileOutcome.COLLISION
+    assert destination.read_bytes() == archived_before
+    assert lights[0].read_bytes() == source_after
+    assert len(tuple(archive_root.rglob("observation_*"))) == 1
+
+
+def test_target_free_collision_preserves_complete_existing_root_index(tmp_path: Path) -> None:
+    archive_root = tmp_path / "archive"
+    hierarchy = "{telescope}"
+    first_root, _, _ = _source_tree(tmp_path / "first", include_stack=False)
+    second_root, second_lights, _ = _source_tree(tmp_path / "second", include_stack=False)
+    _set_device(first_root, "S50_00000001")
+    _set_device(second_root, "S50_00000002")
+    for path in first_root.rglob("*.fit"):
+        with fits.open(path, mode="update") as hdus:
+            hdus[0].header["OBJECT"] = "First Target"
+    for path in second_root.rglob("*.fit"):
+        with fits.open(path, mode="update") as hdus:
+            hdus[0].header["OBJECT"] = "Second Target"
+
+    first = archive_seestar_session(
+        first_root,
+        archive_root=archive_root,
+        hierarchy_template=hierarchy,
+    )
+    second = archive_seestar_session(
+        second_root,
+        archive_root=archive_root,
+        hierarchy_template=hierarchy,
+    )
+    assert first.status is SeestarArchiveStatus.COMPLETE
+    assert second.status is SeestarArchiveStatus.COMPLETE
+    index_path = archive_root / "INDEX.md"
+    index_before = index_path.read_bytes()
+    assert b"First Target" in index_before
+    assert b"Second Target" in index_before
+    archived_destination = second.execution.files[0].destination_path
+    archived_before = archived_destination.read_bytes()
+    with fits.open(second_lights[0], mode="update") as hdus:
+        hdus[0].data[0, 0] += 1
+    source_after = second_lights[0].read_bytes()
+
+    collided = archive_seestar_session(
+        second_root,
+        archive_root=archive_root,
+        hierarchy_template=hierarchy,
+    )
+
+    assert collided.status is SeestarArchiveStatus.FAILED
+    assert collided.execution.files[0].outcome is ArchiveFileOutcome.COLLISION
+    assert collided.indexes[0].outcome is ArchiveIndexOutcome.FAILED
+    assert collided.indexes[0].diagnostic is not None
+    assert "S50_00000002/observation_01" in collided.indexes[0].diagnostic
+    assert "collision" in collided.indexes[0].diagnostic
+    assert index_path.read_bytes() == index_before
+    assert archived_destination.read_bytes() == archived_before
+    assert second_lights[0].read_bytes() == source_after
+
+
+def _reconstruction_with_conflict_and_valid_observation(root: Path):
+    discovery = discover_seestar_inputs(root)
+    reconstruction = reconstruct_seestar_observations(discovery)
+    valid = reconstruction.observations[0]
+    assert valid.stack is not None
+    assert valid.stack.fits_inspection is not None
+    conflicting_stack = replace(
+        valid.stack,
+        fits_inspection=replace(
+            valid.stack.fits_inspection,
+            telescope="S50 Pro_87654321",
+        ),
+    )
+    conflicting = replace(valid, stack=conflicting_stack)
+    return ObservationReconstructionResult(
+        observations=(conflicting, valid),
+        excluded_items=reconstruction.excluded_items,
+    )
+
+
+def test_integrity_conflict_skips_observation_continues_valid_work_and_returns_one(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    root, _, _ = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+    reconstruction = _reconstruction_with_conflict_and_valid_observation(root)
+    monkeypatch.setattr(
+        orchestration,
+        "reconstruct_seestar_observations",
+        lambda _discovery: reconstruction,
+    )
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(["archive", str(root), str(archive_root), "--non-interactive"])
+
+    assert status == 1
+    archived_fits = tuple(archive_root.rglob("*.fit"))
+    assert len(archived_fits) == 2
+    assert tuple(archive_root.rglob("observation_*")) == (
+        archive_root / "Target/unknown/20260903/observation_01",
+    )
+    assert tuple(archive_root.rglob("INDEX.md")) == (archive_root / "Target/INDEX.md",)
+    captured = capsys.readouterr()
+    assert "Archive partial" in captured.out
+    assert "observation skipped" in captured.err
+    assert "S50_12345678" in captured.err
+    assert "S50_Pro_87654321" in captured.err
+
+
+def test_dry_run_integrity_conflict_reports_exit_one_without_mutation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    root, lights, stack = _source_tree(tmp_path)
+    archive_root = tmp_path / "archive"
+    sources = (*lights, stack)
+    before = {path: (_fingerprint(path), path.stat().st_mtime_ns) for path in sources}
+    reconstruction = _reconstruction_with_conflict_and_valid_observation(root)
+    monkeypatch.setattr(
+        orchestration,
+        "reconstruct_seestar_observations",
+        lambda _discovery: reconstruction,
+    )
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(["archive", str(root), str(archive_root), "--dry-run", "--non-interactive"])
+
+    assert status == 1
+    assert not archive_root.exists()
+    assert {path: (_fingerprint(path), path.stat().st_mtime_ns) for path in sources} == before
+    captured = capsys.readouterr()
+    assert "Summary: 1 observations" in captured.out
+    assert "Warnings: 1 total (0 observation metadata, 1 planning, 0 discovery)" in captured.out
+    assert "observation skipped" in captured.err
+    assert "S50_12345678" in captured.err
+    assert "S50_Pro_87654321" in captured.err
+
+
 def _set_device(root: Path, telescope: str | None) -> None:
     for path in root.rglob("*.fit"):
         with fits.open(path, mode="update") as hdus:
@@ -1633,6 +1852,101 @@ def _tree_fingerprint(root: Path):
         for path in root.rglob("*")
         if path.is_file()
     }
+
+
+def _remove_object_metadata(root: Path) -> None:
+    for path in root.rglob("*.fit"):
+        with fits.open(path, mode="update") as hdus:
+            hdus[0].header.pop("OBJECT", None)
+
+
+def test_target_free_incremental_archive_recovers_historical_target_from_index(
+    tmp_path: Path,
+) -> None:
+    archive_root = tmp_path / "archive"
+    hierarchy = "{telescope}"
+    historical, _, _ = _source_tree(tmp_path / "historical")
+    _set_device(historical, "S50_00000001")
+    _remove_object_metadata(historical)
+    historical_sources = _tree_fingerprint(historical)
+    first = archive_seestar_session(
+        historical,
+        archive_root=archive_root,
+        hierarchy_template=hierarchy,
+    )
+    assert first.status is SeestarArchiveStatus.COMPLETE
+
+    incoming, _, _ = _source_tree(tmp_path / "incoming")
+    _set_device(incoming, "S50_00000002")
+    for path in incoming.rglob("*.fit"):
+        with fits.open(path, mode="update") as hdus:
+            hdus[0].header["OBJECT"] = "Current Target"
+    incoming_sources = _tree_fingerprint(incoming)
+    second = archive_seestar_session(
+        incoming,
+        archive_root=archive_root,
+        hierarchy_template=hierarchy,
+    )
+
+    assert second.status is SeestarArchiveStatus.COMPLETE
+    content = (archive_root / "INDEX.md").read_text()
+    assert content.count("- Target: Target") == 1
+    assert content.count("- Target: Current Target") == 1
+    assert "- Archive path: S50_00000001/observation_01" in content
+    assert "- Archive path: S50_00000002/observation_01" in content
+    assert _tree_fingerprint(historical) == historical_sources
+    assert _tree_fingerprint(incoming) == incoming_sources
+
+
+def test_target_free_recovery_failure_preserves_index_and_returns_one(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    archive_root = tmp_path / "archive"
+    hierarchy = "{telescope}"
+    historical, _, _ = _source_tree(tmp_path / "historical")
+    _set_device(historical, "S50_00000001")
+    _remove_object_metadata(historical)
+    first = archive_seestar_session(
+        historical,
+        archive_root=archive_root,
+        hierarchy_template=hierarchy,
+    )
+    assert first.status is SeestarArchiveStatus.COMPLETE
+    index_path = archive_root / "INDEX.md"
+    assert "- Archive path: S50_00000001/observation_01" in index_path.read_text()
+
+    malformed = b"# Archive\n\n### Observation 01\n\n- Target: Target\n"
+    index_path.write_bytes(malformed)
+    archived_before = {path: _fingerprint(path) for path in archive_root.rglob("*.fit")}
+    incoming, incoming_lights, incoming_stack = _source_tree(tmp_path / "incoming")
+    _set_device(incoming, "S50_00000002")
+    sources = (*incoming_lights, incoming_stack)
+    source_before = {path: _fingerprint(path) for path in sources}
+    monkeypatch.setattr(cli, "load_archive_config", lambda path=None: ArchiveConfig())
+
+    status = cli.main(
+        [
+            "archive",
+            str(incoming),
+            str(archive_root),
+            "--hierarchy",
+            hierarchy,
+            "--non-interactive",
+        ]
+    )
+
+    assert status == 1
+    assert index_path.read_bytes() == malformed
+    assert {path: _fingerprint(path) for path in archived_before} == archived_before
+    assert {path: _fingerprint(path) for path in sources} == source_before
+    assert len(tuple(archive_root.rglob("*.fit"))) == 4
+    captured = capsys.readouterr()
+    assert "Archive partial" in captured.out
+    assert "Index failed" in captured.err
+    assert "S50_00000001/observation_01" in captured.err
+    assert "malformed" in captured.err
 
 
 @pytest.mark.parametrize(
@@ -1703,6 +2017,43 @@ def test_sequential_devices_with_shared_names_and_reruns(
     assert regenerated[0].outcome is ArchiveIndexOutcome.CREATED
     assert index.read_bytes() == content
     assert [_tree_fingerprint(root) for root in sources] == original
+
+
+def test_telescope_hierarchy_reconciles_each_device_directory_independently(
+    tmp_path: Path,
+) -> None:
+    archive_root = tmp_path / "archive"
+    hierarchy = "{target}/{telescope}/{location}/{session_end_date}"
+    sources = []
+    for number, device in enumerate(("S50_99643794", "S50_b90071df")):
+        root, _, _ = _source_tree(tmp_path / str(number))
+        _set_device(root, device)
+        sources.append(root)
+
+    first = archive_seestar_session(
+        sources[0], archive_root=archive_root, hierarchy_template=hierarchy
+    )
+    second = archive_seestar_session(
+        sources[1], archive_root=archive_root, hierarchy_template=hierarchy
+    )
+
+    assert first.plan.observations[0].observation_name == "observation_01"
+    assert second.plan.observations[0].observation_name == "observation_01"
+    assert first.plan.observations[0].hierarchy_directory != (
+        second.plan.observations[0].hierarchy_directory
+    )
+    for source, expected in zip(sources, (first, second), strict=True):
+        repeated = archive_seestar_session(
+            source, archive_root=archive_root, hierarchy_template=hierarchy
+        )
+        assert repeated.plan.observations[0].observation_directory == (
+            expected.plan.observations[0].observation_directory
+        )
+        assert all(
+            item.outcome is ArchiveFileOutcome.SKIPPED_IDENTICAL
+            for item in repeated.execution.files
+        )
+    assert len(tuple(archive_root.rglob("observation_*"))) == 2
 
 
 @pytest.mark.parametrize(

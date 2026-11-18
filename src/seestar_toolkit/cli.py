@@ -947,6 +947,9 @@ def _print_archive_result(result) -> None:
         f"{index_counts[ArchiveIndexOutcome.UNCHANGED]} unchanged, "
         f"{index_counts[ArchiveIndexOutcome.FAILED]} failed"
     )
+    plan = getattr(result, "plan", None)
+    for problem in getattr(plan, "problems", ()):
+        print(f"Planning problem: {'; '.join(problem.messages)}", file=sys.stderr)
     for item in execution.files:
         if item.outcome in {
             ArchiveFileOutcome.COLLISION,

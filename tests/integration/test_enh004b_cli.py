@@ -12,8 +12,8 @@ from seestar_toolkit import cli
 DATA_DIR = Path(__file__).parents[1] / "data"
 
 
-def _observation(tmp_path: Path) -> Path:
-    observation = tmp_path / "Target/Home/20261027/observation_01"
+def _observation(tmp_path: Path, ancestors: str = "Target/Home/20261027") -> Path:
+    observation = tmp_path / ancestors / "observation_01"
     (observation / "fits_images/lights").mkdir(parents=True)
     return observation
 
@@ -110,6 +110,35 @@ def test_batch_resolves_all_archive_levels_with_inferred_or_explicit_output(
     assert (output / "a.tiff").is_file()
     assert "Batch status: SUCCESS" in captured.out
     assert ("Inferred output directory:" in captured.out) is (not explicit)
+
+
+@pytest.mark.parametrize(
+    "ancestors",
+    (
+        "S50_12345678/Target/Home/20261027",
+        "Target/S50_12345678/Home/20261027",
+        "Target/Home/S50_12345678/20261027",
+        "Target/Home/20261027/S50_12345678",
+    ),
+)
+@pytest.mark.parametrize("command", ("convert", "convert-batch"))
+def test_archive_aware_conversion_accepts_telescope_at_arbitrary_ancestor_depth(
+    tmp_path: Path,
+    ancestors: str,
+    command: str,
+) -> None:
+    observation = _observation(tmp_path, ancestors)
+    source = Path(
+        shutil.copy2(
+            DATA_DIR / "seestar/light.fit",
+            observation / "fits_images/lights/light.fit",
+        )
+    )
+
+    arguments = [command, str(source)] if command == "convert" else [command, str(observation)]
+    assert cli.main(arguments) == 0
+
+    assert (observation / "tiff_images/lights/light.tiff").is_file()
 
 
 def test_empty_archive_batch_fails_without_creating_output(
