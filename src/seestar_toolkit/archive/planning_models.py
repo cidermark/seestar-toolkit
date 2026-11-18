@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum, auto
 from pathlib import Path
 
 from .reconstruction_models import ReconstructedObservation
@@ -29,12 +30,21 @@ class ArchivePlanningConfig:
     observation_date_policy: str = "end"
 
 
+class ArchivePlanningProblemKind(Enum):
+    """Machine-readable classification for an unplanned observation."""
+
+    GENERAL = auto()
+    TELESCOPE_IDENTITY_CONFLICT = auto()
+
+
 @dataclass(frozen=True, slots=True)
 class ArchivePlanningProblem:
     """A visible reason why an observation was not planned authoritatively."""
 
     observation: ReconstructedObservation
     messages: tuple[str, ...]
+    kind: ArchivePlanningProblemKind = ArchivePlanningProblemKind.GENERAL
+    conflicting_telescope_identities: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,6 +69,8 @@ class ObservationArchiveMetadata:
     session_end_date: str
     telescope: str | None
     diagnostics: tuple[str, ...]
+    resolved_telescope_identity: str | None = None
+    telescope_component: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

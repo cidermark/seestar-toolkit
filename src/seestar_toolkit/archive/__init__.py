@@ -58,11 +58,17 @@ from .orchestration_models import (
     SeestarArchiveResult,
     SeestarArchiveStatus,
 )
-from .planning import normalize_archive_component, plan_seestar_archive, session_end_date
+from .planning import (
+    canonical_telescope_component,
+    normalize_archive_component,
+    plan_seestar_archive,
+    session_end_date,
+)
 from .planning_models import (
     ArchivePlan,
     ArchivePlanningConfig,
     ArchivePlanningProblem,
+    ArchivePlanningProblemKind,
     ObservationArchiveMetadata,
     PlannedArchiveObservation,
     PlannedFile,
@@ -106,6 +112,7 @@ __all__ = [
     "ArchivePlanningConfigurationError",
     "ArchivePlanningError",
     "ArchivePlanningProblem",
+    "ArchivePlanningProblemKind",
     "ArchiveTiffOutcome",
     "ArchiveTiffResult",
     "LightTiffCollisionDecision",
@@ -133,6 +140,7 @@ __all__ = [
     "SourceAction",
     "TimestampEvidence",
     "archive_seestar_session",
+    "canonical_telescope_component",
     "discover_seestar_inputs",
     "default_archive_config_path",
     "execute_archive_plan",

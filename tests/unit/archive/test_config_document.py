@@ -98,7 +98,7 @@ def test_same_policy_is_byte_and_timestamp_preserving_noop(tmp_path, value):
 @pytest.mark.parametrize(
     ("key", "value"),
     [
-        ("archive.hierarchy", "{target}"),
+        ("archive.hierarchy", "{target}/{target}"),
         ("archive.source_action", " copy "),
         ("archive.collision_policy", "replace"),
         ("archive.source_root", "x"),
@@ -110,6 +110,15 @@ def test_invalid_edit_does_not_mutate(tmp_path, key, value):
     with pytest.raises(ArchiveConfigError):
         management.prepare_archive_edit(document, key, value)
     assert _fingerprint(document.path) == before
+
+
+def test_single_component_hierarchy_edit_is_valid(tmp_path):
+    document = _read(tmp_path, "# preserve\n")
+
+    edit = management.prepare_archive_edit(document, "archive.hierarchy", "{telescope}")
+
+    assert edit.changed
+    assert 'hierarchy = "{telescope}"' in edit.text
 
 
 def test_targeted_repair_does_not_fallback_or_ignore_another_invalid_value(tmp_path):

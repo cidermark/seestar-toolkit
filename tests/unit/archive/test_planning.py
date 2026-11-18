@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from datetime import datetime, timedelta
+from itertools import permutations
 from pathlib import Path
 
 import numpy as np
@@ -12,6 +13,7 @@ import pytest
 from seestar_toolkit.archive import (
     ArchivePlanningCollisionError,
     ArchivePlanningConfigurationError,
+    ArchivePlanningProblemKind,
     DiscoveryClassification,
     ObservationCompatibility,
     ObservationReconstructionResult,
@@ -20,6 +22,7 @@ from seestar_toolkit.archive import (
     SavedLocation,
     SeestarDiscoveryItem,
     SourceDirectoryContext,
+    canonical_telescope_component,
     normalize_archive_component,
     plan_seestar_archive,
     session_end_date,
@@ -29,6 +32,12 @@ from seestar_toolkit.fits import FitsImageClass, FitsInspection
 ROOT = Path("My Works")
 ARCHIVE_ROOT = Path("/archive")
 BASE_TIME = datetime(2026, 9, 1, 22, 0)
+HIERARCHY_TOKENS = ("target", "location", "session_end_date", "telescope")
+HIERARCHY_TOKEN_ORDERS = tuple(
+    ordering
+    for length in range(1, len(HIERARCHY_TOKENS) + 1)
+    for ordering in permutations(HIERARCHY_TOKENS, length)
+)
 
 
 def _item(
@@ -160,6 +169,8 @@ def test_default_hierarchy_and_source_metadata_are_retained() -> None:
     assert planned.metadata.source_latitude == 51.41234
     assert planned.metadata.source_longitude == -0.75123
     assert planned.metadata.telescope == "S50_99643794"
+    assert planned.metadata.resolved_telescope_identity == "s50_99643794"
+    assert planned.metadata.telescope_component is None
 
 
 def test_alternative_hierarchy_ordering_uses_supported_tokens() -> None:
@@ -172,15 +183,42 @@ def test_alternative_hierarchy_ordering_uses_supported_tokens() -> None:
     assert planned.hierarchy_directory == ARCHIVE_ROOT / "Home/20260902/IC 434"
 
 
+@pytest.mark.parametrize("tokens", HIERARCHY_TOKEN_ORDERS)
+def test_every_nonempty_unique_hierarchy_ordering_is_supported(tokens: tuple[str, ...]) -> None:
+    template = "/".join(f"{{{token}}}" for token in tokens)
+    expected = {
+        "target": "IC 434",
+        "location": "Home",
+        "session_end_date": "20260902",
+        "telescope": "S50_99643794",
+    }
+
+    planned = _plan(
+        _observation(), hierarchy_template=template, explicit_location="Home"
+    ).observations[0]
+
+    assert planned.hierarchy_directory == ARCHIVE_ROOT.joinpath(
+        *(expected[token] for token in tokens)
+    )
+
+
 @pytest.mark.parametrize(
     ("template", "message"),
     [
+        ("", "relative path"),
         ("{target}/{planet}/{session_end_date}", "Unknown hierarchy token"),
         ("/{target}/{location}/{session_end_date}", "relative path"),
         ("../{target}/{location}/{session_end_date}", "unsafe component"),
         ("{target}\\{location}\\{session_end_date}", "relative path"),
         ("prefix-{target}/{location}/{session_end_date}", "one supported token"),
-        ("{target}/{location}", "exactly once"),
+        ("{target}{location}", "one supported token"),
+        ("{target!r}", "one supported token"),
+        ("{target:>10}", "one supported token"),
+        ("{{target}}", "one supported token"),
+        ("{target}/{target}", "must not repeat"),
+        ("{target}//{location}", "unsafe component"),
+        ("{target}/", "unsafe component"),
+        ("{target", "malformed braces"),
     ],
 )
 def test_unsafe_or_unsupported_hierarchy_is_rejected(template: str, message: str) -> None:
@@ -417,7 +455,171 @@ def test_numbering_restarts_for_a_different_target_group() -> None:
 def test_missing_telescope_identifier_remains_explicitly_absent() -> None:
     light = _item("Light.fit", DiscoveryClassification.LIGHT_FITS, telescope=None)
 
-    assert _plan(_observation(lights=(light,))).observations[0].metadata.telescope is None
+    metadata = _plan(_observation(lights=(light,))).observations[0].metadata
+
+    assert metadata.telescope is None
+    assert metadata.resolved_telescope_identity is None
+    assert metadata.telescope_component is None
+
+
+@pytest.mark.parametrize(
+    ("telescope", "expected"),
+    [
+        ("S50_a1b2c3d4", "S50_A1B2C3D4"),
+        (" s50_ABCDEF12 ", "S50_ABCDEF12"),
+        ("S50 Pro_edfe7fb2", "S50_Pro_EDFE7FB2"),
+        (" s50 PRO_ABCDEF12 ", "S50_Pro_ABCDEF12"),
+        (None, "unidentified"),
+        ("Seestar S50", "unidentified"),
+        ("S50_1234567", "unidentified"),
+        ("S30_12345678", "unidentified"),
+    ],
+)
+def test_canonical_telescope_component(telescope: str | None, expected: str) -> None:
+    assert canonical_telescope_component(telescope) == expected
+
+
+@pytest.mark.parametrize("telescope", [None, "Seestar S50", "S50_1234567", "S30_12345678"])
+def test_unrecognised_telescope_uses_unidentified_only_when_configured(
+    telescope: str | None,
+) -> None:
+    light = _item("Light.fit", DiscoveryClassification.LIGHT_FITS, telescope=telescope)
+    observation = _observation(lights=(light,))
+
+    without_telescope = _plan(observation).observations[0]
+    with_telescope = _plan(observation, hierarchy_template="{telescope}/{target}").observations[0]
+
+    assert without_telescope.metadata.telescope_component is None
+    assert without_telescope.hierarchy_directory == ARCHIVE_ROOT / "IC 434/unknown/20260902"
+    assert with_telescope.metadata.telescope_component == "unidentified"
+    assert with_telescope.hierarchy_directory == ARCHIVE_ROOT / "unidentified/IC 434"
+
+
+def test_recognised_identity_is_adopted_with_unidentified_members() -> None:
+    recognised = _item(
+        "Light_recognised.fit",
+        DiscoveryClassification.LIGHT_FITS,
+        telescope=" s50 pro_edfe7fb2 ",
+    )
+    generic = _item(
+        "Light_generic.fit",
+        DiscoveryClassification.LIGHT_FITS,
+        telescope="Seestar S50",
+    )
+    stack = _item("Stacked_2.fit", DiscoveryClassification.SEESTAR_STACK_FITS, telescope=None)
+    observation = _observation(
+        lights=(generic, recognised),
+        stack=stack,
+        stack_at=BASE_TIME + timedelta(minutes=1),
+        status=ObservationStatus.COMPLETE,
+    )
+
+    planned = _plan(observation, hierarchy_template="{telescope}").observations[0]
+
+    assert planned.metadata.telescope == "Seestar S50"
+    assert planned.metadata.resolved_telescope_identity == "s50 pro_edfe7fb2"
+    assert planned.metadata.telescope_component == "S50_Pro_EDFE7FB2"
+    assert planned.hierarchy_directory == ARCHIVE_ROOT / "S50_Pro_EDFE7FB2"
+
+
+def test_conflicting_recognised_identities_are_an_explicit_unplanned_problem() -> None:
+    s50 = _item("Light_s50.fit", DiscoveryClassification.LIGHT_FITS, telescope="S50_a1b2c3d4")
+    pro = _item(
+        "Stacked_1_pro.fit",
+        DiscoveryClassification.SEESTAR_STACK_FITS,
+        telescope="S50 Pro_edfe7fb2",
+    )
+
+    conflicting = _observation(
+        lights=(s50,),
+        stack=pro,
+        stack_at=BASE_TIME + timedelta(minutes=1),
+        status=ObservationStatus.COMPLETE,
+    )
+    valid = _observation(
+        lights=(
+            _item(
+                "Light_valid.fit",
+                DiscoveryClassification.LIGHT_FITS,
+                telescope="S50_a1b2c3d4",
+            ),
+        ),
+        first_at=BASE_TIME + timedelta(minutes=2),
+    )
+
+    plan = _plan(conflicting, valid, hierarchy_template="{target}")
+
+    assert len(plan.observations) == 1
+    assert plan.observations[0].lights[0].source_path.name == "Light_valid.fit"
+    assert plan.observations[0].observation_name == "observation_01"
+    assert len(plan.problems) == 1
+    problem = plan.problems[0]
+    assert problem.kind is ArchivePlanningProblemKind.TELESCOPE_IDENTITY_CONFLICT
+    assert problem.conflicting_telescope_identities == (
+        "S50_A1B2C3D4",
+        "S50_Pro_EDFE7FB2",
+    )
+    assert "Light_s50.fit" in problem.messages[0]
+    assert "Stacked_1_pro.fit" in problem.messages[0]
+    assert "skipped" in problem.messages[0]
+
+
+def test_numbering_is_independent_in_resolved_telescope_directories() -> None:
+    s50 = _observation(
+        lights=(
+            _item(
+                "Light_s50.fit",
+                DiscoveryClassification.LIGHT_FITS,
+                telescope="S50_a1b2c3d4",
+            ),
+        )
+    )
+    pro = _observation(
+        lights=(
+            _item(
+                "Light_pro.fit",
+                DiscoveryClassification.LIGHT_FITS,
+                telescope="S50 Pro_edfe7fb2",
+            ),
+        ),
+        first_at=BASE_TIME + timedelta(minutes=1),
+    )
+
+    plan = _plan(s50, pro, hierarchy_template="{target}/{telescope}")
+
+    assert {item.observation_name for item in plan.observations} == {"observation_01"}
+    assert {item.hierarchy_directory for item in plan.observations} == {
+        ARCHIVE_ROOT / "IC 434/S50_A1B2C3D4",
+        ARCHIVE_ROOT / "IC 434/S50_Pro_EDFE7FB2",
+    }
+
+
+def test_multiple_observations_for_one_telescope_are_numbered_chronologically() -> None:
+    later = _observation(
+        lights=(
+            _item(
+                "Light_later.fit",
+                DiscoveryClassification.LIGHT_FITS,
+                telescope="S50_a1b2c3d4",
+            ),
+        ),
+        first_at=BASE_TIME + timedelta(minutes=1),
+    )
+    earlier = _observation(
+        lights=(
+            _item(
+                "Light_earlier.fit",
+                DiscoveryClassification.LIGHT_FITS,
+                telescope="S50_A1B2C3D4",
+            ),
+        )
+    )
+
+    plan = _plan(later, earlier, hierarchy_template="{telescope}")
+
+    by_source = {item.lights[0].source_path.name: item for item in plan.observations}
+    assert by_source["Light_earlier.fit"].observation_name == "observation_01"
+    assert by_source["Light_later.fit"].observation_name == "observation_02"
 
 
 def test_only_stack_has_planned_tiff_destination() -> None:

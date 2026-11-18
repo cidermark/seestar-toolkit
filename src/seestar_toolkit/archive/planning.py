@@ -15,11 +15,13 @@ from .planning_models import (
     ArchivePlan,
     ArchivePlanningConfig,
     ArchivePlanningProblem,
+    ArchivePlanningProblemKind,
     ObservationArchiveMetadata,
     PlannedArchiveObservation,
     PlannedFile,
     SavedLocation,
 )
+from .reconstruction import _recognised_telescope_identity
 from .reconstruction_models import (
     ObservationReconstructionResult,
     ObservationStatus,
@@ -27,7 +29,7 @@ from .reconstruction_models import (
 )
 from .target_comparison import directory_target_for_comparison
 
-_SUPPORTED_TOKENS = frozenset({"target", "location", "session_end_date"})
+_SUPPORTED_TOKENS = frozenset({"target", "location", "session_end_date", "telescope"})
 _UNSAFE_COMPONENT_CHARACTERS = re.compile(r'[\x00-\x1f<>:"/\\|?*]+')
 _WHITESPACE = re.compile(r"\s+")
 _EARTH_RADIUS_M = 6_371_008.8
@@ -40,6 +42,16 @@ def normalize_archive_component(value: str) -> str:
     if not normalized or normalized in {".", ".."}:
         return "unknown"
     return normalized
+
+
+def canonical_telescope_component(telescope: str | None) -> str:
+    """Return the safe canonical component for a recognised individual device."""
+    identity = _recognised_telescope_identity(telescope)
+    if identity is None:
+        return "unidentified"
+    model, identifier = identity.split("_", maxsplit=1)
+    canonical_model = {"s50": "S50", "s50 pro": "S50_Pro"}[model]
+    return normalize_archive_component(f"{canonical_model}_{identifier.upper()}")
 
 
 def session_end_date(capture_datetime: datetime, policy: str = "end") -> str:
@@ -82,15 +94,11 @@ def plan_seestar_archive(
         else:
             candidates.append(candidate)
 
-    grouped: dict[
-        tuple[str, str, str],
-        list[tuple[ReconstructedObservation, ObservationArchiveMetadata, Path]],
-    ] = defaultdict(list)
+    grouped: dict[Path, list[tuple[ReconstructedObservation, ObservationArchiveMetadata, Path]]] = (
+        defaultdict(list)
+    )
     for candidate in candidates:
-        metadata = candidate[1]
-        grouped[
-            (metadata.target_component, metadata.location_component, metadata.session_end_date)
-        ].append(candidate)
+        grouped[candidate[2]].append(candidate)
 
     planned: list[PlannedArchiveObservation] = []
     destinations: dict[Path, Path] = {}
@@ -154,9 +162,9 @@ def _template_tokens(template: str) -> tuple[str, ...]:
         if token not in _SUPPORTED_TOKENS:
             raise ArchivePlanningConfigurationError(f"Unknown hierarchy token: {token}")
         tokens.append(token)
-    if set(tokens) != _SUPPORTED_TOKENS or len(tokens) != len(_SUPPORTED_TOKENS):
+    if len(tokens) != len(set(tokens)):
         raise ArchivePlanningConfigurationError(
-            "Hierarchy template must contain each supported token exactly once"
+            "Hierarchy template must not repeat a supported token"
         )
     return tuple(tokens)
 
@@ -165,6 +173,19 @@ def _observation_candidate(
     observation: ReconstructedObservation, config: ArchivePlanningConfig
 ) -> tuple[ReconstructedObservation, ObservationArchiveMetadata, Path] | ArchivePlanningProblem:
     diagnostics = list(observation.problems)
+    resolved_identity, conflicting_identities = _resolve_telescope_identity(observation)
+    if conflicting_identities:
+        members = ", ".join(item.source_path.as_posix() for item in _observation_items(observation))
+        identities = ", ".join(conflicting_identities)
+        return ArchivePlanningProblem(
+            observation=observation,
+            messages=(
+                f"Observation members [{members}] have conflicting recognised telescope "
+                f"identities: {identities}; observation skipped",
+            ),
+            kind=ArchivePlanningProblemKind.TELESCOPE_IDENTITY_CONFLICT,
+            conflicting_telescope_identities=conflicting_identities,
+        )
     if observation.status in {ObservationStatus.AMBIGUOUS, ObservationStatus.UNRESOLVED}:
         return ArchivePlanningProblem(
             observation=observation,
@@ -188,6 +209,10 @@ def _observation_candidate(
         saved_locations=config.saved_locations,
     )
     date_token = session_end_date(capture_at, config.observation_date_policy)
+    template_tokens = _template_tokens(config.hierarchy_template)
+    telescope_component = (
+        canonical_telescope_component(resolved_identity) if "telescope" in template_tokens else None
+    )
     metadata = ObservationArchiveMetadata(
         logical_target=logical_target,
         target_component=normalize_archive_component(logical_target),
@@ -198,15 +223,16 @@ def _observation_candidate(
         session_end_date=date_token,
         telescope=_telescope(observation),
         diagnostics=tuple(diagnostics),
+        resolved_telescope_identity=resolved_identity,
+        telescope_component=telescope_component,
     )
     values = {
         "target": metadata.target_component,
         "location": metadata.location_component,
         "session_end_date": date_token,
+        "telescope": telescope_component,
     }
-    hierarchy = config.archive_root.joinpath(
-        *(values[token] for token in _template_tokens(config.hierarchy_template))
-    )
+    hierarchy = config.archive_root.joinpath(*(values[token] for token in template_tokens))
     _require_beneath_root(config.archive_root, hierarchy)
     return observation, metadata, hierarchy
 
@@ -297,6 +323,25 @@ def _telescope(observation: ReconstructedObservation) -> str | None:
         if item.fits_inspection is not None and item.fits_inspection.telescope is not None:
             return item.fits_inspection.telescope
     return None
+
+
+def _resolve_telescope_identity(
+    observation: ReconstructedObservation,
+) -> tuple[str | None, tuple[str, ...]]:
+    identities = {
+        identity
+        for item in _observation_items(observation)
+        if (
+            identity := _recognised_telescope_identity(
+                item.fits_inspection.telescope if item.fits_inspection else None
+            )
+        )
+        is not None
+    }
+    if len(identities) <= 1:
+        return next(iter(identities), None), ()
+    conflicts = tuple(sorted(canonical_telescope_component(identity) for identity in identities))
+    return None, conflicts
 
 
 def _observation_items(observation: ReconstructedObservation) -> tuple[SeestarDiscoveryItem, ...]:
