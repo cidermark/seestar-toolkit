@@ -2,8 +2,8 @@
 
 **Status:** APPROVED
 
-**Specification revision:** Draft 2.1 — administrative approval-status
-correction (18 November 2026; no functional requirement changes)
+**Specification revision:** Draft 2.3 — administrative stage-status correction
+following the D08 historical target-identification amendment (18 November 2026)
 
 **Specification date:** 17 November 2026
 
@@ -11,10 +11,15 @@ correction (18 November 2026; no functional requirement changes)
 `4c487016fc534b4e9237154e60d686db94bb7665`
 
 **Approval and authorisation:** The user formally approved Draft 2 on
-18 November 2026. ENH-007c is authorised. ENH-007d and ENH-007e remain
-planned and require separate approval before work begins. This administrative
-revision does not change functional requirements. Git operations remain under
-user control. Archive reorganisation remains excluded.
+18 November 2026. ENH-007c completed and was committed as `9ef8e61`.
+ENH-007d is authorised and in progress. ENH-007e remains planned and is not
+authorised. Git operations remain under user control. Archive reorganisation
+remains excluded.
+
+The user approved the D08 specification amendment on 18 November 2026. Its
+implementation correction awaits separate authorisation; neither D08
+implementation nor ENH-007d closure is recorded by this administrative
+revision.
 
 ## 1. Objective and motivation
 
@@ -90,6 +95,8 @@ updated for any new token.
    indexing, dry-run display and conversion-recognition behaviour.
 6. Focused and regression validation of the established archive contracts
    affected by the new component.
+7. The D08-limited use of an existing archive-root `INDEX.md` to preserve an
+   otherwise unrecoverable historical logical target in a target-free hierarchy.
 
 ### 3.2 Excluded
 
@@ -107,6 +114,8 @@ updated for any new token.
   from existing archive paths.
 - Changes to source copy/move semantics, collision policy, observing-night
   date policy, TIFF conversion policy, or archive-aware conversion layout.
+- General-purpose index parsing, regeneration or repair commands. D08 permits
+  only the narrowly defined historical-target fallback in Section 5.6.
 - Unrelated refactoring or documentation changes outside an authorised later
   stage.
 
@@ -121,6 +130,7 @@ updated for any new token.
 | D05 | AGREED | The default remains `{target}/{location}/{session_end_date}`. `{telescope}` is not automatically added to existing configurations. |
 | D06 | AGREED | Preserve `observation_NN`. Number observations independently within each resolved hierarchy directory, permitting multiple observations from one telescope and independent numbering across telescope directories. Preserve incremental archive compatibility. |
 | D07 | AGREED | Preserve established behaviour for dry-run, optional light-TIFF conversion, single and batch conversion, indexing, incremental reconciliation, collisions, and copy/move. `{telescope}` works in any hierarchy position and implementation must not assume fixed hierarchy depth. |
+| D08 | AGREED | For a target-free hierarchy only, an archive-root `INDEX.md` records each observation's resolved logical target and exact relative archive-observation path. During root-index regeneration, that existing index may be read as a last-resort historical-target fallback when established evidence cannot identify the target. It must never override reliable FITS, reconstruction, or source-directory evidence. No sidecar is introduced. Missing, unreadable, malformed, ambiguous or inconsistent required fallback evidence prevents publication of the affected root index, preserves existing archive and index content, reports a diagnostic, and makes the archive operation exit `1`. |
 
 ### Supporting design evidence
 
@@ -258,10 +268,45 @@ telescope hierarchy directories.
   need not be first; `{telescope}` may precede or follow it.
 - For a hierarchy without `{target}`, archive indexes must be generated at the
   archive root. Index records must retain each observation's target from
-  observation metadata; the implementation must not create artificial target
+  observation metadata and a stable identifier formed from the observation's
+  relative archive path; the implementation must not create artificial target
   directories.
 - Copy/move source actions, planned-file collision detection, filesystem
   collision policy, and source-preservation guarantees remain unchanged.
+
+### 5.6 Limited historical target retention for target-free indexes
+
+For a hierarchy omitting `{target}`, each archive-root index record shall retain
+the resolved logical target and an exact, stable observation identifier based on
+the POSIX relative path from the archive root through `observation_NN`. The
+identifier must distinguish, for example, separate `observation_01` directories
+under different resolved hierarchy directories. The index remains
+human-readable Markdown.
+
+Target identification retains its established precedence. FITS metadata,
+reconstruction metadata and source-directory evidence remain the normal
+sources; a reliably identified target must not be replaced by stale index
+information. For a historical observation absent from the current plan, when
+the established available evidence cannot identify its target, the existing
+archive-root `INDEX.md` may be read solely to recover a target from an exact,
+unambiguous matching observation identifier.
+
+This is a limited exception to the established rule that indexes are derived
+artifacts rather than archive metadata. It does not authorise a general-purpose
+index parser, regeneration or repair command, an observation metadata sidecar,
+or recovery outside target-free root-index generation. Independent index
+regeneration and recovery remain deferred to ENH-008.
+
+A missing `INDEX.md` is not itself an error where the target remains
+recoverable through established evidence. If required historical target recovery
+cannot proceed because the index is missing, unreadable, malformed, ambiguous,
+inconsistent or lacks an exact matching identifier, the archive-root index
+publication is the affected operation: it must be safely aborted, leave existing
+archive files and index content unchanged, and emit a clear diagnostic naming
+the observation identifier and recovery failure. Other independently safe
+archive placement work may continue, but the command returns exit status `1`.
+The implementation must not silently replace such a previously known target
+with `unknown`.
 
 ## 6. Error, diagnostic and safety behaviour
 
@@ -309,6 +354,9 @@ non-mutation.
 8. Existing target-containing hierarchies retain target-level index placement.
    Archive-root indexes apply only to newly permitted configurations that omit
    `{target}`; no artificial target directory is added.
+9. D08 is a deliberately narrow compatibility exception: a target-free
+   archive-root index may be consulted only for exact historical target recovery
+   under Section 5.6. Target-containing hierarchy behaviour remains unchanged.
 
 ## 8. Acceptance criteria
 
@@ -332,7 +380,7 @@ non-mutation.
 | E007-16 | Dry-run, light-TIFF conversion, copy/move and collision behaviour remain compatible under telescope-enabled hierarchy configurations. |
 | E007-17 | Single-file and batch archive-aware conversion work under telescope-enabled hierarchies without a fixed-depth dependency. |
 | E007-18 | For configurations containing `{target}`, archive index generation works with `{telescope}` before or after `{target}` and remains target-level. |
-| E007-19 | For configurations without `{target}`, archive index generation writes at the archive root, retains every observation target in its metadata record, and creates no artificial target directory. |
+| E007-19 | For configurations without `{target}`, archive index generation writes at the archive root, records every observation's resolved logical target and exact relative archive-observation identifier, and creates no artificial target directory. For a historical observation absent from the current plan whose established evidence cannot identify its target, an existing root index is used only as the Section 5.6 exact, unambiguous, last-resort fallback. Required fallback recovery failure preserves existing archive and index content, emits a diagnostic, and returns exit status `1`; no known target is silently replaced with `unknown`. |
 | E007-20 | No FITS metadata, source file, or existing archive is rewritten solely because of ENH-007. |
 | E007-21 | Focused regressions, the complete test suite, Ruff, and whitespace checks pass at the authorised validation gate. |
 
@@ -371,6 +419,14 @@ Implementation stages must add or update tests for at least:
     retains observation target metadata and creates no artificial directory;
 16. unchanged reconstruction tests demonstrating that focal length, gain,
     focus, and image dimensions are not new grouping constraints.
+17. D08 historical target recovery: a target-free historical observation absent
+    from the current plan with no usable FITS `OBJECT` and a target recoverable
+    from `INDEX.md`; distinct `observation_01` identifiers in different
+    hierarchy directories; a missing index with usable FITS evidence; required
+    recovery from a missing or malformed index; exact unambiguous matching and
+    rejection of ambiguous or inconsistent records; preservation of existing
+    index content when recovery fails; and target-containing hierarchy
+    compatibility.
 
 ## 10. Resolved technical policies
 
@@ -386,15 +442,18 @@ The Draft 1 technical questions are resolved as follows:
   Dry-run has the same diagnostic and exit policy without mutation.
 - **T03 — archive indexing:** a hierarchy containing `{target}` retains a
   target-level index regardless of token order. A hierarchy without `{target}`
-  writes one index at the archive root and retains target names in observation
-  metadata records without inventing target directories.
+  writes one index at the archive root and retains target names plus exact
+  relative archive-observation identifiers in Markdown records without
+  inventing target directories. D08 permits reading that root index only as the
+  Section 5.6 last-resort historical-target fallback.
 
 No additional material technical question is open at this approved revision.
 
 ## 11. Implementation stages
 
-ENH-007c is approved and authorised. ENH-007d and ENH-007e are planned and
-not yet authorised; each requires separate approval before work begins.
+ENH-007c is complete at `9ef8e61`. ENH-007d is authorised and in progress;
+the D08 implementation correction requires separate authorisation. ENH-007e
+remains planned and not yet authorised.
 
 ### ENH-007c — Identity resolution and hierarchy planning foundation
 
@@ -415,22 +474,26 @@ reconstruction-membership regression.
 
 ### ENH-007d — Archive operation and integration compatibility
 
-**Status:** PLANNED / NOT YET AUTHORISED
+**Status:** AUTHORISED / IN PROGRESS; D08 implementation correction pending
+separate authorisation
 
 **Purpose:** Integrate the approved foundation across incremental
 reconciliation, archive indexing, dry-run output, light-TIFF paths, and
 archive-aware conversion contracts.
 
 **Permitted work:** Only integration areas required by D06–D07 and their
-focused/integration regressions.
+focused/integration regressions. The D08 implementation correction is excluded
+pending separate authorisation; its specification amendment is recorded above.
 
 **Exclusions:** Changes to identity formats, reconstruction grouping, FITS
-metadata, archive reorganisation, and unrelated output redesign.
+metadata, archive reorganisation, general-purpose index parsing or repair, and
+unrelated output redesign.
 
 **Closure evidence:** E007-11 through E007-12 and E007-15 through E007-20;
 integrity-error safe-continuation and dry-run non-mutation evidence; copy/move
 and collision regression evidence; index and conversion-recognition evidence;
-`git diff --check`.
+D08 exact historical-target fallback, required-recovery failure preservation
+and diagnostic evidence; `git diff --check`.
 
 ### ENH-007e — Full validation and closure review
 
@@ -458,5 +521,11 @@ the reported Seestar models but cannot establish an individual device; gain,
 focus, image dimensions and related fields do not provide sufficient evidence
 to change grouping.
 
-No ENH-007 implementation, migration, validation run, commit, integration, or
-release is recorded by this administrative correction.
+ENH-007c implementation completed and was committed as `9ef8e61`.
+ENH-007d implementation is uncommitted and remains under review; this record
+does not claim ENH-007d completion, D08 implementation, ENH-007e completion,
+ENH-007 closure, migration, integration, or release.
+
+D08 is an approved specification amendment. Its implementation correction,
+focused validation, ENH-007d closure, and any ENH-008 recovery work are not
+recorded by this administrative correction.
