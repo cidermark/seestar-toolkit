@@ -1,17 +1,20 @@
 # ENH-007 — Telescope Identity and Archive Hierarchy
 
-**Status:** DRAFT / NOT APPROVED
+**Status:** APPROVED
 
-**Specification revision:** Draft 2
+**Specification revision:** Draft 2.1 — administrative approval-status
+correction (18 November 2026; no functional requirement changes)
 
 **Specification date:** 17 November 2026
 
 **Repository baseline:** `cidermark/seestar-toolkit`, `main`,
 `4c487016fc534b4e9237154e60d686db94bb7665`
 
-**Authorisation:** This document records agreed design decisions and a proposed
-stage plan only. It does not authorise implementation, branch creation,
-staging, commits, pushes, merges, releases, or archive reorganisation.
+**Approval and authorisation:** The user formally approved Draft 2 on
+18 November 2026. ENH-007c is authorised. ENH-007d and ENH-007e remain
+planned and require separate approval before work begins. This administrative
+revision does not change functional requirements. Git operations remain under
+user control. Archive reorganisation remains excluded.
 
 ## 1. Objective and motivation
 
@@ -386,13 +389,16 @@ The Draft 1 technical questions are resolved as follows:
   writes one index at the archive root and retains target names in observation
   metadata records without inventing target directories.
 
-No additional material technical question is open at this draft revision.
+No additional material technical question is open at this approved revision.
 
-## 11. Proposed implementation stages
+## 11. Implementation stages
 
-The following stages are proposed, not authorised by this draft.
+ENH-007c is approved and authorised. ENH-007d and ENH-007e are planned and
+not yet authorised; each requires separate approval before work begins.
 
 ### ENH-007c — Identity resolution and hierarchy planning foundation
+
+**Status:** APPROVED / AUTHORISED
 
 **Purpose:** Add the optional hierarchy grammar and derive a resolved,
 observation-level telescope component without changing reconstruction grouping.
@@ -408,6 +414,8 @@ applicable; focused tests; Ruff for changed files; `git diff --check`; no
 reconstruction-membership regression.
 
 ### ENH-007d — Archive operation and integration compatibility
+
+**Status:** PLANNED / NOT YET AUTHORISED
 
 **Purpose:** Integrate the approved foundation across incremental
 reconciliation, archive indexing, dry-run output, light-TIFF paths, and
@@ -425,6 +433,8 @@ and collision regression evidence; index and conversion-recognition evidence;
 `git diff --check`.
 
 ### ENH-007e — Full validation and closure review
+
+**Status:** PLANNED / NOT YET AUTHORISED
 
 **Purpose:** Validate the approved implementation as one compatible archive
 change and prepare closure evidence.
@@ -449,4 +459,4 @@ focus, image dimensions and related fields do not provide sufficient evidence
 to change grouping.
 
 No ENH-007 implementation, migration, validation run, commit, integration, or
-release is recorded by this draft.
+release is recorded by this administrative correction.
