@@ -79,14 +79,21 @@ Distribution validation is inconclusive because external PyPI name resolution
 was unavailable and is recorded separately from product validation. Checkpoint
 6B commit `4b61259` was verified, and formal ENH-007 development closure was
 approved on 20 November 2026 following the Checkpoint 6C PASS review. The
-formal closure-record commit, integration-readiness review, integration into
-`main`, push to origin, GitHub Actions verification and feature-branch cleanup
-remain pending. Release is separate scope.
+formal closure record was committed as `17147d7` and fast-forwarded into
+`main`, containing five feature-branch commits beyond the previous local
+`main`. Local integration, push to `origin/main`, and remote verification
+passed with local `main`, `origin/main`, and remote `main` at
+`17147d7f3ede8bd5100642d18774f41134879a1e`. GitHub Actions Distribution
+validation, push event on `main`, run
+[`44751144450`](https://github.com/cidermark/seestar-toolkit/actions/runs/44751144450), completed successfully for that exact commit. Final integration-evidence
+documentation is in progress. Feature-branch cleanup remains pending; release
+is separate scope.
 
 ## Development commit history
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
+| ENH-007 | Record formal closure and fast-forward integration into `main` | `17147d7` | 2026-11-20 |
 | ENH-007d | Implement archive indexing and historical target retention | `696e32d` | 2026-11-18 |
 | ENH-007 | Approve the D08 historical target-recovery amendment | `f6ac79d` | 2026-11-18 |
 | ENH-007c | Implement telescope identity and hierarchy planning | `9ef8e61` | 2026-11-18 |
@@ -232,10 +239,14 @@ remain pending. Release is separate scope.
   `enh/ENH-007-telescope-hierarchy` through `696e32d`; ENH-007c, ENH-007d and
   ENH-007e are complete, and Checkpoint 5F passed. Formal development closure
   was approved on 20 November 2026 following Checkpoint 6C PASS, accepting
-  feature-branch commit `4b61259`. The closure-record commit,
-  integration-readiness review, main-branch integration, push, remote CI
-  verification and feature-branch cleanup have not occurred. Release is
-  separate scope.
+  feature-branch commit `4b61259`. Formal closure was recorded at `17147d7`,
+  which was fast-forwarded into `main` with five feature-branch commits beyond
+  the previous local `main`; local `main`, `origin/main` and remote `main` were
+  verified at `17147d7f3ede8bd5100642d18774f41134879a1e`. GitHub Actions
+  Distribution validation push run
+  [`44751144450`](https://github.com/cidermark/seestar-toolkit/actions/runs/44751144450)
+  passed for that exact commit. Final integration-evidence documentation is in
+  progress. Feature-branch cleanup has not occurred; release is separate scope.
 - **S50 Pro qualification Stage 3:** technical PASS and independent
   closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
   October 2026. Administrative closure is approved subject to completion of

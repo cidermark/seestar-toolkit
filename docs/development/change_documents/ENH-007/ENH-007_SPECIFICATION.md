@@ -7,8 +7,15 @@ following the D08 historical target-identification amendment (18 November 2026)
 
 **Status record reconciled:** 20 November 2026; approved behaviour unchanged
 
+**Delivery record:** ENH-007 — Configurable Telescope Identity in Archive
+Hierarchy
+
 **Formal closure:** APPROVED — 20 November 2026; Checkpoint 6C PASS;
 accepted feature-branch commit `4b61259`
+
+**Formal closure commit and integration:** `17147d7f3ede8bd5100642d18774f41134879a1e`
+fast-forwarded into `main`; local `main`, `origin/main` and remote `main`
+verified at that commit. Final integration-evidence documentation is in progress.
 
 **Specification date:** 17 November 2026
 
@@ -20,9 +27,15 @@ accepted feature-branch commit `4b61259`
 ENH-007d completed at `696e32d`. The coordinator accepted ENH-007e as complete
 following the Checkpoint 5F final acceptance review. Formal ENH-007 closure was
 approved on 20 November 2026 following the Checkpoint 6C PASS review, accepting
-feature-branch commit `4b61259`. The formal closure-record commit remains
-pending. Git operations remain under user control. Archive reorganisation
-remains excluded.
+feature-branch commit `4b61259`. The formal closure record was committed as
+`17147d7` and integrated by fast-forward into `main`, containing five
+feature-branch commits beyond the previous local `main`. Local `main`,
+`origin/main` and remote `main` were verified at
+`17147d7f3ede8bd5100642d18774f41134879a1e`. GitHub Actions Distribution
+validation run `44751144450` passed for that exact commit. Final
+integration-evidence documentation is in progress; feature-branch cleanup and
+release remain pending. Git operations remain under user control. Archive
+reorganisation remains excluded.
 
 The user approved the D08 specification amendment on 18 November 2026. Its
 implementation correction was delivered in `696e32d` and accepted with the
@@ -463,8 +476,13 @@ ENH-007c is complete at `9ef8e61`. ENH-007d is complete at `696e32d`, including
 the separately authorised D08 implementation correction. ENH-007e and the
 Checkpoint 5F final acceptance review are complete. Formal ENH-007 closure was
 approved on 20 November 2026 after the Checkpoint 6C review returned PASS; the
-accepted feature-branch commit is `4b61259`. The closure-record commit remains
-pending.
+accepted feature-branch commit is `4b61259`. The closure record was committed
+as `17147d7` and fast-forwarded into `main`; local `main`, `origin/main` and
+remote `main` were verified at
+`17147d7f3ede8bd5100642d18774f41134879a1e`. Distribution validation GitHub
+Actions run `44751144450` passed for that exact commit. Final integration-
+evidence documentation is in progress; feature-branch cleanup and release
+remain pending.
 
 ### ENH-007c — Identity resolution and hierarchy planning foundation
 
@@ -554,8 +572,14 @@ resolution was unavailable; it is recorded separately from product validation
 and was not an explicit ENH-007e completion requirement. Formal ENH-007
 development closure was approved on 20 November 2026 following the Checkpoint
 6C PASS review, with feature-branch commit `4b61259` accepted. The formal
-closure-record commit, integration-readiness review, integration into `main`,
-push to origin, GitHub Actions verification and feature-branch cleanup remain
-pending. Release is separate scope. This record does not claim migration or any
-of those pending delivery activities. General ENH-008 recovery work remains
-outside scope.
+closure record was committed as `17147d7` and integrated by fast-forward into
+`main`; the integration contained five feature-branch commits beyond the
+previous local `main`. Local integration, push to `origin/main`, and remote
+verification passed with local `main`, `origin/main` and remote `main` all at
+`17147d7f3ede8bd5100642d18774f41134879a1e`; the working tree was clean after
+integration and push. GitHub Actions Distribution validation, push event on
+`main`, run [`44751144450`](https://github.com/cidermark/seestar-toolkit/actions/runs/44751144450), completed successfully for that exact head SHA. Final
+integration-evidence documentation is in progress. Feature-branch cleanup
+remains pending, and release is separate scope. This record does not claim
+migration or either pending delivery activity. General ENH-008 recovery work
+remains outside scope.
