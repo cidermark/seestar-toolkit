@@ -5,9 +5,10 @@ Start PDFs. It is not required to install or run Seestar Toolkit.
 
 ## Tested environment
 
-Stage 9.3b tested the following Homebrew packages on macOS arm64:
+The approved ENH-007 documentation toolchain uses the following packages on
+macOS arm64:
 
-- Pandoc 3.12;
+- Pandoc 3.14 at `/opt/homebrew/bin/pandoc`;
 - TeX Live 2026/Homebrew (`texlive` 20260301), providing XeTeX
   0.999998 and the TeX Gyre Heros and DejaVu Sans Mono fonts; and
 - Poppler 26.09.0, providing `pdfinfo`, `pdftotext`, `pdffonts`,
@@ -40,9 +41,10 @@ requires byte-identical PDFs, validates candidates, installs each PDF atomically
 synchronises its mtime to its Markdown source, writes its two-entry SHA-256
 manifest, and then runs final validation.
 
-The current frozen sources are the unreleased ENH-005 development editions,
-labelled `Development — ENH-005 (unreleased)` and dated 2026-11-10. This does not
-change the published v1.1.0 release or assign a later release version.
+The current frozen sources are the unreleased ENH-007 development editions,
+labelled `Development — ENH-007 (unreleased)` and dated 2026-11-19. This does
+not change the published v1.1.0 release, assign a later release version, or
+claim formal ENH-007 completion.
 
 The validator is read-only. To create temporary visual-review images outside the
 repository:
@@ -73,11 +75,20 @@ The accepted-generation and revalidation logs instead identify TeX Live
 2026/Homebrew, selected through `/opt/homebrew/bin/xelatex`. These are distinct
 installations; matching XeTeX version numbers do not make their output equivalent.
 
-Use the declared Homebrew tools first on PATH for this validated pipeline. The
-generator rejects a different Pandoc/XeTeX version string before generation.
-It does not alter shell startup files. Font files are resolved through TeX Live:
-TeX Gyre Heros 2.004 and DejaVu Sans Mono 2.34, with regular/bold variants embedded.
-No font binary is copied into this repository.
+The generator invokes the approved `/opt/homebrew/bin/pandoc` directly and
+rejects any version other than Pandoc 3.14. It also retains strict XeTeX version
+checking. This is deliberately not support for arbitrary Pandoc versions and
+does not alter shell startup files, PATH, or Homebrew links. Font files are
+resolved through TeX Live: TeX Gyre Heros 2.004 and DejaVu Sans Mono 2.34, with
+regular/bold variants embedded. No font binary is copied into this repository.
+
+The ENH-007 D-PDF-01 comparison used the same Markdown sources, ENH-007
+metadata, Lua filter, LaTeX header, source timestamps, XeTeX engine and render
+settings with Pandoc 3.12 and 3.14. All eight clean builds were reproducible.
+For both documents, the two versions produced byte-identical PDFs: matching
+text, links, bookmarks, fonts, metadata and PDF structure. All 45 rendered
+pages were identical, with zero differing pixels. This evidence approves
+Pandoc 3.14 for this strict toolchain only; it is not formal ENH-007 closure.
 
 Generation fixes UTC, C.UTF-8, SOURCE_DATE_EPOCH, FORCE_SOURCE_DATE and
 SOURCE_DATE_EPOCH_TEX_PRIMITIVES from the source mtime. Pandoc writes TeX to a

@@ -100,7 +100,8 @@ Responsibilities:
 - Preserve original lights and Seestar-generated stacks.
 - Place Toolkit-generated TIFF derivatives beside their owning source class.
 - Apply explicit copy/move, duplicate/collision and dry-run policies.
-- Generate regenerable target-level indexes.
+- Generate regenerable target-level or archive-root indexes according to the
+  configured hierarchy.
 
 Does NOT modify FITS image data.
 
@@ -178,6 +179,10 @@ require an archive index or hierarchy ancestors, or create directories.
 Historical `observation_NN/lights/` and unsafe symbolic-link paths are not
 recognised.
 
+Because recognition starts at the structural `observation_NN` boundary, it is
+compatible with ENH-007 hierarchies of arbitrary supported depth and component
+ordering, including those containing `{telescope}` or omitting `{target}`.
+
 ENH-004b integrates that boundary in the CLI. An omitted single-file output is
 allowed only for a direct archived FIT/FITS light. Archive-form batch inputs
 resolve to canonical lights whether output is inferred or explicit. The CLI
@@ -224,6 +229,13 @@ The hierarchy is configuration-driven. Its default is:
 Alternative token ordering, including
 `{location}/{session_end_date}/{target}`, uses the same configuration model
 rather than a separate code path.
+
+ENH-007 extends the valid grammar to one or more unique components chosen from
+`{target}`, `{location}`, `{session_end_date}` and `{telescope}`, in arbitrary
+order. Each token is a complete path component. Empty templates, repeated or
+unsupported tokens, literals, combined or formatted tokens, absolute paths,
+traversal and backslash-separated forms are rejected. The built-in default is
+unchanged, and changing the configuration does not migrate existing archives.
 
 Every observation has an explicit numbered directory, starting with
 `observation_01`; the first observation is never initially flattened and later
@@ -363,22 +375,41 @@ evidence, then directory context, with `unknown` as the explicit final fallback.
 Conflicting evidence remains diagnostic. Exact source target, GPS and telescope
 metadata is retained separately from logical and path-normalized values.
 
-The default hierarchy template is `{target}/{location}/{session_end_date}` and
-the same model supports alternative ordering of those three tokens. Archive
-roots must be absolute. Templates and normalized components cannot introduce
-absolute paths or traversal. Component normalization trims outer whitespace,
-collapses repeated whitespace, preserves ordinary spaces and case, replaces
-unsafe filesystem characters and path separators with `-`, and maps empty,
-`.` or `..` values to `unknown`.
+The default hierarchy template is `{target}/{location}/{session_end_date}`.
+ENH-007 supports any valid non-empty ordering/subset of the four unique tokens
+`{target}`, `{location}`, `{session_end_date}` and `{telescope}`. Archive roots
+must be absolute. Templates and normalized components cannot introduce absolute
+paths or traversal. Component normalization trims outer whitespace, collapses
+repeated whitespace, preserves ordinary spaces and case, replaces unsafe
+filesystem characters and path separators with `-`, and maps empty, `.` or
+`..` values to `unknown`.
+
+Telescope identity is resolved at observation level from every light and stack.
+The recognised complete device forms are `S50_` plus eight hexadecimal
+characters and `S50 Pro_` plus eight hexadecimal characters; path components
+are canonicalised as `S50_<id>` and `S50_Pro_<id>`. One unanimous recognised
+identity wins even when other values are missing, generic or unrecognised.
+Without a recognised identity, `{telescope}` resolves to `unidentified`.
+Multiple recognised identities are an integrity error: the affected observation
+has no destination and is skipped, the diagnostic includes every conflicting
+recognised value, independently safe observations may proceed, and orchestration
+returns a non-success result. Dry-run uses the same resolution and reporting
+without filesystem mutation.
+
+ENH-007c and ENH-007d implementation and ENH-007e validation are complete on
+the enhancement branch. Checkpoint 5F accepted E007-01 through E007-21 and D01
+through D08. Formal closure documentation is in progress; final commit,
+integration into `main`, remote verification and release have not occurred.
 
 Non-interactive location resolution uses an explicit logical name first, then
 the nearest saved GPS location within its inclusive radius, otherwise
 `unknown`. Saved coordinates and radii are validated, exact capture coordinates
 remain available, and planning has no network or reverse-geocoder dependency.
 
-Within each target/location/session group, observations are sorted by retained
-capture time and deterministic source-path evidence and numbered from
-`observation_01`. Width expands above 99 observations to prevent ambiguity.
+Within each fully resolved hierarchy directory, observations are sorted by
+retained capture time and deterministic source-path evidence and numbered from
+`observation_01`. Telescope-scoped directories therefore have independent
+numbering. Width expands above 99 observations to prevent ambiguity.
 Planned original lights retain their filenames under `fits_images/lights/`.
 They have no light-TIFF operation unless the current archive invocation supplies
 `--convert-lights`; then their derivative destination is
@@ -504,12 +535,26 @@ safe ignore behaviour. Future JPEG-management policy may introduce explicit
 keep or destructive discard choices, but those operations are not implemented
 in Stage 7.
 
-Each concrete target directory has a regenerable `INDEX.md` derived from the
-archived FITS content and current structured execution results. Placement is
-calculated from the `{target}` position in the configured hierarchy rather
-than assuming `archive_root/target`. Existing indexes are never parsed as
-archive metadata. Historical observations are reconstructed, when necessary,
-with the established FITS inspector so incremental runs retain older entries.
+When the hierarchy contains `{target}`, each concrete target directory has a
+regenerable `INDEX.md` derived from archived FITS content and current structured
+execution results. Placement is calculated from the `{target}` position rather
+than assuming `archive_root/target`.
+
+When `{target}` is absent, one archive-root `INDEX.md` records each target and
+the exact relative observation path through `observation_NN`; no artificial
+target directory is introduced. Historical observations are reconstructed,
+when necessary, with the established FITS inspector so incremental runs retain
+older entries. For a historical target-free observation absent from the current
+plan, D08 permits a limited fallback to an existing root index only when normal
+FITS/reconstruction/source evidence cannot identify the target and exactly one
+record matches the observation path. Reliable primary evidence takes
+precedence. The fallback is not a general index parser or repair mechanism.
+
+If required historical target recovery encounters a missing, unreadable,
+malformed, ambiguous, inconsistent or non-matching root index, publication of
+that affected root index is aborted. Existing archive and index content is
+preserved, a diagnostic is returned, and the operation is non-successful;
+`unknown` is not substituted. Independently safe placement may still proceed.
 
 The deterministic index records location, session, planned observation number,
 capture range, exposure, filter, safely established light count, safely
@@ -520,8 +565,10 @@ and makes an otherwise successful archive partial without rolling back FITS or
 TIFF output.
 
 Archive preparation reconciles planned observation numbers with already
-established numbered directories for incremental invocations. BUG-002 makes
-this reconciliation telescope-aware within each concrete target/location/night.
+established numbered directories for incremental invocations. ENH-007 scopes
+this reconciliation to the fully resolved hierarchy directory, including a
+telescope component when configured; BUG-002's recognised-device safeguards
+continue to apply.
 A filename match (including its light/stack subdirectory) can reuse an existing
 observation only when inspection of all relevant archived FITS succeeds and
 its recognised device identities do not contradict the incoming observation's

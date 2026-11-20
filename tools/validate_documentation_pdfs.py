@@ -19,16 +19,16 @@ ROOT = Path(__file__).resolve().parents[1]
 USER_DOCS = ROOT / "docs" / "user"
 EXPECTED_HASHES = {
     "SEESTAR_TOOLKIT_USER_GUIDE.md": (
-        "5afa8ae4e73c579a03a13a60ca477966f1ab5db74d614801962fcce41be96670"
+        "c4c629f8be905f47156f65310c270833116274ba985bf4763d791d5a57a97449"
     ),
     "SEESTAR_TOOLKIT_QUICK_START.md": (
-        "dd3c4bf68ac4fd2ce59fbe47e6f2c2cbaf5ab4c33f3b2658612e2d843666264a"
+        "a9ad6207ba7d07d1ca40c737c020ff2ae8a307112dbd1e5cbb3f0b26269d9710"
     ),
 }
-DOCUMENT_LABEL = "Development — ENH-006 (unreleased)"
-DOCUMENT_DATE = "2026-11-13"
+DOCUMENT_LABEL = "Development — ENH-007 (unreleased)"
+DOCUMENT_DATE = "2026-11-19"
 DOCUMENT_SUBJECT = f"Seestar Toolkit {DOCUMENT_LABEL} documentation"
-DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-006, unreleased, documentation"
+DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-007, unreleased, documentation"
 
 
 @dataclass(frozen=True)
@@ -76,7 +76,22 @@ def normalize(value: str) -> str:
 
 
 def normalize_prose(value: str) -> str:
-    return re.sub(r"(?<=\w)-(?=\w)", "", normalize(value))
+    return re.sub(r"(?<=\w)-+(?=\w)", "", normalize(value))
+
+
+def validated_page_body_text(extracted: str, pages: int, pdf: Path) -> str:
+    extracted_pages = extracted.split("\f")[:-1]
+    if len(extracted_pages) != pages:
+        raise AssertionError(f"extracted page count mismatch: {pdf}")
+    page_bodies: list[str] = []
+    for number, page_text in enumerate(extracted_pages, 1):
+        lines = page_text.splitlines()
+        nonempty = [index for index, line in enumerate(lines) if line.strip()]
+        if not nonempty or lines[nonempty[-1]].strip() != str(number):
+            raise AssertionError(f"missing footer page number {number}: {pdf}")
+        del lines[nonempty[-1]]
+        page_bodies.append("\n".join(lines))
+    return "\n".join(page_bodies)
 
 
 def markdown_inventory(source: Path) -> tuple[list[str], list[str], list[str]]:
@@ -270,14 +285,7 @@ def validate_document(document: Document) -> dict[str, object]:
         raise AssertionError(f"non-A4 page size: {size}")
 
     extracted = run("pdftotext", "-layout", str(document.pdf), "-")
-    extracted_pages = extracted.split("\f")[:-1]
-    if len(extracted_pages) != pages:
-        raise AssertionError(f"extracted page count mismatch: {document.pdf}")
-    for number, page_text in enumerate(extracted_pages, 1):
-        nonempty = [line.strip() for line in page_text.splitlines() if line.strip()]
-        if not nonempty or nonempty[-1] != str(number):
-            raise AssertionError(f"missing footer page number {number}: {document.pdf}")
-    normalized_pdf = normalize(extracted)
+    normalized_pdf = normalize(validated_page_body_text(extracted, pages, document.pdf))
     normalized_raw_pdf = normalize(run("pdftotext", "-raw", str(document.pdf), "-"))
     headings, code_blocks, prose_blocks = markdown_inventory(document.source)
     # Ordered extracted headings are supplemented by the exact bookmark outline

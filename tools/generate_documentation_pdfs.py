@@ -17,10 +17,11 @@ ROOT = Path(__file__).resolve().parents[1]
 USER_DOCS = ROOT / "docs" / "user"
 HEADER = ROOT / "tools" / "documentation_pdf_header.tex"
 FILTER = ROOT / "tools" / "documentation_pdf_filter.lua"
-DOCUMENT_LABEL = "Development — ENH-006 (unreleased)"
-DOCUMENT_DATE = "2026-11-13"
+PANDOC = "/opt/homebrew/bin/pandoc"
+DOCUMENT_LABEL = "Development — ENH-007 (unreleased)"
+DOCUMENT_DATE = "2026-11-19"
 DOCUMENT_SUBJECT = f"Seestar Toolkit {DOCUMENT_LABEL} documentation"
-DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-006, unreleased, documentation"
+DOCUMENT_KEYWORDS = "Seestar Toolkit, ENH-007, unreleased, documentation"
 
 
 @dataclass(frozen=True)
@@ -37,14 +38,14 @@ DOCUMENTS = (
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.md",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_USER_GUIDE.sha256",
-        "5afa8ae4e73c579a03a13a60ca477966f1ab5db74d614801962fcce41be96670",
+        "c4c629f8be905f47156f65310c270833116274ba985bf4763d791d5a57a97449",
         "Seestar Toolkit User Guide",
     ),
     Document(
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.md",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.pdf",
         USER_DOCS / "SEESTAR_TOOLKIT_QUICK_START.sha256",
-        "dd3c4bf68ac4fd2ce59fbe47e6f2c2cbaf5ab4c33f3b2658612e2d843666264a",
+        "a9ad6207ba7d07d1ca40c737c020ff2ae8a307112dbd1e5cbb3f0b26269d9710",
         "Seestar Toolkit Quick Start",
     ),
 )
@@ -64,12 +65,20 @@ def sha256(path: Path) -> str:
 
 
 def require_tools() -> None:
-    for command in ("pandoc", "xelatex", "pdfinfo", "pdftotext", "pdffonts", "pdftohtml", "mutool"):
+    for command in (
+        PANDOC,
+        "xelatex",
+        "pdfinfo",
+        "pdftotext",
+        "pdffonts",
+        "pdftohtml",
+        "mutool",
+    ):
         if shutil.which(command) is None:
             raise SystemExit(f"required documentation command not found: {command}")
 
     expected = {
-        "pandoc": "pandoc 3.12",
+        PANDOC: "pandoc 3.14",
         "xelatex": "XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew)",
     }
     for command, first_line in expected.items():
@@ -108,7 +117,7 @@ def build(document: Document, output: Path, author: str) -> None:
     )
     tex_source = output.with_suffix(".tex")
     pandoc_command = [
-        "pandoc",
+        PANDOC,
         str(document.source),
         "--from=gfm+smart",
         "--standalone",

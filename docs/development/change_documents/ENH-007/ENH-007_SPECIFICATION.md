@@ -5,6 +5,8 @@
 **Specification revision:** Draft 2.3 — administrative stage-status correction
 following the D08 historical target-identification amendment (18 November 2026)
 
+**Status record reconciled:** 20 November 2026; approved behaviour unchanged
+
 **Specification date:** 17 November 2026
 
 **Repository baseline:** `cidermark/seestar-toolkit`, `main`,
@@ -12,14 +14,15 @@ following the D08 historical target-identification amendment (18 November 2026)
 
 **Approval and authorisation:** The user formally approved Draft 2 on
 18 November 2026. ENH-007c completed and was committed as `9ef8e61`.
-ENH-007d is authorised and in progress. ENH-007e remains planned and is not
-authorised. Git operations remain under user control. Archive reorganisation
-remains excluded.
+ENH-007d completed at `696e32d`. The coordinator accepted ENH-007e as complete
+following the Checkpoint 5F final acceptance review. Formal ENH-007 closure
+documentation is in progress. Git operations remain under user control.
+Archive reorganisation remains excluded.
 
 The user approved the D08 specification amendment on 18 November 2026. Its
-implementation correction awaits separate authorisation; neither D08
-implementation nor ENH-007d closure is recorded by this administrative
-revision.
+implementation correction was delivered in `696e32d` and accepted with the
+ENH-007d and ENH-007e evidence. This administrative reconciliation does not
+alter the approved Draft 2.3 behaviour or record formal ENH-007 closure.
 
 ## 1. Objective and motivation
 
@@ -451,13 +454,14 @@ No additional material technical question is open at this approved revision.
 
 ## 11. Implementation stages
 
-ENH-007c is complete at `9ef8e61`. ENH-007d is authorised and in progress;
-the D08 implementation correction requires separate authorisation. ENH-007e
-remains planned and not yet authorised.
+ENH-007c is complete at `9ef8e61`. ENH-007d is complete at `696e32d`, including
+the separately authorised D08 implementation correction. ENH-007e and the
+Checkpoint 5F final acceptance review are complete. Formal ENH-007 closure
+documentation is in progress.
 
 ### ENH-007c — Identity resolution and hierarchy planning foundation
 
-**Status:** APPROVED / AUTHORISED
+**Status:** COMPLETE — implementation commit `9ef8e61`
 
 **Purpose:** Add the optional hierarchy grammar and derive a resolved,
 observation-level telescope component without changing reconstruction grouping.
@@ -470,20 +474,21 @@ integration, broader documentation, and archive reorganisation.
 
 **Closure evidence:** E007-01 through E007-10 and E007-13 through E007-14 as
 applicable; focused tests; Ruff for changed files; `git diff --check`; no
-reconstruction-membership regression.
+reconstruction-membership regression. Checkpoint 5F accepted the applicable
+criteria and found no outstanding evidence gap.
 
 ### ENH-007d — Archive operation and integration compatibility
 
-**Status:** AUTHORISED / IN PROGRESS; D08 implementation correction pending
-separate authorisation
+**Status:** COMPLETE — implementation commit `696e32d`
 
 **Purpose:** Integrate the approved foundation across incremental
 reconciliation, archive indexing, dry-run output, light-TIFF paths, and
 archive-aware conversion contracts.
 
-**Permitted work:** Only integration areas required by D06–D07 and their
-focused/integration regressions. The D08 implementation correction is excluded
-pending separate authorisation; its specification amendment is recorded above.
+**Permitted work:** The original stage authorisation covered only integration
+areas required by D06–D07 and their focused/integration regressions. The D08
+implementation correction was subsequently authorised separately and delivered
+within this stage; its approved specification amendment is recorded above.
 
 **Exclusions:** Changes to identity formats, reconstruction grouping, FITS
 metadata, archive reorganisation, general-purpose index parsing or repair, and
@@ -493,11 +498,12 @@ unrelated output redesign.
 integrity-error safe-continuation and dry-run non-mutation evidence; copy/move
 and collision regression evidence; index and conversion-recognition evidence;
 D08 exact historical-target fallback, required-recovery failure preservation
-and diagnostic evidence; `git diff --check`.
+and diagnostic evidence; `git diff --check`. Checkpoint 5F accepted the
+applicable criteria and found no outstanding evidence gap.
 
 ### ENH-007e — Full validation and closure review
 
-**Status:** PLANNED / NOT YET AUTHORISED
+**Status:** COMPLETE — coordinator accepted Checkpoint 5F on 20 November 2026
 
 **Purpose:** Validate the approved implementation as one compatible archive
 change and prepare closure evidence.
@@ -510,7 +516,11 @@ separate launcher approves it, and authorised closure documentation only.
 **Closure evidence:** Complete `pytest`; `ruff check .`; applicable formatting
 and whitespace checks; review of actual diff and scope; all E007 criteria;
 documented known limitations; coordinator review before any user-controlled
-Git action.
+Git action. Accepted evidence records 941 tests passed with zero failures and
+two expected duplicate-ZIP-entry warnings; Ruff lint, formatting, PDF,
+SHA-256-manifest and whitespace validation passed; E007-01 through E007-21
+passed; D01 through D08 were compliant; documentation and the complete change
+set passed review; no product defect or acceptance-criteria gap remained.
 
 ## 12. Records and limitations
 
@@ -521,11 +531,17 @@ the reported Seestar models but cannot establish an individual device; gain,
 focus, image dimensions and related fields do not provide sufficient evidence
 to change grouping.
 
-ENH-007c implementation completed and was committed as `9ef8e61`.
-ENH-007d implementation is uncommitted and remains under review; this record
-does not claim ENH-007d completion, D08 implementation, ENH-007e completion,
-ENH-007 closure, migration, integration, or release.
+ENH-007c implementation completed and was committed as `9ef8e61`. ENH-007d,
+including the D08 correction, completed at `696e32d`. ENH-007e completed after
+the Checkpoint 5F final acceptance review passed all 21 acceptance criteria and
+confirmed all eight decisions compliant. The accepted evidence includes 527
+focused tests and 941 complete-suite tests, with two expected warnings, plus
+passing Ruff, formatting, public-input, PDF, SHA-256-manifest and whitespace
+checks.
 
-D08 is an approved specification amendment. Its implementation correction,
-focused validation, ENH-007d closure, and any ENH-008 recovery work are not
-recorded by this administrative correction.
+Distribution validation remains inconclusive because external PyPI name
+resolution was unavailable; it is recorded separately from product validation
+and was not an explicit ENH-007e completion requirement. Formal closure
+documentation is in progress. This record does not claim formal ENH-007 closure,
+commit of the outstanding change set, migration, integration, push, remote CI,
+branch cleanup or release. General ENH-008 recovery work remains outside scope.

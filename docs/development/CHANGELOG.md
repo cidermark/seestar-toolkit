@@ -64,10 +64,30 @@ into and pushed to `main`. GitHub Actions run `43433956734` passed the complete
 Distribution validation matrix on `main`, including all four macOS ARM64 Python
 jobs. No release activity or enhancement-branch deletion is recorded.
 
+ENH-007 Draft 2.3 was approved on 18 November 2026. Telescope identity and
+hierarchy planning were implemented at `9ef8e61`; the D08 specification
+amendment was approved at `f6ac79d`; indexing and historical target retention
+were implemented at `696e32d`. ENH-007c, ENH-007d and ENH-007e are complete.
+Checkpoint 5F accepted E007-01 through E007-21 and D01 through D08 with no
+outstanding product defect or acceptance-criteria gap. Evidence records 527
+focused tests and 941 complete-suite tests passing, with two expected warnings,
+together with passing Ruff, formatting, public-input, PDF, manifest and
+whitespace checks. Two focused test-only regression corrections for E007-13
+and E007-16 remain uncommitted at this documentation checkpoint. Distribution
+validation is inconclusive because external PyPI name resolution was
+unavailable and is recorded separately from product validation. Formal closure
+documentation is in progress; ENH-007 is not yet formally closed, released,
+integrated into `main` or verified by remote CI.
+
 ## Development commit history
 
 | Work item | Work summary | Commit | Commit date |
 |---|---|---|---|
+| ENH-007d | Implement archive indexing and historical target retention | `696e32d` | 2026-11-18 |
+| ENH-007 | Approve the D08 historical target-recovery amendment | `f6ac79d` | 2026-11-18 |
+| ENH-007c | Implement telescope identity and hierarchy planning | `9ef8e61` | 2026-11-18 |
+| ENH-007 | Correct specification approval status | `bf95287` | 2026-11-18 |
+| ENH-007 | Approve Draft 2.3 specification | `f71b0fd` | 2026-11-18 |
 | ENH-006 | Apply CI-required Ruff formatting | `25911b4` | 2026-11-13 |
 | ENH-006 | Record formal ENH-006 closure | `a0f4ce3` | 2026-11-13 |
 | ENH-006 | Complete dry-run reporting test coverage | `a9f0938` | 2026-11-13 |
@@ -204,6 +224,11 @@ jobs. No release activity or enhancement-branch deletion is recorded.
   formatter gate, and run `43433956734` passed the complete Distribution matrix
   on `main`, including all four macOS ARM64 Python jobs. This records neither a
   release nor enhancement-branch deletion.
+- **ENH-007:** implementation is present on
+  `enh/ENH-007-telescope-hierarchy` through `696e32d`; ENH-007c, ENH-007d and
+  ENH-007e are complete, and Checkpoint 5F passed. Formal closure documentation
+  is in progress. Formal closure, a new release, main-branch integration and
+  remote CI verification have not occurred.
 - **S50 Pro qualification Stage 3:** technical PASS and independent
   closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
   October 2026. Administrative closure is approved subject to completion of

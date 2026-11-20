@@ -696,6 +696,36 @@ def test_distinct_sources_mapping_to_one_destination_are_rejected() -> None:
         _plan(observation)
 
 
+def test_telescope_hierarchy_rejects_planned_collision_without_mutation(tmp_path: Path) -> None:
+    first = _item(
+        "Light.fit",
+        DiscoveryClassification.LIGHT_FITS,
+        source_directory=ROOT / "first",
+    )
+    second = _item(
+        "Light.fit",
+        DiscoveryClassification.LIGHT_FITS,
+        source_directory=ROOT / "second",
+    )
+    reconstruction = ObservationReconstructionResult((_observation(lights=(first, second)),), ())
+    archive_root = tmp_path / "archive-does-not-exist"
+    destination = archive_root / "IC 434/S50_99643794/observation_01/fits_images/lights/Light.fit"
+
+    with pytest.raises(ArchivePlanningCollisionError) as raised:
+        plan_seestar_archive(
+            reconstruction,
+            archive_root=archive_root,
+            hierarchy_template="{target}/{telescope}",
+        )
+
+    message = str(raised.value)
+    assert "Distinct sources" in message
+    assert first.source_path.as_posix() in message
+    assert second.source_path.as_posix() in message
+    assert destination.as_posix() in message
+    assert not archive_root.exists()
+
+
 def test_planning_is_deterministic_and_does_not_mutate_filesystem(tmp_path: Path) -> None:
     archive_root = tmp_path / "archive-does-not-exist"
     reconstruction = ObservationReconstructionResult((_observation(),), ())

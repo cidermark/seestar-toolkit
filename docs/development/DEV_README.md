@@ -62,6 +62,13 @@ immediate child directories only. It supports `--dry-run`, `--location`,
 {skip-identical,error,overwrite}`, `--non-interactive`, and `--config PATH`.
 COPY and non-destructive identical-file skipping are the defaults.
 
+ENH-007 keeps the default hierarchy unchanged and allows one or more unique
+components from `{target}`, `{location}`, `{session_end_date}` and
+`{telescope}`, in any order. Tokens must occupy complete path components;
+empty, repeated, unsupported, literal, formatted, absolute, traversal and
+backslash-separated forms are rejected. Changing the hierarchy does not
+migrate existing configuration or archive content.
+
 Archive settings are read from `~/.config/seestar-toolkit/config.toml` when it
 exists; an explicit `--config` path takes its place. CLI values override TOML,
 which overrides built-in defaults. The loader is read-only and ignores unknown
@@ -86,11 +93,24 @@ filesystem mutation. Archive exit status is `0` for complete success and `1`
 for expected operational, partial or failed outcomes; argparse usage errors
 remain `2`.
 
-Real archive runs also create or update a derived `INDEX.md` in each concrete
-target directory. Its placement follows the configured hierarchy, and it lists
-the archived observations and retained capture metadata. Indexes are
-regenerable convenience views, not authoritative archive metadata. Dry-run
-reports their planned paths but does not create index or temporary files.
+Real archive runs create or update a derived `INDEX.md`. With `{target}` in the
+hierarchy, each concrete target has an index whose placement follows the token.
+Without `{target}`, one archive-root index records the target and exact relative
+`observation_NN` path for every entry. D08 permits limited recovery of a
+historical target from an existing root index only after stronger FITS,
+reconstruction and source evidence fails and exactly one path matches. Required
+recovery failure aborts publication of that root index and preserves existing
+content. Indexes are regenerable convenience views, not authoritative archive
+metadata. Dry-run reports planned paths but creates no index or temporary file.
+
+When `{telescope}` is selected, observation-wide identity resolution recognises
+complete S50 and S50 Pro device forms and emits canonical `S50_<id>` or
+`S50_Pro_<id>` components. Otherwise it uses `unidentified`. Conflicting
+recognised identities skip the affected observation and produce archive exit
+status `1`; dry-run reports the same failure without mutation. Numbering and
+reconciliation are scoped to the fully resolved hierarchy directory. Existing
+copy/move, collision, light-TIFF and archive-aware conversion policies remain
+in force at any supported hierarchy depth.
 
 ## Tests
 
@@ -164,5 +184,6 @@ edits and absent removals are successful no-ops; removal needs no extra question
 Exit status remains 0 for success/skip/no-op, 1 for configuration/extraction/write
 or unattended-authorisation errors, and 2 for argument errors.
 
-ENH-001c will update final user guides and PDF/checksum artifacts. ENH-001 remains
-STARTED; package version and release metadata are unchanged.
+This section preserves the ENH-001b checkpoint contract for historical context.
+Later ENH-001 stages completed separately; the package version and published
+v1.1.0 release metadata remain distinct from the development branch.

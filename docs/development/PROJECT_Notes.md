@@ -1,6 +1,6 @@
 # Seestar Toolkit — Project Notes
 
-> **Status date:** 13 November 2026<br>
+> **Status date:** 20 November 2026<br>
 > **Purpose:** Current project state, architectural decisions, roadmap and outstanding work.<br>
 > **Historical detail:** The source notes contain a chronological development diary. The original notes are preserved in `docs/development/history/PROJECT_Notes_HISTORICAL_SNAPSHOT.md` to avoid losing prior checkpoint evidence.
 
@@ -40,6 +40,7 @@ The numbered Stages 1–9 below refer to the original development and release pr
 | ENH-005d | FITS privacy integration, regression, and release readiness | Complete; authorised at `aa905af` and implemented at `2e8c2e1`. |
 | ENH-005 | FITS privacy processing | Complete; formal closure approved 10 November 2026. Delivered `header-report`, `pii-scrub`, and `pii-scrub --verify`; existing implementation and validation evidence is retained. |
 | ENH-006 | Archive dry-run reporting | Complete; formal closure approved 13 November 2026 and integrated into `main`. Delivered concise observation-level dry-run summaries by default, with detailed per-file mappings in global `--verbose`; implementation evidence is retained at `96bfa75` and `a9f0938`. Post-integration formatter-only commit `25911b4` and GitHub Actions run `43433956734` passed the complete Distribution matrix on `main`. |
+| ENH-007 | Optional telescope-aware archive hierarchy | ENH-007c, ENH-007d and ENH-007e are complete; implementation is delivered through `696e32d`, and Checkpoint 5F accepted E007-01 through E007-21 and D01 through D08. Formal closure documentation is in progress. Commit of the outstanding change set, release, integration into `main` and remote CI verification remain pending. Distribution validation remains inconclusive because external PyPI name resolution was unavailable. |
 | S50 Pro qualification — Stage 3 | Technical qualification T01–T06 | Technical PASS; closure readiness PASS; T01–T06 user acceptance APPROVED 26 October 2026; administrative closure APPROVED, subject to documentation and Git workflow completion |
 
 ## 3. Current behaviour and architectural decisions
@@ -64,7 +65,10 @@ The numbered Stages 1–9 below refer to the original development and release pr
 
 ### 3.2 Archive organisation
 
-- Archive hierarchy is configurable; the default order is `{target}/{location}/{session_end_date}`.
+- Archive hierarchy is configurable; the unchanged default is
+  `{target}/{location}/{session_end_date}`. ENH-007 accepts one or more unique
+  components from `{target}`, `{location}`, `{session_end_date}` and
+  `{telescope}`, in any order, and performs no automatic migration.
 - Observation directories are numbered `observation_01`, `observation_02`, etc.
 - **Current post-ENH-003 observation layout:**
 
@@ -89,7 +93,12 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
   and planned light/stack FITS counts. Global `--verbose` adds planned
   source-to-destination mappings. With `--convert-lights`, dry-run reports only
   conservative established facts; it does not claim conversion outcomes.
-- The target-level `INDEX.md` is a derived convenience index, not authoritative input for reconstruction.
+- A target-containing hierarchy uses derived target-level `INDEX.md` files. A
+  target-free hierarchy uses one archive-root index with the target and exact
+  relative observation path. D08's existing-index fallback is limited to
+  unambiguous historical target recovery after stronger evidence fails; index
+  recovery failure preserves existing content and makes the operation
+  non-successful.
 - Location handling supports configured saved locations, GPS matching and interactive workflows where applicable.
 
 ### 3.3 Configuration and observing-night policy
@@ -105,6 +114,18 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 - BUG-003 added recognition of S50 Pro device-specific `TELESCOP` values such as `S50 Pro_edfe7fb2`.
 - The observed S50 Pro qualification FITS lacked `INSTRUME`; absence of that field must not invalidate otherwise supported files.
 - Unknown or generic telescope identities retain conservative compatibility behaviour; recognition does not establish the origin of otherwise unidentified captures.
+- With `{telescope}` configured, complete recognised S50 and S50 Pro identities
+  become canonical hierarchy components; observations without one use
+  `unidentified`. Conflicting recognised identities skip the affected
+  observation, permit independently safe work to continue and return exit
+  status `1`, including in mutation-free dry-run reporting.
+- Observation numbering and incremental reconciliation are scoped to the fully
+  resolved hierarchy directory, so telescope directories number independently.
+- ENH-007 identity recognition is deliberately limited to complete S50 and S50
+  Pro device forms. It does not infer identity from model, focal length, gain,
+  focus, image dimensions or other capture properties; S30/S30 Pro remain
+  outside the qualified scope. D08 is not a general index parser or repair
+  facility, and existing archive reorganisation is deferred.
 
 ### 3.5 FITS privacy processing
 
@@ -131,6 +152,7 @@ The stacked filenames are illustrative; the source stack basename is preserved. 
 | ENH-005d | Authorised at `aa905af` and implemented at `2e8c2e1`. The temporary option is removed, user/development documentation is integrated, 738 full-suite tests and 74 focused ENH-005 regressions pass, Ruff lint and changed-file formatting pass, and PDF validation passes. The repository-wide Ruff formatting check still reports 16 pre-existing unrelated files. ENH-005d is complete. |
 | ENH-005 | Formal closure approved 10 November 2026 following completed implementation, validation, final closure audit, and documentation remediation. `header-report`, `pii-scrub`, and `pii-scrub --verify` are delivered; the implementation and validation evidence above is retained. No formal closure commit identifier is recorded. |
 | ENH-006 | Formal closure approved 13 November 2026 following the final closure and documentation audit. Implementation was delivered at `96bfa75` and reporting-focused test coverage completed at `a9f0938`. Nineteen reporting-focused tests and 754 full-suite tests passed, with two expected duplicate-ZIP warnings; Ruff and changed-file whitespace checks passed. Manual acceptance covered C 27, NGC 6888, their combined input, and two separately reconstructed M 42 observations. It was fast-forwarded into `main` at closure-documentation commit `a0f4ce3`. GitHub Actions run `43430158866` failed only the scoped Ruff formatter gate; formatter-only corrective commit `25911b4` was fast-forwarded into and pushed to `main`. GitHub Actions run `43433956734` passed the complete Distribution matrix on `main`, including all four macOS ARM64 Python jobs. No user-visible behaviour changed after the approved implementation; release activity and enhancement-branch deletion are not recorded. |
+| ENH-007e | Complete. Checkpoint 5F final acceptance review passed all E007-01 through E007-21 criteria and confirmed D01 through D08 compliance with no outstanding product defect or acceptance-criteria gap. The combined regression state passed 941 complete-suite tests with two expected warnings; Ruff lint, formatting, public-input, PDF, manifest and whitespace checks passed. The focused ENH-007 suite previously passed 527 tests. Distribution validation is recorded separately as inconclusive because external PyPI name resolution failed; it is not presented as a product-validation failure or a successful distribution check. Formal closure documentation is in progress; formal closure, commit, release, main integration and remote CI remain pending. |
 
 ### 4.1 S50 Pro qualification — separate Stage 3
 
@@ -159,7 +181,7 @@ These are candidates, not approved implementations or commitments. Priorities an
 |---|---|---|---|
 | TIFF verification | Independently verify archived TIFF derivatives against authoritative FITS conversion output | ENH-003 deferred follow-up | Deferred |
 | Archive regeneration | Rebuild or reorganise existing archives safely when hierarchy or date policy changes | Post-release enhancement inventory; ENH-002 deferral | Deferred |
-| Telescope hierarchy token | Optional telescope model or device identity in archive paths | Archive hierarchy enhancement proposal | Deferred |
+| Archive hierarchy migration | Safely reorganise existing archives after hierarchy changes; ENH-007 deliberately performs no migration | ENH-007 scope boundary | Deferred |
 | Configuration prompt clarity | Make Enter-to-skip and `y`-to-save behaviour clearer; preserve existing accepted responses | Configuration usability observation | Deferred |
 | Additional telescope qualification | S30/S30 Pro and other firmware or capture configurations, subject to representative evidence | S50 Pro qualification scope boundary | Deferred |
 | Additional capture formats | Solar, Lunar, planetary video; DSLR/conventional-camera ingestion | Longer-term roadmap | Deferred |

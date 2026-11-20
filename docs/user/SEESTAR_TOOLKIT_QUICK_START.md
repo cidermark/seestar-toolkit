@@ -1,13 +1,14 @@
 # Seestar Toolkit Quick Start
 
-**Development — ENH-006 (unreleased)**
+**Development — ENH-007 (unreleased)**
 
-**Document updated:** 2026-11-13
+**Document updated:** 2026-11-19
 
 This development edition includes the unreleased ENH-001 configuration commands,
 ENH-002 observing-night date policy, ENH-003 archive light-TIFF option, and
-ENH-005 FITS privacy commands, and ENH-006 archive dry-run reporting. They are
-not included in the published v1.1.0 wheel. The released installation
+ENH-005 FITS privacy commands, ENH-006 archive dry-run reporting, and ENH-007
+optional telescope-aware archive hierarchies. They are not included in the
+published v1.1.0 wheel. The released installation
 instructions and support boundaries remain as described below. No new release
 number has been assigned.
 
@@ -92,11 +93,12 @@ it again; you do **not** need to reinstall the Toolkit each time.
 
 ## 3. Install Seestar Toolkit
 
-These steps install the **published v1.1.0 release**, not ENH-001. The new
-configuration commands require an installation containing the development
-changes; confirm `seestar-toolkit config --help` is available in the environment
-you intend to use. The package version may still report `1.1.0`, so that number
-alone does not identify an ENH-001 build.
+These steps install the **published v1.1.0 release**, not the unreleased
+development edition described above. The newer commands and ENH-007 hierarchy
+behaviour require an installation containing the development changes; confirm
+the relevant `--help` output in the environment you intend to use. The package
+version may still report `1.1.0`, so that number alone does not identify a
+development build.
 
 Download the v1.1.0 release package from the project's GitHub Releases page.
 
@@ -199,6 +201,12 @@ Before continuing, check that the preview has the expected:
 - archive destination;
 - `copy` source action.
 
+If your configured hierarchy includes `{telescope}`, also check the canonical
+`S50_<device-id>` or `S50_Pro_<device-id>` component. Captures without one
+recognised identity use `unidentified`. Conflicting recognised identities make
+the affected observation fail with exit status `1`; dry-run reports the same
+problem without changing source or archive data.
+
 If anything looks wrong, stop and investigate while you are still in dry-run.
 
 ## 6. Create the archive by copying
@@ -225,8 +233,15 @@ Target/
 ```
 
 The Toolkit may create additional observation directories when the captures
-represent separate observations. A human-readable target index is also
-maintained.
+represent separate observations. A human-readable archive index is also
+maintained at the target level for this default hierarchy.
+
+The default hierarchy remains `{target}/{location}/{session_end_date}`. An
+ENH-007 development build can instead use one or more unique components from
+`{target}`, `{location}`, `{session_end_date}` and `{telescope}`, in any order.
+For example, `{telescope}/{target}/{session_end_date}` scopes observation
+numbering by telescope. Changing the setting does not migrate an existing
+archive.
 
 Because this example uses `copy`, the source FITS files remain in their original
 location.
@@ -241,14 +256,14 @@ Confirm that:
 1.  the original source captures are still present;
 2.  the expected target, location and observing-night directories exist;
 3.  the expected observation directories and files are present;
-4.  the stack TIFF companion and target index are where expected;
+4.  the stack TIFF companion and applicable archive index are where expected;
 5.  the command did not report unresolved observations, collisions or failures.
 
 Do **not** delete your originals simply because the command completed.
 
 The full User Guide explains observing-night dates, observation reconstruction,
-custom hierarchy order, collisions, re-running an archive and the additional
-risks of `--source-action move`.
+hierarchy components and order, collisions, re-running an archive and the
+additional risks of `--source-action move`.
 
 ## 8. Save preferences and observing locations
 
@@ -469,8 +484,9 @@ source ~/.venvs/seestar-toolkit/bin/activate
 
 ## Next: the full User Guide
 
-This development Quick Start deliberately leaves out many details. Final
-ENH-001 validation remains pending.
+This development Quick Start deliberately leaves out many details. ENH-007
+implementation and repository validation have supporting evidence, but formal
+ENH-007 closure, release and integration into `main` are not claimed here.
 
 Read the [Seestar Toolkit User Guide](SEESTAR_TOOLKIT_USER_GUIDE.md) before using `move`, changing collision
 policies, customising the archive hierarchy, troubleshooting partial operations,

@@ -4,8 +4,8 @@
 
 Seestar Toolkit was developed to make a growing collection of Seestar captures
 easier to preserve, understand and use. It reconstructs related captures into
-observations and organises them into a predictable archive by target, observing
-location and observing night.
+observations and, by default, organises them into a predictable archive by
+target, observing location and observing night.
 
 The archive workflow keeps you in control: back up the source, preview the plan
 with `--dry-run`, inspect every proposed path, then copy before considering a
@@ -21,6 +21,12 @@ Target/
             |   `-- lights/
             `-- seestar_stacked/
 ```
+
+The development branch keeps this default unchanged and adds an optional
+`{telescope}` hierarchy component. A hierarchy may contain one or more unique
+components chosen from `{target}`, `{location}`, `{session_end_date}` and
+`{telescope}`, in any order. Existing archives and saved configuration are not
+automatically migrated.
 
 In the ENH-003 development workflow, individual light FITS remain in
 `fits_images/lights/` without automatic TIFF conversion. The explicit,

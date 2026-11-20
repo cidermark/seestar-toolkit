@@ -1,13 +1,14 @@
 # Seestar Toolkit User Guide
 
-**Development — ENH-006 (unreleased)**
+**Development — ENH-007 (unreleased)**
 
-**Document updated:** 2026-11-13
+**Document updated:** 2026-11-19
 
 This development edition includes the unreleased ENH-001 configuration commands,
 ENH-002 observing-night date policy, ENH-003 archive light-TIFF option, and
-ENH-005 FITS privacy commands, and ENH-006 archive dry-run reporting. They are
-not included in the published v1.1.0 wheel. The released installation
+ENH-005 FITS privacy commands, ENH-006 archive dry-run reporting, and ENH-007
+optional telescope-aware archive hierarchies. They are not included in the
+published v1.1.0 wheel. The released installation
 instructions and support boundaries remain as described below. No new release
 number has been assigned.
 
@@ -40,10 +41,10 @@ number has been assigned.
   - [How is the observing night chosen?](#how-is-the-observing-night-chosen)
   - [What goes inside an observation?](#what-goes-inside-an-observation)
   - [Optional individual-light TIFFs](#optional-individual-light-tiffs)
-  - [Target indexes](#target-indexes)
+  - [Archive indexes](#archive-indexes)
   - [When the Toolkit is not sure](#when-the-toolkit-is-not-sure)
 - [Customising your archive](#customising-your-archive)
-  - [Change the hierarchy order](#change-the-hierarchy-order)
+  - [Choose hierarchy components and order](#choose-hierarchy-components-and-order)
   - [Locations](#locations)
   - [Optional configuration](#optional-configuration)
   - [Using a different configuration file](#using-a-different-configuration-file)
@@ -136,9 +137,10 @@ files should be kept together.
 astronomy archive.**
 
 The Toolkit examines supported captures, identifies related observations and
-organises them into a consistent archive based on **target, observing location
-and observing night**. The archive hierarchy can be customised to suit the way
-you prefer to organise your images.
+organises them into a consistent archive based by default on **target, observing
+location and observing night**. The archive hierarchy can be customised, with
+an optional telescope identity component, to suit the way you prefer to
+organise your images.
 
 Before anything is copied or moved, you can preview the proposed archive and
 inspect what the Toolkit intends to do. The recommended workflow keeps your
@@ -153,9 +155,10 @@ workflow.
 
 ### Organise your observing sessions
 
-Turn supported captures into a predictable archive arranged by **target,
-location and observing night**. If you prefer a different arrangement, the
-hierarchy can be customised by changing the order of these components.
+Turn supported captures into a predictable archive arranged by default by
+**target, location and observing night**. A development build can select one or
+more unique hierarchy components from target, location, observing night and
+telescope identity, in any order.
 
 The Toolkit uses information from the captures themselves to reconstruct related
 observations rather than simply treating every directory as an observing
@@ -204,7 +207,9 @@ original FITS files.
 ### Keep a useful record of your archive
 
 As your archive grows, the Toolkit maintains a human-readable index for each
-target, providing a convenient record alongside the organised observations.
+target when the hierarchy contains `{target}`. A target-free hierarchy instead
+uses one archive-root index with the target and exact relative observation path
+in every record.
 
 We'll look at the archive structure and its indexes in more detail later in this
 guide.
@@ -238,19 +243,22 @@ Here, `M 31` is the target, `Home` is the observing-location label and
 `20260910` identifies the observing night. Captures belonging to the same
 reconstructed observation are kept together beneath `observation_01`.
 
-The hierarchy is configurable. For example, if you would rather begin with
-observing location, the same information could be arranged as:
+The default remains unchanged. The hierarchy is configurable; for example, if
+you would rather begin with telescope identity, the same information could be
+arranged as:
 
 ``` text
-Home/
-└── 20260910/
-    └── M 31/
+S50_A1B2C3D4/
+└── M 31/
+    └── 20260910/
         └── observation_01/
             └── ...
 ```
 
-The Toolkit changes the **order** of the target, location and observing-night
-components rather than requiring you to adopt one fixed filing system.
+The Toolkit accepts one or more unique components chosen from `{target}`,
+`{location}`, `{session_end_date}` and `{telescope}`, in any order. It does not
+provide a general directory-template language or migrate an existing archive
+when the setting changes.
 
 Later in this guide we'll explain exactly how observations are reconstructed,
 how an observing night is determined, what happens to each type of capture and
@@ -432,11 +440,12 @@ change your Mac or your normal Python setup.
 
 ## 3. Install Seestar Toolkit
 
-These steps install the **published v1.1.0 release**, not ENH-001. The new
-configuration commands require an installation containing the development
-changes; confirm `seestar-toolkit config --help` is available in the environment
-you intend to use. The package version may still report `1.1.0`, so that number
-alone does not identify an ENH-001 build.
+These steps install the **published v1.1.0 release**, not the unreleased
+development edition described above. The newer commands and ENH-007 hierarchy
+behaviour require an installation containing the development changes; confirm
+the relevant `--help` output in the environment you intend to use. The package
+version may still report `1.1.0`, so that number alone does not identify a
+development build.
 
 Download the v1.1.0 release package from the project's GitHub Releases page.
 
@@ -667,7 +676,7 @@ seestar-toolkit archive --source-action copy \
 
 The Toolkit can now create the planned archive directories, copy eligible
 original FITS files, create the Seestar stack TIFF companion where appropriate
-and maintain the target index.
+and maintain the applicable archive index.
 
 Because we explicitly selected `copy`, the source FITS files remain in their
 original location.
@@ -684,7 +693,7 @@ Check that:
 2.  the expected target/location/night directories exist beneath the archive
     root;
 3.  the expected observation directories and files are present;
-4.  any expected Seestar stack TIFF companion and the target index are where you
+4.  any expected Seestar stack TIFF companion and archive index are where you
     expect them;
 5.  the command did not report unresolved observations, collisions or other
     failures.
@@ -716,7 +725,7 @@ the captures represent separate observations.
 
 In the next part of the guide we'll look inside that structure properly: how the
 Toolkit decides what belongs together, how the observing-night date is
-determined, where lights and stacked products go, what the target index
+determined, where lights and stacked products go, what the archive index
 contains, and how the hierarchy can be customised.
 
 ## Don't use move yet
@@ -885,11 +894,12 @@ A normal Seestar work folder can contain JPEGs and thumbnails alongside the FITS
 files. The archive workflow leaves those JPEG files untouched in the source
 location; it does not copy or move them into the reconstructed archive.
 
-## Target indexes
+## Archive indexes
 
-At the target level the Toolkit maintains a human-readable `INDEX.md` file. This
-provides a convenient summary alongside the archived observations rather than
-requiring you to discover everything by browsing directories manually.
+When the hierarchy contains `{target}`, the Toolkit maintains a human-readable
+`INDEX.md` at each concrete target level. Its location follows the target's
+position in the configured hierarchy rather than assuming that targets are
+direct children of the archive root.
 
 For example:
 
@@ -905,6 +915,21 @@ The index is part of the archive, but it is not a substitute for the FITS files
 or a backup. Because it can contain information derived from your
 captures---including location and capture information---you should review it
 before sharing it publicly.
+
+When the hierarchy omits `{target}`, the Toolkit maintains one `INDEX.md` at
+the archive root instead. Each record includes the target and the exact relative
+path through its `observation_NN` directory; the Toolkit does not create an
+artificial target directory.
+
+For a historical target-free observation that is absent from the current plan,
+the Toolkit normally recovers the target from reliable FITS, reconstruction or
+source evidence. The limited D08 fallback may consult an existing root index
+only when that evidence cannot identify the target and exactly one record
+matches the observation's relative path. It is not a general index parser or
+repair tool. If required recovery is missing, unreadable, malformed, ambiguous
+or inconsistent, publication of the affected root index is aborted, the
+existing archive and index are preserved, and the command exits with status
+`1`; it does not substitute `unknown`.
 
 ## When the Toolkit is not sure
 
@@ -944,31 +969,33 @@ For example: **M 42/Home/20260915**
 
 You do not have to use that order.
 
-## Change the hierarchy order
+## Choose hierarchy components and order
 
-The three archive components can be reordered to suit the way you prefer to
-browse your collection. For example:
+Choose one or more unique components from `{target}`, `{location}`,
+`{session_end_date}` and `{telescope}`. They may appear in any order. For
+example:
 
 ``` text
-{location}/{session_end_date}/{target}
+{telescope}/{target}/{session_end_date}
 ```
 
 would give you:
 
-**Home/20260915/M 42**
+**S50_A1B2C3D4/M 42/20260915**
 
-This can be useful if you tend to think first in terms of an observing site or a
-particular night's session rather than an astronomical target.
+This can be useful when captures from more than one telescope share an archive.
 
-All three components---`{target}`, `{location}` and `{session_end_date}`---must
-appear exactly once as separate path components. The option changes their order;
-v1.1.0 does not provide an arbitrary directory-template language.
+Each selected token must be a complete path component and may appear only once.
+Empty hierarchies, repeated or unsupported tokens, literal components,
+combined/formatted tokens, absolute paths, traversal and backslash-separated
+forms are rejected. The published v1.1.0 release does not contain this ENH-007
+grammar.
 
 For a one-off operation, supply the hierarchy explicitly:
 
 ``` bash
 seestar-toolkit archive --dry-run --source-action copy \
---hierarchy "{location}/{session_end_date}/{target}" \
+--hierarchy "{telescope}/{target}/{session_end_date}" \
 --location "Home" --non-interactive \
 "/path/to/work root" "/absolute/path/to/archive"
 ```
@@ -976,9 +1003,38 @@ seestar-toolkit archive --dry-run --source-action copy \
 As always, preview a changed hierarchy with `--dry-run` before writing archive
 outputs.
 
+Recognised device-specific values are canonicalised as `S50_<eight-hex-id>` or
+`S50_Pro_<eight-hex-id>`, with the hexadecimal identifier uppercased. Missing,
+generic and unrecognised values use
+`unidentified` when `{telescope}` is selected. Identity is resolved across all
+lights and the stack in an observation: one recognised identity is adopted even
+when other files are generic or missing it. Conflicting recognised identities
+are an integrity error. The diagnostic identifies the affected observation and
+lists all conflicting recognised values. That observation is skipped, unrelated
+safe observations may continue, and the archive command exits with status `1`.
+Dry-run reports the same outcome without mutation.
+
+Observation numbering and reconciliation occur inside the fully resolved
+hierarchy directory. Telescope-scoped directories therefore number
+independently, while filename collisions remain conservatively reported and do
+not silently overwrite or associate unrelated captures. Copy, move,
+`--convert-lights`, stack TIFF creation and archive-aware standalone conversion
+remain compatible; archive recognition is structural at `observation_NN`, so
+arbitrary hierarchy depth and ordering do not change inferred TIFF placement.
+
+Changing a saved hierarchy affects later planning only. The Toolkit does not
+rewrite saved configuration, migrate or reorganise an existing archive, or
+rewrite source files solely because of ENH-007.
+
+Identity recognition is limited to the approved complete S50 and S50 Pro device
+forms. It does not infer a telescope from model text, focal length, gain, focus,
+image dimensions or other capture properties, and it does not qualify S30/S30
+Pro. This development behaviour also does not change the published v1.1.0
+support boundary described earlier in this guide.
+
 ## Locations
 
-Location is one of the three archive hierarchy components. You do not
+Location is one of the supported archive hierarchy components. You do not
 necessarily need to specify it every time you create an archive.
 
 If supported Seestar captures contain usable location coordinates, the Toolkit
@@ -1188,7 +1244,7 @@ These are the archive preferences currently managed by the Toolkit:
 
 | Setting | Accepted values | Built-in default |
 |---|---|---|
-| `archive.hierarchy` | `{target}`, `{location}` and `{session_end_date}`, each once as a separate path component, in any order | `{target}/{location}/{session_end_date}` |
+| `archive.hierarchy` | One or more unique path components chosen from `{target}`, `{location}`, `{session_end_date}` and `{telescope}`, in any order | `{target}/{location}/{session_end_date}` |
 | `archive.source_action` | `copy` or `move` | `copy` |
 | `archive.collision_policy` | `skip-identical`, `error` or `overwrite` | `skip-identical` |
 | `archive.observation_date_policy` | `start` to identify the observing night by its starting date, or `end` to identify it by its ending date | `end` |
@@ -2242,9 +2298,10 @@ This does not repair the file or make an archive run ignore it.
 
 ## A saved hierarchy contains an unmatched brace
 
-The hierarchy must contain `{target}`, `{location}` and `{session_end_date}`,
-each exactly once as a separate path component. Each placeholder needs both
-an opening `{` and a closing `}`.
+The hierarchy must contain one or more unique path components chosen from
+`{target}`, `{location}`, `{session_end_date}` and `{telescope}`. Each
+placeholder needs both an opening `{` and a closing `}` and must occupy the
+whole component.
 
 For example, a saved value such as `{target` is an invalid hierarchy, even
 though the quoted string can be stored in a correctly formatted configuration
@@ -2296,9 +2353,9 @@ are rejected rather than guessed.
 
 # Command reference
 
-This section covers the existing command-line interface plus ENH-001's
-unreleased `config` commands. The earlier chapters explain the workflows and
-safety considerations in more detail.
+This section covers the development command-line interface documented through
+ENH-007. The earlier chapters explain the workflows and safety considerations
+in more detail.
 
 For the exact syntax accepted by the version installed on your Mac, use the
 relevant `--help` command.
@@ -2658,6 +2715,7 @@ making decisions about removing source files.
 ------------------------------------------------------------------------
 
 This development guide retains the released v1.1.0 workflows and documents the
-unreleased enhancements through ENH-006. ENH-006 formal closure is approved and
-complete; Git integration remains pending. For a shorter
+unreleased enhancements through ENH-007. ENH-007 implementation and validation
+have supporting evidence, but formal closure, release and integration into
+`main` are not claimed. For a shorter
 installation and first-use path, see the [Seestar Toolkit Quick Start](SEESTAR_TOOLKIT_QUICK_START.md).

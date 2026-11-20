@@ -37,6 +37,11 @@ def _item(
     problem: str | None = None,
     total_exposure: float | None = None,
     telescope: str | None = "S50_12345678",
+    width: int = 10,
+    height: int = 8,
+    gain: float | None = 80.0,
+    focus_position: int | None = None,
+    focal_length: float | None = None,
 ) -> SeestarDiscoveryItem:
     source_directory = ROOT / (
         "IC 434" if classification is DiscoveryClassification.SEESTAR_STACK_FITS else "IC 434_sub"
@@ -44,12 +49,12 @@ def _item(
     inspection = FitsInspection(
         path=source_directory / name,
         hdu_index=0,
-        width=10,
-        height=8,
+        width=width,
+        height=height,
         dtype=np.dtype(np.uint16),
         bit_depth=16,
         exposure_seconds=exposure,
-        gain=80.0,
+        gain=gain,
         bayer_pattern="GRBG",
         object_name=target,
         telescope=telescope,
@@ -70,9 +75,9 @@ def _item(
         site_longitude=None,
         eq_mode=eq_mode,
         ccd_temperature=None,
-        focus_position=None,
+        focus_position=focus_position,
         aperture=None,
-        focal_length=None,
+        focal_length=focal_length,
         creator="ZWO Seestar S50",
         producer="ZWO",
         program=None,
@@ -401,6 +406,56 @@ def test_incompatible_light_is_not_consumed_by_stack(field: str, different: obje
         is ObservationStatus.STACK_ONLY
     )
     assert any(observation.lights == (light,) for observation in result.observations)
+
+
+@pytest.mark.parametrize(
+    ("light_metadata", "stack_metadata"),
+    [
+        pytest.param(
+            {"focal_length": 250.0},
+            {"focal_length": 260.0},
+            id="focal-length",
+        ),
+        pytest.param(
+            {"gain": 80.0},
+            {"gain": 100.0},
+            id="gain",
+        ),
+        pytest.param(
+            {"focus_position": 1500},
+            {"focus_position": 1600},
+            id="focus",
+        ),
+        pytest.param(
+            {"width": 1920, "height": 1080},
+            {"width": 3840, "height": 2160},
+            id="image-dimensions",
+        ),
+    ],
+)
+def test_non_grouping_metadata_differences_preserve_observation_membership(
+    light_metadata: dict[str, object], stack_metadata: dict[str, object]
+) -> None:
+    light = _item(
+        DiscoveryClassification.LIGHT_FITS,
+        "Light.fit",
+        BASE_TIME,
+        **light_metadata,
+    )
+    stack = _item(
+        DiscoveryClassification.SEESTAR_STACK_FITS,
+        "Stacked_1.fit",
+        BASE_TIME + timedelta(seconds=11),
+        **stack_metadata,
+    )
+
+    result = reconstruct_seestar_observations(_inventory(stack, light))
+
+    assert len(result.observations) == 1
+    observation = result.observations[0]
+    assert observation.status is ObservationStatus.COMPLETE
+    assert observation.lights == (light,)
+    assert observation.stack == stack
 
 
 def test_retained_count_greater_than_stack_count_is_not_an_error() -> None:
