@@ -70,14 +70,18 @@ amendment was approved at `f6ac79d`; indexing and historical target retention
 were implemented at `696e32d`. ENH-007c, ENH-007d and ENH-007e are complete.
 Checkpoint 5F accepted E007-01 through E007-21 and D01 through D08 with no
 outstanding product defect or acceptance-criteria gap. Evidence records 527
-focused tests and 941 complete-suite tests passing, with two expected warnings,
-together with passing Ruff, formatting, public-input, PDF, manifest and
+focused tests and 941 complete-suite tests passing, with two expected
+duplicate-ZIP-entry warnings, together with passing Ruff, formatting,
+public-input, PDF, manifest and
 whitespace checks. Two focused test-only regression corrections for E007-13
-and E007-16 remain uncommitted at this documentation checkpoint. Distribution
-validation is inconclusive because external PyPI name resolution was
-unavailable and is recorded separately from product validation. Formal closure
-documentation is in progress; ENH-007 is not yet formally closed, released,
-integrated into `main` or verified by remote CI.
+and E007-16 are included in accepted feature-branch commit `4b61259`.
+Distribution validation is inconclusive because external PyPI name resolution
+was unavailable and is recorded separately from product validation. Checkpoint
+6B commit `4b61259` was verified, and formal ENH-007 development closure was
+approved on 20 November 2026 following the Checkpoint 6C PASS review. The
+formal closure-record commit, integration-readiness review, integration into
+`main`, push to origin, GitHub Actions verification and feature-branch cleanup
+remain pending. Release is separate scope.
 
 ## Development commit history
 
@@ -226,9 +230,12 @@ integrated into `main` or verified by remote CI.
   release nor enhancement-branch deletion.
 - **ENH-007:** implementation is present on
   `enh/ENH-007-telescope-hierarchy` through `696e32d`; ENH-007c, ENH-007d and
-  ENH-007e are complete, and Checkpoint 5F passed. Formal closure documentation
-  is in progress. Formal closure, a new release, main-branch integration and
-  remote CI verification have not occurred.
+  ENH-007e are complete, and Checkpoint 5F passed. Formal development closure
+  was approved on 20 November 2026 following Checkpoint 6C PASS, accepting
+  feature-branch commit `4b61259`. The closure-record commit,
+  integration-readiness review, main-branch integration, push, remote CI
+  verification and feature-branch cleanup have not occurred. Release is
+  separate scope.
 - **S50 Pro qualification Stage 3:** technical PASS and independent
   closure-readiness PASS recorded; T01–T06 user acceptance was approved on 26
   October 2026. Administrative closure is approved subject to completion of
